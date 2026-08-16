@@ -30,7 +30,8 @@
 
 ## UI方針
 
-- 既存のログイン・登録・設定画面などは shadcn-vue(reka-ui)ベースのスターターキット UI をそのまま使用する。
+- 既存のログイン・登録・ダッシュボード画面(`resources/js/pages/auth/*`, `Dashboard.vue`)は shadcn-vue ではなく、素の Tailwind CSS による Breeze 形式の UI(`AuthenticatedLayout.vue` / `GuestLayout.vue`)を正としている。未使用の shadcn-vue 製アプリシェル(AppShell/AppHeader/AppSidebar 等)は削除済み。
+- `/settings/*`(Profile・Security・Appearance)のみ shadcn-vue(reka-ui)ベースの UI を使用する。
 - **新規に作るツール画面(画像圧縮など)は shadcn-vue を使わず、Tailwind CSS で独自にコンポーネントを作り込む。** デザインは iLoveIMG のような実用一辺倒のミニマルなツールサイトを志向する。
 
 ## プライバシー・データ方針
