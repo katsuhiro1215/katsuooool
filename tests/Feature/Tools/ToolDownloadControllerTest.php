@@ -26,6 +26,18 @@ test('a request without a valid signature is rejected', function () {
     $response->assertForbidden();
 });
 
+test('a signed URL for a path with a multibyte filename round-trips successfully', function () {
+    $path = 'tool-tmp/batch-1/画像ファイル.jpg';
+    Storage::disk('local')->put($path, 'fake-image-a');
+
+    $service = new ToolDownloadService;
+    $url = $service->signedUrl($path, '写真.jpg');
+
+    $response = $this->get($url);
+
+    $response->assertSuccessful();
+});
+
 test('a path outside tool-tmp is rejected even with a valid signature', function () {
     $service = new ToolDownloadService;
     $url = $service->signedUrl('../.env', 'stolen.env');

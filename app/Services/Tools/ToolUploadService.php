@@ -46,11 +46,15 @@ class ToolUploadService
             $storedName = Str::uuid().'.'.$extension;
             $path = "tool-tmp/{$batchId}/{$storedName}";
 
-            Storage::disk('local')->putFileAs(
+            $stored = Storage::disk('local')->putFileAs(
                 "tool-tmp/{$batchId}",
                 $uploadedFile,
                 $storedName,
             );
+
+            if ($stored === false) {
+                throw new \RuntimeException("Failed to store uploaded file at tool-tmp/{$batchId}/{$storedName}.");
+            }
 
             $files[] = new UploadedToolFile(
                 path: $path,

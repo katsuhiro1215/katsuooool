@@ -18,13 +18,20 @@ class ToolDownloadService
         $absoluteZipPath = $disk->path($zipRelativePath);
 
         $zip = new ZipArchive;
-        $zip->open($absoluteZipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-
-        foreach ($files as $file) {
-            $zip->addFile($disk->path($file['path']), $file['download_name']);
+        $opened = $zip->open($absoluteZipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        if ($opened !== true) {
+            throw new \RuntimeException("Failed to open zip archive at {$absoluteZipPath} (error code {$opened}).");
         }
 
-        $zip->close();
+        foreach ($files as $file) {
+            if (! $zip->addFile($disk->path($file['path']), $file['download_name'])) {
+                throw new \RuntimeException("Failed to add file {$file['path']} to zip archive.");
+            }
+        }
+
+        if (! $zip->close()) {
+            throw new \RuntimeException("Failed to finalize zip archive at {$absoluteZipPath}.");
+        }
 
         return $zipRelativePath;
     }
@@ -35,7 +42,7 @@ class ToolDownloadService
             'tools.download',
             now()->addMinutes($expiresInMinutes),
             [
-                'token' => base64_encode($path),
+                'token' => rtrim(strtr(base64_encode($path), '+/', '-_'), '='),
                 'download_name' => $downloadName,
             ],
         );

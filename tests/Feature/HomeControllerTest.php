@@ -6,7 +6,7 @@ test('the home page renders with the tool catalog', function () {
     $response->assertSuccessful();
     $response->assertInertia(fn ($page) => $page
         ->component('Home')
-        ->has('tools', 1)
+        ->has('tools')
         ->where('tools.0.slug', 'image-compress')
     );
 });

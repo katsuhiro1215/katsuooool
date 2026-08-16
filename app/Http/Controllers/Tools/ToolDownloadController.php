@@ -11,7 +11,7 @@ class ToolDownloadController extends Controller
 {
     public function show(Request $request, string $token): StreamedResponse
     {
-        $path = base64_decode($token, strict: true);
+        $path = $this->decodeToken($token);
 
         abort_if($path === false, 404);
 
@@ -27,5 +27,21 @@ class ToolDownloadController extends Controller
         $downloadName = $request->query('download_name', basename($normalized));
 
         return $disk->download($normalized, $downloadName);
+    }
+
+    /**
+     * Decode a base64url-encoded token back into its original path.
+     */
+    private function decodeToken(string $token): string|false
+    {
+        $base64 = strtr($token, '-_', '+/');
+        $padded = str_pad(
+            $base64,
+            strlen($base64) % 4 === 0 ? strlen($base64) : strlen($base64) + (4 - strlen($base64) % 4),
+            '=',
+            STR_PAD_RIGHT,
+        );
+
+        return base64_decode($padded, strict: true);
     }
 }

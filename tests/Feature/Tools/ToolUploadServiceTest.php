@@ -61,6 +61,33 @@ test('store rejects a file whose real content type is not allowed', function () 
     expect($result->rejected)->toHaveKey(0);
 });
 
+test('store rejects a file whose extension lies about its real content', function () {
+    $service = new ToolUploadService;
+
+    $tmpPath = tempnam(sys_get_temp_dir(), 'fake_jpg_');
+    file_put_contents($tmpPath, 'this is plain text, not an image');
+
+    $spoofedFile = new UploadedFile(
+        $tmpPath,
+        'evil.jpg',
+        'image/jpeg', // client-declared type — must be ignored
+        null,
+        true, // test mode, so Laravel doesn't require a real HTTP upload
+    );
+
+    $result = $service->store(
+        uploadedFiles: [$spoofedFile],
+        allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+        maxFileBytes: 10 * 1024 * 1024,
+        maxFileCount: 10,
+    );
+
+    expect($result->files)->toBe([]);
+    expect($result->rejected)->toHaveKey(0);
+
+    @unlink($tmpPath);
+});
+
 test('store throws when the number of files exceeds the maximum', function () {
     $service = new ToolUploadService;
 

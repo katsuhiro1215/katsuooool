@@ -23,7 +23,7 @@ class ToolEventLogger
             'input_bytes' => $data['input_bytes'] ?? null,
             'output_bytes' => $data['output_bytes'] ?? null,
             'ip_hash' => $this->hashIp($ip),
-            'user_agent' => $userAgent,
+            'user_agent' => $userAgent !== null ? mb_substr($userAgent, 0, 255) : null,
         ]);
     }
 
@@ -33,6 +33,6 @@ class ToolEventLogger
             return null;
         }
 
-        return hash('sha256', $ip.date('Y-m-d').config('app.key'));
+        return hash('sha256', $ip.now()->toDateString().config('app.key'));
     }
 }
