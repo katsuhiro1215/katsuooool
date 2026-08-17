@@ -118,16 +118,16 @@
 
 ### 4.1 画像から色を抽出(`/image-color-extract`)
 
-- [ ] `ImageColorExtractService` 作成(100×100pxへのダウンスケール + RGB量子化による頻度カウントで上位6色を算出、GD/Imagickランタイム検出は既存Serviceと同様の方式を流用)
-- [ ] `ImageColorExtractController` 作成(GET: ページ表示, POST: 抽出実行。ダウンロードURLは発行しない)
-- [ ] ルート `/image-color-extract` 追加、config/tools.php にエントリ追加
-- [ ] `/image-color-extract` Inertiaページ作成(色スウォッチ + HEXコード表示、クリックでクリップボードコピー)
-- [ ] バックエンドテスト(正常系の色抽出、非対応形式・上限超過・破損ファイル、全透明画像などのエッジケース)
+- [x] `ImageColorExtractService` 作成(100×100pxへのダウンスケール + RGB量子化による頻度カウントで上位6色を算出、GD/Imagickランタイム検出は既存Serviceと同様の方式を流用)
+- [x] `ImageColorExtractController` 作成(GET: ページ表示, POST: 抽出実行。ダウンロードURLは発行しない)
+- [x] ルート `/image-color-extract` 追加、config/tools.php にエントリ追加
+- [x] `/image-color-extract` Inertiaページ作成(色スウォッチ + HEXコード表示、クリックでクリップボードコピー)
+- [x] バックエンドテスト(正常系の色抽出、非対応形式・上限超過・破損ファイル、全透明画像などのエッジケース)
 
 ### 4.2 動作確認
 
-- [ ] `composer test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
-- [ ] Playwrightで実ブラウザ動作確認(スクリーンショット提示)
+- [x] `composer test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(スクリーンショット提示)
 
 ## 完了の定義(Definition of Done)
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Tools\ImageColorExtractController;
 use App\Http\Controllers\Tools\ImageCompressController;
 use App\Http\Controllers\Tools\ImageConvertController;
 use App\Http\Controllers\Tools\ImageResizeController;
@@ -35,6 +36,12 @@ Route::get('/image-resize', [ImageResizeController::class, 'show'])->name('image
 Route::post('/image-resize', [ImageResizeController::class, 'process'])
     ->middleware('throttle:10,1')
     ->name('image-resize.process');
+
+Route::get('/image-color-extract', [ImageColorExtractController::class, 'show'])->name('image-color-extract.show');
+
+Route::post('/image-color-extract', [ImageColorExtractController::class, 'process'])
+    ->middleware('throttle:10,1')
+    ->name('image-color-extract.process');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
