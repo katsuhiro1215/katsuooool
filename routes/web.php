@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Tools\ImageCompressController;
 use App\Http\Controllers\Tools\ImageConvertController;
+use App\Http\Controllers\Tools\ImageResizeController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,6 +29,12 @@ Route::get('/image-convert', [ImageConvertController::class, 'show'])->name('ima
 Route::post('/image-convert', [ImageConvertController::class, 'process'])
     ->middleware('throttle:10,1')
     ->name('image-convert.process');
+
+Route::get('/image-resize', [ImageResizeController::class, 'show'])->name('image-resize.show');
+
+Route::post('/image-resize', [ImageResizeController::class, 'process'])
+    ->middleware('throttle:10,1')
+    ->name('image-resize.process');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
