@@ -22,4 +22,11 @@ return [
         'description' => '幅・高さを指定して画像サイズを変更します。アスペクト比の自動維持にも対応。',
         'href' => '/image-resize',
     ],
+    [
+        'slug' => 'image-color-extract',
+        'name' => '画像から色を抽出',
+        'category' => 'image',
+        'description' => '画像から主要な色を6色抽出し、HEXコードで表示します。',
+        'href' => '/image-color-extract',
+    ],
 ];
