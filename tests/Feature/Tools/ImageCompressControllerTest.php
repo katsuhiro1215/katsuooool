@@ -21,7 +21,7 @@ test('posting valid images returns compressed download links', function () {
         UploadedFile::fake()->image('photo-b.png', 400, 300),
     ];
 
-    $response = $this->post(route('image-compress.process'), ['files' => $files]);
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])->post(route('image-compress.process'), ['files' => $files]);
 
     $response->assertSuccessful();
     $response->assertJsonCount(2, 'results');
@@ -36,7 +36,7 @@ test('posting valid images returns compressed download links', function () {
 test('posting a single valid image does not return a batch download url', function () {
     $files = [UploadedFile::fake()->image('photo.jpg', 800, 600)];
 
-    $response = $this->post(route('image-compress.process'), ['files' => $files]);
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])->post(route('image-compress.process'), ['files' => $files]);
 
     $response->assertSuccessful();
     $response->assertJsonCount(1, 'results');
@@ -50,7 +50,7 @@ test('posting a disallowed file type is reported as rejected, not a fatal error'
         UploadedFile::fake()->create('not-an-image.txt', 10, 'text/plain'),
     ];
 
-    $response = $this->post(route('image-compress.process'), ['files' => $files]);
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])->post(route('image-compress.process'), ['files' => $files]);
 
     $response->assertSuccessful();
     $response->assertJsonCount(2, 'results');
@@ -64,7 +64,7 @@ test('posting more than 10 files is rejected with a validation error', function 
         ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
         ->all();
 
-    $response = $this->post(route('image-compress.process'), ['files' => $files]);
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])->post(route('image-compress.process'), ['files' => $files]);
 
     $response->assertStatus(422);
 });
