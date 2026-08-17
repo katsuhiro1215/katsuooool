@@ -91,6 +91,29 @@
 - [x] 集計結果のテーブル表示コンポーネント作成(簡易グラフは見送り、表形式のみ)
 - [x] 動作確認(データが無い場合の表示含む、Playwrightで実ブラウザ確認済み)
 
+## Phase 3 — 画像形式変換・画像リサイズ
+
+### 3.1 画像形式変換(`/image-convert`)
+
+- [ ] `ImageConvertService` 作成(JPEG/PNG/WebP/AVIF間の相互変換、GD/Imagickランタイム検出は既存 `ImageCompressService` と同様の方式を流用)
+- [ ] `ImageConvertController` 作成(GET: ページ表示, POST: 出力形式パラメータ付きで変換実行)
+- [ ] ルート `/image-convert` 追加、config/tools.php にエントリ追加
+- [ ] `/image-convert` Inertiaページ作成(出力形式選択UI、既存ツール群と統一感のあるTailwind UI)
+- [ ] バックエンドテスト(4形式それぞれへの変換、非対応形式・上限超過・破損ファイル)
+
+### 3.2 画像リサイズ(`/image-resize`)
+
+- [ ] `ImageResizeService` 作成(幅/高さ指定、片方省略時はアスペクト比維持)
+- [ ] `ImageResizeController` 作成(GET/POST)
+- [ ] ルート `/image-resize` 追加、config/tools.php にエントリ追加
+- [ ] `/image-resize` Inertiaページ作成(幅・高さ入力UI)
+- [ ] バックエンドテスト(幅のみ・高さのみ・両方指定、不正な値、上限超過)
+
+### 3.3 動作確認
+
+- [ ] `composer test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
+- [ ] Playwrightで実ブラウザ動作確認(スクリーンショット提示)
+
 ## 完了の定義(Definition of Done)
 
 - [ ] `composer test`(Pint/PHPStan/Pest)がグリーン
