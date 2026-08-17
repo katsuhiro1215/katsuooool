@@ -144,9 +144,46 @@
 - [x] `composer test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
 - [x] Playwrightで実ブラウザ動作確認(スクリーンショット提示)
 
+## Phase 6 — Colorカテゴリ(5ツール一括)
+
+### 6.0 共通基盤
+
+- [ ] `resources/js/lib/color.ts` 作成(HEX⇔RGB⇔HSL相互変換、WCAGコントラスト比計算、色相操作の共通ユーティリティ + 単体テスト)
+- [ ] Colorツール共通の軽量Controllerパターン確立(`show()` + ログ専用POSTエンドポイント、`ToolEventLogger` 連携)
+
+### 6.1 HEX/RGB/HSL変換(`/color-convert`)
+
+- [ ] Controller・ルート・config/tools.php エントリ追加
+- [ ] Inertiaページ作成(カラーピッカー + HEX/RGB/HSL相互入力、コピー機能)
+
+### 6.2 コントラストチェック(`/color-contrast`)
+
+- [ ] Controller・ルート・config/tools.php エントリ追加
+- [ ] Inertiaページ作成(前景色/背景色選択、コントラスト比・AA/AAA判定表示、プレビュー)
+
+### 6.3 カラーパレット生成(`/color-palette`)
+
+- [ ] Controller・ルート・config/tools.php エントリ追加
+- [ ] Inertiaページ作成(5色ランダム生成、色ごとのロック機能、コピー機能)
+
+### 6.4 グラデーション生成(`/color-gradient`)
+
+- [ ] Controller・ルート・config/tools.php エントリ追加
+- [ ] Inertiaページ作成(開始色/終了色/角度指定、プレビュー、CSSコードコピー)
+
+### 6.5 色の組み合わせ(`/color-scheme`)
+
+- [ ] Controller・ルート・config/tools.php エントリ追加
+- [ ] Inertiaページ作成(基準色選択、補色/類似色/三色配色/分割補色/四色配色の表示)
+
+### 6.6 動作確認
+
+- [ ] `composer test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
+- [ ] Playwrightで5ツールすべての実ブラウザ動作確認(スクリーンショット提示)
+
 ## 今後の実装順序
 
-画像の回転(Phase 5)→ Colorカテゴリ → Webカテゴリ → SEOカテゴリ → 画像の切り抜き(SPEC.md §15参照)。
+画像の回転(Phase 5)→ Colorカテゴリ(Phase 6、進行中)→ Webカテゴリ → SEOカテゴリ → 画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 
