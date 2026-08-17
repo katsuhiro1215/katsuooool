@@ -15,4 +15,11 @@ return [
         'description' => 'JPEG・PNG・WebP・AVIF間で画像形式を一括変換します。',
         'href' => '/image-convert',
     ],
+    [
+        'slug' => 'image-resize',
+        'name' => '画像リサイズ',
+        'category' => 'image',
+        'description' => '幅・高さを指定して画像サイズを変更します。アスペクト比の自動維持にも対応。',
+        'href' => '/image-resize',
+    ],
 ];
