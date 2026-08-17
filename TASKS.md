@@ -80,16 +80,16 @@
 
 ### 2.1 Admin認証画面
 
-- [ ] `/admin/login` ページ作成(独自Tailwind UI)
-- [ ] `AdminAuthenticatedSessionController` 作成(ログイン/ログアウト)
-- [ ] ログイン試行のレート制限設定
+- [x] `/admin/login` ページ作成(独自Tailwind UI)
+- [x] `AuthenticatedSessionController` 作成(ログイン/ログアウト、`app/Http/Controllers/Admin/` 配下)
+- [x] ログイン試行のレート制限設定(`admin-login` 名前付きリミッター、5回/分・メール+IP)
 
 ### 2.2 Adminダッシュボード
 
-- [ ] `/admin/dashboard` ルート・ページ作成(`auth:admin` ミドルウェア保護)
-- [ ] `tool_events` 集計クエリ実装(ツール別 実行回数・ダウンロード回数、直近7日/30日推移)
-- [ ] 集計結果のテーブル/簡易グラフ表示コンポーネント作成
-- [ ] 動作確認(データが無い場合の表示含む)
+- [x] `/admin/dashboard` ルート・ページ作成(`auth:admin` ミドルウェア保護)
+- [x] `tool_events` 集計クエリ実装(ツール別 実行回数・ダウンロード回数(概算)、直近7日/30日推移)
+- [x] 集計結果のテーブル表示コンポーネント作成(簡易グラフは見送り、表形式のみ)
+- [x] 動作確認(データが無い場合の表示含む、Playwrightで実ブラウザ確認済み)
 
 ## 完了の定義(Definition of Done)
 
