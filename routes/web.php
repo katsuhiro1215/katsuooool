@@ -23,3 +23,4 @@ Route::post('/image-compress', [ImageCompressController::class, 'process'])
     ->name('image-compress.process');
 
 require __DIR__.'/settings.php';
+require __DIR__.'/admin.php';
