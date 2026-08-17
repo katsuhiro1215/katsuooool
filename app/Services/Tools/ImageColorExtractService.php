@@ -2,6 +2,7 @@
 
 namespace App\Services\Tools;
 
+use Intervention\Image\Colors\Rgb\Colorspace as RgbColorspace;
 use Intervention\Image\ImageManager;
 use RuntimeException;
 
@@ -21,6 +22,7 @@ class ImageColorExtractService
     public function extract(string $inputPath): array
     {
         $image = $this->makeManager()->read($inputPath);
+        $image->setColorspace(new RgbColorspace);
         $image->scale(width: self::SAMPLE_DIMENSION, height: self::SAMPLE_DIMENSION);
 
         $buckets = [];

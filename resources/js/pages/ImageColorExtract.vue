@@ -34,6 +34,7 @@ const isProcessing = ref(false);
 const errorMessage = ref('');
 const response = ref<ColorExtractResponse | null>(null);
 const copiedHex = ref('');
+const copyFailed = ref(false);
 
 const canExtract = computed(
     () => selectedFiles.value.length > 0 && !isProcessing.value,
@@ -105,6 +106,8 @@ async function extract() {
 }
 
 async function copyHex(hex: string) {
+    copyFailed.value = false;
+
     try {
         await navigator.clipboard.writeText(hex);
         copiedHex.value = hex;
@@ -114,7 +117,12 @@ async function copyHex(hex: string) {
             }
         }, 1500);
     } catch {
-        // Clipboard API unavailable (e.g. insecure context); ignore silently.
+        // Clipboard API unavailable (e.g. insecure context) or permission
+        // denied; surface it instead of leaving the click looking inert.
+        copyFailed.value = true;
+        setTimeout(() => {
+            copyFailed.value = false;
+        }, 1500);
     }
 }
 
@@ -201,6 +209,10 @@ function isSuccess(result: ColorExtractResult): result is SuccessResult {
             >
                 {{ isProcessing ? '抽出しています...' : '抽出する' }}
             </button>
+
+            <p v-if="copyFailed" class="mt-4 text-sm text-red-600">
+                コピーできませんでした。HEXコードを手動で選択してください。
+            </p>
 
             <div v-if="response" class="mt-8 space-y-4">
                 <div
