@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Tools\ImageCompressController;
+use App\Http\Controllers\Tools\ImageConvertController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,6 +22,12 @@ Route::get('/image-compress', [ImageCompressController::class, 'show'])->name('i
 Route::post('/image-compress', [ImageCompressController::class, 'process'])
     ->middleware('throttle:10,1')
     ->name('image-compress.process');
+
+Route::get('/image-convert', [ImageConvertController::class, 'show'])->name('image-convert.show');
+
+Route::post('/image-convert', [ImageConvertController::class, 'process'])
+    ->middleware('throttle:10,1')
+    ->name('image-convert.process');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
