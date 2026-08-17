@@ -32,13 +32,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('admin.dashboard'));
+        return redirect()->route('admin.dashboard');
     }
 
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('admin')->logout();
 
+        // セッション全体を破棄するため、同一ブラウザで web ガードにもログインして
+        // いる場合はそちらも同時にログアウトされる(Laravel Breeze 標準の挙動を踏襲)。
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

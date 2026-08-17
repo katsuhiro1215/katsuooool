@@ -2,6 +2,7 @@
 
 use App\Models\Admin;
 use App\Models\ToolEvent;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -23,6 +24,15 @@ test('unauthenticated visitors are redirected to the admin login page', function
     $response = $this->get(route('admin.dashboard'));
 
     $response->assertRedirect(route('admin.login'));
+});
+
+test('a web-authenticated user (not an admin) cannot access the admin dashboard', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->get(route('admin.dashboard'));
+
+    $response->assertRedirect(route('admin.login'));
+    $this->assertGuest('admin');
 });
 
 test('the dashboard renders zeroed stats when there is no data', function () {

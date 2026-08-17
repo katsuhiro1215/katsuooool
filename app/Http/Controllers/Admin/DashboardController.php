@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ToolEvent;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Config;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -12,7 +13,10 @@ class DashboardController extends Controller
 {
     public function index(): Response
     {
-        $stats = collect(config('tools'))
+        /** @var list<array{slug: string, name: string, category: string, description: string, href: string}> $tools */
+        $tools = Config::array('tools');
+
+        $stats = collect($tools)
             ->map(function (array $tool) {
                 // A closure that returns a fresh Builder instance each call
                 // (Eloquent's ::query() always builds a new one), so no

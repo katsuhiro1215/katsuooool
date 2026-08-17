@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -60,10 +61,18 @@ class AppServiceProvider extends ServiceProvider
         // Request (no guard parameter) — the 'admin/*' prefix matches every
         // route inside routes/admin.php's Route::prefix('admin') group.
         // Non-admin routes fall through to the default web-guard login.
-        Authenticate::redirectUsing(
-            fn (Request $request) => $request->is('admin/*')
-                ? route('admin.login')
-                : route('login')
-        );
+        $redirectUnauthenticatedTo = fn (Request $request) => $request->is('admin/*')
+            ? route('admin.login')
+            : route('login');
+
+        Authenticate::redirectUsing($redirectUnauthenticatedTo);
+
+        // Laravel's redirectTo() configuration normally applies the same
+        // closure to Authenticate, AuthenticateSession, and
+        // AuthenticationException together. This app only routes auth
+        // failures through Authenticate today, but AuthenticationException
+        // is kept in sync here too so a future bare-exception path under
+        // /admin/* doesn't silently fall back to the web-guard login route.
+        AuthenticationException::redirectUsing($redirectUnauthenticatedTo);
     }
 }
