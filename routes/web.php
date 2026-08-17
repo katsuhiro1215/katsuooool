@@ -5,6 +5,7 @@ use App\Http\Controllers\Tools\ImageColorExtractController;
 use App\Http\Controllers\Tools\ImageCompressController;
 use App\Http\Controllers\Tools\ImageConvertController;
 use App\Http\Controllers\Tools\ImageResizeController;
+use App\Http\Controllers\Tools\ImageRotateController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -42,6 +43,12 @@ Route::get('/image-color-extract', [ImageColorExtractController::class, 'show'])
 Route::post('/image-color-extract', [ImageColorExtractController::class, 'process'])
     ->middleware('throttle:10,1')
     ->name('image-color-extract.process');
+
+Route::get('/image-rotate', [ImageRotateController::class, 'show'])->name('image-rotate.show');
+
+Route::post('/image-rotate', [ImageRotateController::class, 'process'])
+    ->middleware('throttle:10,1')
+    ->name('image-rotate.process');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

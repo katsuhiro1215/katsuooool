@@ -29,4 +29,11 @@ return [
         'description' => '画像から主要な色を6色抽出し、HEXコードで表示します。',
         'href' => '/image-color-extract',
     ],
+    [
+        'slug' => 'image-rotate',
+        'name' => '画像の回転',
+        'category' => 'image',
+        'description' => '画像を左90度・180度・右90度のいずれかに一括回転します。',
+        'href' => '/image-rotate',
+    ],
 ];
