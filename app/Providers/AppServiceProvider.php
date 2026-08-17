@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -47,6 +48,22 @@ class AppServiceProvider extends ServiceProvider
             fn (Request $request) => Auth::guard('admin')->check()
                 ? route('admin.dashboard')
                 : route('dashboard')
+        );
+
+        // Laravel's default Authenticate middleware (the 'auth' alias) has no
+        // guard awareness either: it just redirects any unauthenticated
+        // visitor to route('login') if it exists — which is Fortify's
+        // web-guard login page. Without this override, an unauthenticated
+        // visitor hitting an 'auth:admin' route (e.g. GET /admin/dashboard)
+        // would be sent to /login instead of /admin/login. Detect admin
+        // routes by their URL prefix, since the callback only receives the
+        // Request (no guard parameter) — the 'admin/*' prefix matches every
+        // route inside routes/admin.php's Route::prefix('admin') group.
+        // Non-admin routes fall through to the default web-guard login.
+        Authenticate::redirectUsing(
+            fn (Request $request) => $request->is('admin/*')
+                ? route('admin.login')
+                : route('login')
         );
     }
 }
