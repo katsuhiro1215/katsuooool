@@ -171,7 +171,7 @@ function isSuccess(result: ConvertResult): result is SuccessResult {
                             v-model="targetFormat"
                             type="radio"
                             :value="option.value"
-                            class="hidden"
+                            class="sr-only"
                         />
                         {{ option.label }}
                     </label>
