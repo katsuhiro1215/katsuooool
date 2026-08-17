@@ -2,8 +2,8 @@
 
 namespace App\Services\Tools;
 
-use InvalidArgumentException;
 use Intervention\Image\ImageManager;
+use InvalidArgumentException;
 
 class ImageCompressService
 {
