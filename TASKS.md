@@ -9,7 +9,7 @@
 - [x] Git初期化(`git init`)、`.gitignore` 確認
 - [x] GitHub上にPrivateリポジトリを新規作成し、リモート登録
 - [x] 初回コミット・push
-- [ ] `.env` の DB接続先を MySQL(MAMP)に設定し、ローカルで疎通確認 — MAMP側のMySQLユーザーで `Access denied` が発生(要ユーザー側でのMAMP設定確認)
+- [x] `.env` の DB接続先を MySQL(MAMP)に設定し、ローカルで疎通確認 — 原因は `.env` の `DB_USERNAME=katsuooool` に対しMAMP側のMySQLユーザーが `katsuoool`(oが1つ少ないtypo)だったこと。`.env` の値に合わせて `katsuooool`@`localhost`/`127.0.0.1` ユーザーを作成し解消、`php artisan migrate` 成功済み
 - [ ] Xserverの実際の制限値(upload_max_filesize / post_max_size / max_execution_time、GD/Imagick/ZipArchive拡張の有無)を確認し、SPEC.mdの前提と齟齬がないか検証
 
 ### 0.2 不要依存の整理
@@ -113,6 +113,21 @@
 
 - [x] `composer test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
 - [x] Playwrightで実ブラウザ動作確認(スクリーンショット提示)
+
+## Phase 4 — 画像から色を抽出
+
+### 4.1 画像から色を抽出(`/image-color-extract`)
+
+- [ ] `ImageColorExtractService` 作成(100×100pxへのダウンスケール + RGB量子化による頻度カウントで上位6色を算出、GD/Imagickランタイム検出は既存Serviceと同様の方式を流用)
+- [ ] `ImageColorExtractController` 作成(GET: ページ表示, POST: 抽出実行。ダウンロードURLは発行しない)
+- [ ] ルート `/image-color-extract` 追加、config/tools.php にエントリ追加
+- [ ] `/image-color-extract` Inertiaページ作成(色スウォッチ + HEXコード表示、クリックでクリップボードコピー)
+- [ ] バックエンドテスト(正常系の色抽出、非対応形式・上限超過・破損ファイル、全透明画像などのエッジケース)
+
+### 4.2 動作確認
+
+- [ ] `composer test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
+- [ ] Playwrightで実ブラウザ動作確認(スクリーンショット提示)
 
 ## 完了の定義(Definition of Done)
 
