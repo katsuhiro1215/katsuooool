@@ -133,16 +133,16 @@
 
 ### 5.1 画像の回転(`/image-rotate`)
 
-- [ ] `ImageRotateService` 作成(90/180/270度回転、GD/Imagickランタイム検出は既存Serviceと同様の方式を流用)
-- [ ] `ImageRotateController` 作成(GET: ページ表示, POST: 回転角度パラメータ付きで一括回転実行)
-- [ ] ルート `/image-rotate` 追加、config/tools.php にエントリ追加
-- [ ] `/image-rotate` Inertiaページ作成(左90度/180度/右90度のボタン選択UI)
-- [ ] バックエンドテスト(各角度での回転、90/270度での幅高さ入れ替わり確認、非対応形式・上限超過・破損ファイル)
+- [x] `ImageRotateService` 作成(90/180/270度回転、GD/Imagickランタイム検出は既存Serviceと同様の方式を流用)
+- [x] `ImageRotateController` 作成(GET: ページ表示, POST: 回転角度パラメータ付きで一括回転実行)
+- [x] ルート `/image-rotate` 追加、config/tools.php にエントリ追加
+- [x] `/image-rotate` Inertiaページ作成(左90度/180度/右90度のボタン選択UI)
+- [x] バックエンドテスト(各角度での回転、90/270度での幅高さ入れ替わり確認、非対応形式・上限超過・破損ファイル)
 
 ### 5.2 動作確認
 
-- [ ] `composer test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
-- [ ] Playwrightで実ブラウザ動作確認(スクリーンショット提示)
+- [x] `composer test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(スクリーンショット提示)
 
 ## 今後の実装順序
 
