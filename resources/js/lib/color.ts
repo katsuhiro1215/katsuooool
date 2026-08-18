@@ -142,6 +142,16 @@ export function contrastRatio(a: Rgb, b: Rgb): number {
 }
 
 export function rotateHue(hex: string, degrees: number): string {
+    // A 0-degree rotation must be a true identity: routing it through the
+    // integer-rounded HSL round-trip below can shift a channel by a few
+    // units (e.g. #02d8e6 -> #02d4e3), which is visibly wrong for the
+    // offset-0 entry of a color scheme (the user's own chosen color).
+    if (((degrees % 360) + 360) % 360 === 0) {
+        const rgb = parseHex(hex);
+
+        return rgb ? rgbToHex(rgb) : hex;
+    }
+
     const hsl = hexToHsl(hex);
 
     if (!hsl) {

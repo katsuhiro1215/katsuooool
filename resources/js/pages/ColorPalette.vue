@@ -20,14 +20,26 @@ const swatches = ref<Swatch[]>(
 );
 const copiedHex = ref('');
 
+let trackTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function track() {
+    if (trackTimeout) {
+        clearTimeout(trackTimeout);
+    }
+
+    trackTimeout = setTimeout(() => {
+        axios.post('/color-palette/track').catch(() => {
+            // Analytics-only endpoint; ignore failures.
+        });
+    }, 500);
+}
+
 function generate() {
     swatches.value = swatches.value.map((swatch) =>
         swatch.locked ? swatch : { ...swatch, hex: randomHex() },
     );
 
-    axios.post('/color-palette/track').catch(() => {
-        // Analytics-only endpoint; ignore failures.
-    });
+    track();
 }
 
 function toggleLock(index: number) {

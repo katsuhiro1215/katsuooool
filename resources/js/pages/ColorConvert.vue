@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ref, watch } from 'vue';
 
 import { hslToRgb, parseHex, rgbToHex, rgbToHsl } from '@/lib/color';
-import type { Rgb } from '@/lib/color';
+import type { Hsl, Rgb } from '@/lib/color';
 
 const INITIAL_RGB: Rgb = { r: 51, g: 102, b: 255 };
 
@@ -13,34 +13,59 @@ const hexInput = ref(rgbToHex(INITIAL_RGB));
 const rInput = ref(String(INITIAL_RGB.r));
 const gInput = ref(String(INITIAL_RGB.g));
 const bInput = ref(String(INITIAL_RGB.b));
-const hslDisplay = ref(rgbToHsl(INITIAL_RGB));
+// Kept as its own source of truth (not re-derived from rgb after every
+// edit) so that editing H/S while L is 0 or 100 — or editing H while S is
+// 0 — doesn't collapse back to whatever HSL rgbToHsl() reconstructs for a
+// degenerate RGB, which silently discards the hue/saturation the user just
+// typed.
+const hsl = ref<Hsl>(rgbToHsl(INITIAL_RGB));
 const copiedField = ref('');
 
+// Guards against the hexInput watcher re-firing when applyFromRgb()
+// normalizes the field programmatically. `flush: 'sync'` below makes the
+// watcher run synchronously within this same guarded block instead of as a
+// microtask, so the flag is still true when it would otherwise re-enter.
 let suppressWatchers = false;
 
-function applyRgb(next: Rgb) {
+function applyFromRgb(next: Rgb) {
     suppressWatchers = true;
     rgb.value = next;
     hexInput.value = rgbToHex(next);
     rInput.value = String(next.r);
     gInput.value = String(next.g);
     bInput.value = String(next.b);
-    hslDisplay.value = rgbToHsl(next);
+    hsl.value = rgbToHsl(next);
     suppressWatchers = false;
 }
 
-watch(hexInput, (value) => {
-    if (suppressWatchers) {
-        return;
-    }
+function applyFromHsl(next: Hsl) {
+    suppressWatchers = true;
+    hsl.value = next;
+    const nextRgb = hslToRgb(next);
+    rgb.value = nextRgb;
+    hexInput.value = rgbToHex(nextRgb);
+    rInput.value = String(nextRgb.r);
+    gInput.value = String(nextRgb.g);
+    bInput.value = String(nextRgb.b);
+    suppressWatchers = false;
+}
 
-    const parsed = parseHex(value);
+watch(
+    hexInput,
+    (value) => {
+        if (suppressWatchers) {
+            return;
+        }
 
-    if (parsed) {
-        applyRgb(parsed);
-        track();
-    }
-});
+        const parsed = parseHex(value);
+
+        if (parsed) {
+            applyFromRgb(parsed);
+            track();
+        }
+    },
+    { flush: 'sync' },
+);
 
 function onRgbChannelChange() {
     if (suppressWatchers) {
@@ -62,7 +87,7 @@ function onRgbChannelChange() {
         b >= 0 &&
         b <= 255
     ) {
-        applyRgb({ r, g, b });
+        applyFromRgb({ r, g, b });
         track();
     }
 }
@@ -74,8 +99,7 @@ function onHslChannelChange(field: 'h' | 's' | 'l', value: string) {
         return;
     }
 
-    const next = { ...hslDisplay.value, [field]: parsed };
-    applyRgb(hslToRgb(next));
+    applyFromHsl({ ...hsl.value, [field]: parsed });
     track();
 }
 
@@ -176,6 +200,7 @@ function track() {
                                 type="number"
                                 min="0"
                                 max="255"
+                                aria-label="R"
                                 class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
                                 @input="onRgbChannelChange"
                             />
@@ -184,6 +209,7 @@ function track() {
                                 type="number"
                                 min="0"
                                 max="255"
+                                aria-label="G"
                                 class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
                                 @input="onRgbChannelChange"
                             />
@@ -192,6 +218,7 @@ function track() {
                                 type="number"
                                 min="0"
                                 max="255"
+                                aria-label="B"
                                 class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
                                 @input="onRgbChannelChange"
                             />
@@ -220,10 +247,11 @@ function track() {
                         >
                         <div class="mt-1 flex flex-wrap items-center gap-2">
                             <input
-                                :value="hslDisplay.h"
+                                :value="hsl.h"
                                 type="number"
                                 min="0"
                                 max="360"
+                                aria-label="H"
                                 class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
                                 @input="
                                     (e) =>
@@ -235,10 +263,11 @@ function track() {
                                 "
                             />
                             <input
-                                :value="hslDisplay.s"
+                                :value="hsl.s"
                                 type="number"
                                 min="0"
                                 max="100"
+                                aria-label="S"
                                 class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
                                 @input="
                                     (e) =>
@@ -250,10 +279,11 @@ function track() {
                                 "
                             />
                             <input
-                                :value="hslDisplay.l"
+                                :value="hsl.l"
                                 type="number"
                                 min="0"
                                 max="100"
+                                aria-label="L"
                                 class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
                                 @input="
                                     (e) =>
@@ -270,7 +300,7 @@ function track() {
                                 @click="
                                     copy(
                                         'hsl',
-                                        `hsl(${hslDisplay.h}, ${hslDisplay.s}%, ${hslDisplay.l}%)`,
+                                        `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`,
                                     )
                                 "
                             >

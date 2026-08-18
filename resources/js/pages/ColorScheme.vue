@@ -101,8 +101,8 @@ watch(baseColor, track);
                     </h2>
                     <div class="mt-2 flex gap-3">
                         <div
-                            v-for="hex in scheme.colors"
-                            :key="hex"
+                            v-for="(hex, index) in scheme.colors"
+                            :key="`${scheme.label}-${index}`"
                             class="flex flex-col items-center gap-1"
                         >
                             <button
