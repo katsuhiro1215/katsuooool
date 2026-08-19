@@ -1,7 +1,147 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import axios from 'axios';
+import { computed, ref } from 'vue';
+
+import { decodeUrl, encodeUrl } from '@/lib/textCodecs';
+
+const input = ref('');
+const output = ref('');
+const errorMessage = ref('');
+const copied = ref(false);
+
+const canProcess = computed(() => input.value !== '');
+
+function encode() {
+    if (!canProcess.value) {
+        return;
+    }
+
+    output.value = encodeUrl(input.value);
+    errorMessage.value = '';
+    track();
+}
+
+function decode() {
+    if (!canProcess.value) {
+        return;
+    }
+
+    const result = decodeUrl(input.value);
+
+    if (result.success) {
+        output.value = result.output;
+        errorMessage.value = '';
+    } else {
+        output.value = '';
+        errorMessage.value = result.error;
+    }
+
+    track();
+}
+
+async function copyOutput() {
+    if (!output.value) {
+        return;
+    }
+
+    try {
+        await navigator.clipboard.writeText(output.value);
+        copied.value = true;
+        setTimeout(() => {
+            copied.value = false;
+        }, 1500);
+    } catch {
+        // Clipboard unavailable; the output is still visible as text.
+    }
+}
+
+let trackTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function track() {
+    if (trackTimeout) {
+        clearTimeout(trackTimeout);
+    }
+
+    trackTimeout = setTimeout(() => {
+        axios.post('/url-encode/track').catch(() => {
+            // Analytics-only endpoint; ignore failures.
+        });
+    }, 500);
+}
 </script>
 
 <template>
     <Head title="URL Encode/Decode - katsuooool" />
+
+    <div class="min-h-screen bg-gray-50">
+        <header class="border-b border-gray-200 bg-white">
+            <div class="mx-auto max-w-3xl px-6 py-10">
+                <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
+                    >← トップに戻る</a
+                >
+                <h1 class="mt-2 text-2xl font-bold text-gray-900">
+                    URL Encode/Decode
+                </h1>
+                <p class="mt-2 text-sm text-gray-600">
+                    文字列のURLエンコード・デコードを相互に変換します。
+                </p>
+            </div>
+        </header>
+
+        <main class="mx-auto max-w-3xl px-6 py-10">
+            <label
+                for="url-input"
+                class="block text-sm font-medium text-gray-700"
+                >入力文字列</label
+            >
+            <textarea
+                id="url-input"
+                v-model="input"
+                rows="6"
+                class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-xs focus:border-gray-400 focus:outline-none focus:ring-0"
+            />
+
+            <div class="mt-4 flex gap-2">
+                <button
+                    type="button"
+                    class="flex-1 rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                    :disabled="!canProcess"
+                    @click="encode"
+                >
+                    エンコード
+                </button>
+                <button
+                    type="button"
+                    class="flex-1 rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                    :disabled="!canProcess"
+                    @click="decode"
+                >
+                    デコード
+                </button>
+            </div>
+
+            <p v-if="errorMessage" class="mt-4 text-sm text-red-600">
+                {{ errorMessage }}
+            </p>
+
+            <div v-if="output" class="mt-8">
+                <div class="mb-3 flex justify-end">
+                    <button
+                        type="button"
+                        class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:border-gray-400"
+                        @click="copyOutput"
+                    >
+                        {{ copied ? 'コピーしました' : 'コピー' }}
+                    </button>
+                </div>
+                <textarea
+                    :value="output"
+                    rows="6"
+                    readonly
+                    class="w-full rounded-md border border-gray-200 bg-white px-3 py-2 font-mono text-xs text-gray-800"
+                />
+            </div>
+        </main>
+    </div>
 </template>
