@@ -10,6 +10,12 @@ describe('optimizeSvg', () => {
         expect(optimizeSvg(input)).toBe('<svg><path/></svg>');
     });
 
+    test('removes a plain DOCTYPE declaration with an external DTD reference', () => {
+        const input =
+            '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg><path/></svg>';
+        expect(optimizeSvg(input)).toBe('<svg><path/></svg>');
+    });
+
     test('removes comments', () => {
         const input = '<svg><!-- Generator: Adobe Illustrator --><path/></svg>';
         expect(optimizeSvg(input)).toBe('<svg><path/></svg>');

@@ -87,6 +87,31 @@ describe('formatHtml — whitespace-sensitive elements (regression: content sile
         expect(formatHtml(input)).toBe('<textarea>  keep  </textarea>');
     });
 
+    test('still escapes text inside <pre> and <textarea> (regression: was left raw)', () => {
+        // <pre>/<textarea> preserve whitespace, but their text is still
+        // ordinary entity-decoded HTML text — leaving it unescaped let a
+        // harmless "&lt;svg onload=...&gt;" become live markup, the same
+        // class of bug as the top-level text-node escaping fix.
+        expect(formatHtml('<pre>&lt;svg onload=alert(1)&gt;</pre>')).toBe(
+            '<pre>&lt;svg onload=alert(1)&gt;</pre>',
+        );
+        expect(formatHtml('<textarea>&lt;b&gt;x&lt;/b&gt;</textarea>')).toBe(
+            '<textarea>&lt;b&gt;x&lt;/b&gt;</textarea>',
+        );
+    });
+
+    test('preserves child elements inside <pre> (regression: was collapsed to text)', () => {
+        // A fenced code block wrapping a <code> element for syntax
+        // highlighting is the most common real-world shape of <pre>
+        // content; treating <pre> as a raw-text leaf like <script>
+        // silently deleted the <code> tags.
+        const input = '<pre><code class="lang-js">let a = 1;</code></pre>';
+
+        expect(formatHtml(input)).toBe(
+            '<pre><code class="lang-js">let a = 1;</code></pre>',
+        );
+    });
+
     test('does not escape or reformat <script> content', () => {
         // A bare <script> fragment is promoted into an implicit <head> by
         // the browser's own HTML parser, so the output is a full document

@@ -14,11 +14,18 @@ const VOID_ELEMENTS = new Set([
     'wbr',
 ]);
 
-// Elements whose text content must be re-serialized verbatim, without
-// re-indenting or trimming: <pre>/<textarea> because internal whitespace is
-// significant to what they display, <script>/<style> because their content
-// is raw JS/CSS, not HTML text that needs entity-escaping.
-const RAW_TEXT_ELEMENTS = new Set(['pre', 'textarea', 'script', 'style']);
+// <script>/<style> content is not HTML text — it's raw JS/CSS that the
+// parser never entity-decodes, so it must come back out unescaped and
+// unmodified.
+const SCRIPT_OR_STYLE = new Set(['script', 'style']);
+
+// <pre>/<textarea> content IS ordinary (entity-decoded) HTML text and does
+// need re-escaping, but its whitespace is significant to what it displays,
+// so it can't be trimmed or re-indented like everything else. <pre> can
+// still contain child elements (a fenced code block wrapping a <code>
+// element is the common case); <textarea> is parsed as raw text with no
+// child elements at all, per the HTML spec's RCDATA rules for it.
+const WHITESPACE_PRESERVING_ELEMENTS = new Set(['pre', 'textarea']);
 
 const INDENT_UNIT = '  ';
 
@@ -91,13 +98,17 @@ function formatElement(element: Element, depth: number, lines: string[]): void {
         return;
     }
 
-    if (RAW_TEXT_ELEMENTS.has(tagName)) {
-        // Whitespace and entity-decoding here must stay exactly as the
-        // source had it: reformatting a <pre>/<textarea>'s content changes
-        // what it displays, and <script>/<style> content is not HTML text
-        // (escaping it would corrupt the JS/CSS).
+    if (SCRIPT_OR_STYLE.has(tagName)) {
         lines.push(
             `${indent}<${tagName}${attrs}>${element.textContent ?? ''}</${tagName}>`,
+        );
+
+        return;
+    }
+
+    if (WHITESPACE_PRESERVING_ELEMENTS.has(tagName)) {
+        lines.push(
+            `${indent}<${tagName}${attrs}>${serializeVerbatim(element)}</${tagName}>`,
         );
 
         return;
@@ -112,6 +123,46 @@ function formatElement(element: Element, depth: number, lines: string[]): void {
     lines.push(`${indent}<${tagName}${attrs}>`);
     formatNode(element, depth + 1, lines);
     lines.push(`${indent}</${tagName}>`);
+}
+
+/**
+ * Serializes a node's children inline, with no indentation or trimming, for
+ * use inside whitespace-preserving elements. Text is still escaped and
+ * nested elements are still fully serialized (including their own
+ * <script>/<style> children unescaped) — only the "one node per line, with
+ * indentation" formatting is skipped.
+ */
+function serializeVerbatim(node: Node): string {
+    let output = '';
+
+    for (const child of Array.from(node.childNodes)) {
+        if (child.nodeType === Node.TEXT_NODE) {
+            output += escapeText(child.textContent ?? '');
+            continue;
+        }
+
+        if (child.nodeType !== Node.ELEMENT_NODE) {
+            continue;
+        }
+
+        const element = child as Element;
+        const tagName = element.tagName.toLowerCase();
+        const attrs = Array.from(element.attributes)
+            .map(
+                (attr) => ` ${attr.name}="${escapeAttributeValue(attr.value)}"`,
+            )
+            .join('');
+
+        if (VOID_ELEMENTS.has(tagName)) {
+            output += `<${tagName}${attrs}>`;
+        } else if (SCRIPT_OR_STYLE.has(tagName)) {
+            output += `<${tagName}${attrs}>${element.textContent ?? ''}</${tagName}>`;
+        } else {
+            output += `<${tagName}${attrs}>${serializeVerbatim(element)}</${tagName}>`;
+        }
+    }
+
+    return output;
 }
 
 function escapeText(text: string): string {
