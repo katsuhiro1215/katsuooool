@@ -15,6 +15,7 @@ use App\Http\Controllers\Tools\ImageConvertController;
 use App\Http\Controllers\Tools\ImageResizeController;
 use App\Http\Controllers\Tools\ImageRotateController;
 use App\Http\Controllers\Tools\JsonFormatController;
+use App\Http\Controllers\Tools\OgpCheckController;
 use App\Http\Controllers\Tools\OgpImageController;
 use App\Http\Controllers\Tools\SeoDescriptionCheckController;
 use App\Http\Controllers\Tools\SeoTitleCheckController;
@@ -135,6 +136,11 @@ Route::get('/seo-description-check', [SeoDescriptionCheckController::class, 'sho
 Route::post('/seo-description-check/track', [SeoDescriptionCheckController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('seo-description-check.track');
+
+Route::get('/ogp-check', [OgpCheckController::class, 'show'])->name('ogp-check.show');
+Route::post('/ogp-check', [OgpCheckController::class, 'check'])
+    ->middleware('throttle:10,1')
+    ->name('ogp-check.check');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

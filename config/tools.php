@@ -134,4 +134,11 @@ return [
         'description' => 'meta descriptionの文字数・バイト数をチェックし、表示可否目安を判定します。',
         'href' => '/seo-description-check',
     ],
+    [
+        'slug' => 'ogp-check',
+        'name' => 'OGPチェック',
+        'category' => 'seo',
+        'description' => '指定したURLのOGP・Twitter Cardタグを取得し、SNSシェアカードのプレビューを表示します。',
+        'href' => '/ogp-check',
+    ],
 ];
