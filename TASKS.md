@@ -204,13 +204,48 @@
 - [x] `composer test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
 - [x] Playwrightで2ツールすべての実ブラウザ動作確認(スクリーンショット提示)
 
-## 今後の課題
+## Phase 8 — Webカテゴリ(テキスト処理系5ツール)
 
-- [ ] Vitest等のJSユニットテスト基盤導入(Web/SEOカテゴリでもクライアントサイドの純粋関数が増える見込みのため、Phase 6で顕在化した`color.ts`の未検証ロジックによる不具合の再発を防ぐ)— Phase 8(Webカテゴリのテキスト処理系5ツール)着手前に導入する
+### 8.0 共通基盤
+
+- [ ] Vitest導入(`npm run test` 等のスクリプト追加)
+- [ ] 既存 `resources/js/lib/color.ts` に単体テスト追加(Phase 6で手動検証した参照値・`rotateHue`の0度恒等性等を自動テスト化)
+- [ ] Webテキストツール共通の軽量Controllerパターン確立(`Concerns/WebToolController`、`show()` + ログ専用POSTエンドポイント)
+
+### 8.1 SVG最適化(`/svg-optimize`)
+
+- [ ] `resources/js/lib/svg.ts` 作成(コメント・XML宣言・エディタメタデータ除去、単体テスト)
+- [ ] Controller・ルート・config/tools.php エントリ追加
+- [ ] Inertiaページ作成(テキストエリア + ファイル選択、削減率表示、コピー/ダウンロード)
+
+### 8.2 HTML Formatter(`/html-format`)
+
+- [ ] Controller・ルート・config/tools.php エントリ追加
+- [ ] Inertiaページ作成(テキストエリア、整形結果表示、コピー機能)
+
+### 8.3 JSON Formatter(`/json-format`)
+
+- [ ] Controller・ルート・config/tools.php エントリ追加
+- [ ] Inertiaページ作成(テキストエリア、構文エラー表示、コピー機能)
+
+### 8.4 URL Encode/Decode(`/url-encode`)
+
+- [ ] Controller・ルート・config/tools.php エントリ追加
+- [ ] Inertiaページ作成(エンコード/デコードボタン、エラー表示)
+
+### 8.5 Base64 Encode/Decode(`/base64-encode`)
+
+- [ ] Controller・ルート・config/tools.php エントリ追加
+- [ ] Inertiaページ作成(エンコード/デコードボタン、エラー表示)
+
+### 8.6 動作確認
+
+- [ ] `composer test` / `npm run test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
+- [ ] Playwrightで5ツールすべての実ブラウザ動作確認(スクリーンショット提示)
 
 ## 今後の実装順序
 
-画像の回転(Phase 5)→ Colorカテゴリ(Phase 6完了)→ Webカテゴリ 画像処理系2ツール(Phase 7完了)→ Webカテゴリ テキスト処理系5ツール(Phase 8)→ SEOカテゴリ → 画像の切り抜き(SPEC.md §15参照)。
+画像の回転(Phase 5)→ Colorカテゴリ(Phase 6完了)→ Webカテゴリ 画像処理系2ツール(Phase 7完了)→ Webカテゴリ テキスト処理系5ツール(Phase 8、進行中)→ SEOカテゴリ → 画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 
