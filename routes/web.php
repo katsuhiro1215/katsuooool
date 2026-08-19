@@ -6,11 +6,13 @@ use App\Http\Controllers\Tools\ColorConvertController;
 use App\Http\Controllers\Tools\ColorGradientController;
 use App\Http\Controllers\Tools\ColorPaletteController;
 use App\Http\Controllers\Tools\ColorSchemeController;
+use App\Http\Controllers\Tools\FaviconGenerateController;
 use App\Http\Controllers\Tools\ImageColorExtractController;
 use App\Http\Controllers\Tools\ImageCompressController;
 use App\Http\Controllers\Tools\ImageConvertController;
 use App\Http\Controllers\Tools\ImageResizeController;
 use App\Http\Controllers\Tools\ImageRotateController;
+use App\Http\Controllers\Tools\OgpImageController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -79,6 +81,18 @@ Route::get('/color-scheme', [ColorSchemeController::class, 'show'])->name('color
 Route::post('/color-scheme/track', [ColorSchemeController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('color-scheme.track');
+
+Route::get('/ogp-image', [OgpImageController::class, 'show'])->name('ogp-image.show');
+
+Route::post('/ogp-image', [OgpImageController::class, 'process'])
+    ->middleware('throttle:10,1')
+    ->name('ogp-image.process');
+
+Route::get('/favicon-generate', [FaviconGenerateController::class, 'show'])->name('favicon-generate.show');
+
+Route::post('/favicon-generate', [FaviconGenerateController::class, 'process'])
+    ->middleware('throttle:10,1')
+    ->name('favicon-generate.process');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

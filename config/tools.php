@@ -71,4 +71,18 @@ return [
         'description' => '基準色から補色・類似色・三色配色などの組み合わせを提案します。',
         'href' => '/color-scheme',
     ],
+    [
+        'slug' => 'ogp-image',
+        'name' => 'OGP画像サイズ作成',
+        'category' => 'web',
+        'description' => '画像をOGP標準サイズ(1200×630px)にトリミング・リサイズします。',
+        'href' => '/ogp-image',
+    ],
+    [
+        'slug' => 'favicon-generate',
+        'name' => 'favicon生成',
+        'category' => 'web',
+        'description' => '1枚の画像から6サイズのfavicon用PNGをまとめて生成します。',
+        'href' => '/favicon-generate',
+    ],
 ];
