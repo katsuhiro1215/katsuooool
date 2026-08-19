@@ -185,24 +185,24 @@
 
 ### 7.1 OGP画像サイズ作成(`/ogp-image`)
 
-- [ ] `OgpImageService` 作成(`cover()`で1200×630pxにトリミング+リサイズ、GD/Imagickランタイム検出は既存Serviceと同様の方式を流用)
-- [ ] `OgpImageController` 作成(GET: ページ表示, POST: 一括変換実行)
-- [ ] ルート `/ogp-image` 追加、config/tools.php にエントリ追加
-- [ ] `/ogp-image` Inertiaページ作成(既存の画像ツール群と統一感のあるUI)
-- [ ] バックエンドテスト(横長/縦長/正方形いずれの入力でも1200×630になること、非対応形式・上限超過・破損ファイル)
+- [x] `OgpImageService` 作成(`cover()`で1200×630pxにトリミング+リサイズ、GD/Imagickランタイム検出は既存Serviceと同様の方式を流用)
+- [x] `OgpImageController` 作成(GET: ページ表示, POST: 一括変換実行)
+- [x] ルート `/ogp-image` 追加、config/tools.php にエントリ追加
+- [x] `/ogp-image` Inertiaページ作成(既存の画像ツール群と統一感のあるUI)
+- [x] バックエンドテスト(横長/縦長/正方形いずれの入力でも1200×630になること、非対応形式・上限超過・破損ファイル)
 
 ### 7.2 favicon生成(`/favicon-generate`)
 
-- [ ] `FaviconGenerateService` 作成(`cover()`で正方形化した上で6サイズ(16/32/48/180/192/512px)のPNGを生成)
-- [ ] `FaviconGenerateController` 作成(GET: ページ表示, POST: 1ファイルアップロード→6ファイルZIP生成。他ツールと異なり単一ファイル限定)
-- [ ] ルート `/favicon-generate` 追加、config/tools.php にエントリ追加
-- [ ] `/favicon-generate` Inertiaページ作成(単一ファイルアップロードUI、6サイズ生成後は常にZIPダウンロード)
-- [ ] バックエンドテスト(6サイズすべて正しい寸法で生成されること、非対応形式・上限超過・破損ファイル)
+- [x] `FaviconGenerateService` 作成(`cover()`で正方形化した上で6サイズ(16/32/48/180/192/512px)のPNGを生成。レビュー指摘によりメモリ効率化のため最大サイズ512pxで一度だけ正方形にクロップし、残り5サイズはそこから縮小)
+- [x] `FaviconGenerateController` 作成(GET: ページ表示, POST: 1ファイルアップロード→6ファイルZIP生成。他ツールと異なり単一ファイル限定)
+- [x] ルート `/favicon-generate` 追加、config/tools.php にエントリ追加
+- [x] `/favicon-generate` Inertiaページ作成(単一ファイルアップロードUI、6サイズ生成後は常にZIPダウンロード)
+- [x] バックエンドテスト(6サイズすべて正しい寸法で生成されること、非対応形式・上限超過・破損ファイル)
 
 ### 7.3 動作確認
 
-- [ ] `composer test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
-- [ ] Playwrightで2ツールすべての実ブラウザ動作確認(スクリーンショット提示)
+- [x] `composer test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
+- [x] Playwrightで2ツールすべての実ブラウザ動作確認(スクリーンショット提示)
 
 ## 今後の課題
 
@@ -210,7 +210,7 @@
 
 ## 今後の実装順序
 
-画像の回転(Phase 5)→ Colorカテゴリ(Phase 6完了)→ Webカテゴリ 画像処理系2ツール(Phase 7、進行中)→ Webカテゴリ テキスト処理系5ツール(Phase 8)→ SEOカテゴリ → 画像の切り抜き(SPEC.md §15参照)。
+画像の回転(Phase 5)→ Colorカテゴリ(Phase 6完了)→ Webカテゴリ 画像処理系2ツール(Phase 7完了)→ Webカテゴリ テキスト処理系5ツール(Phase 8)→ SEOカテゴリ → 画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 
