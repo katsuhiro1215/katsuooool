@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Tools;
 
-use App\Http\Controllers\Tools\Concerns\ColorToolController;
+use App\Http\Controllers\Tools\Concerns\TrackedToolController;
 
-class ColorContrastController extends ColorToolController
+class ColorContrastController extends TrackedToolController
 {
     protected function slug(): string
     {

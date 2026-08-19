@@ -10,12 +10,13 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Base for Color-category tool controllers. Unlike the Image tools, these
- * never receive an uploaded file — the calculation happens entirely in the
- * browser. `track()` exists solely so tool_events (and therefore the Admin
- * dashboard's per-tool execution counts) stay populated for these tools too.
+ * Base for tool controllers whose calculation happens entirely in the
+ * browser (Color and Web-text-processing categories) — no file upload or
+ * download exists. `track()` exists solely so tool_events (and therefore
+ * the Admin dashboard's per-tool execution counts) stay populated for
+ * these tools too.
  */
-abstract class ColorToolController extends Controller
+abstract class TrackedToolController extends Controller
 {
     abstract protected function slug(): string;
 

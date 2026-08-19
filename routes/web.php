@@ -1,19 +1,24 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Tools\Base64EncodeController;
 use App\Http\Controllers\Tools\ColorContrastController;
 use App\Http\Controllers\Tools\ColorConvertController;
 use App\Http\Controllers\Tools\ColorGradientController;
 use App\Http\Controllers\Tools\ColorPaletteController;
 use App\Http\Controllers\Tools\ColorSchemeController;
 use App\Http\Controllers\Tools\FaviconGenerateController;
+use App\Http\Controllers\Tools\HtmlFormatController;
 use App\Http\Controllers\Tools\ImageColorExtractController;
 use App\Http\Controllers\Tools\ImageCompressController;
 use App\Http\Controllers\Tools\ImageConvertController;
 use App\Http\Controllers\Tools\ImageResizeController;
 use App\Http\Controllers\Tools\ImageRotateController;
+use App\Http\Controllers\Tools\JsonFormatController;
 use App\Http\Controllers\Tools\OgpImageController;
+use App\Http\Controllers\Tools\SvgOptimizeController;
 use App\Http\Controllers\Tools\ToolDownloadController;
+use App\Http\Controllers\Tools\UrlEncodeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -93,6 +98,31 @@ Route::get('/favicon-generate', [FaviconGenerateController::class, 'show'])->nam
 Route::post('/favicon-generate', [FaviconGenerateController::class, 'process'])
     ->middleware('throttle:10,1')
     ->name('favicon-generate.process');
+
+Route::get('/svg-optimize', [SvgOptimizeController::class, 'show'])->name('svg-optimize.show');
+Route::post('/svg-optimize/track', [SvgOptimizeController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('svg-optimize.track');
+
+Route::get('/html-format', [HtmlFormatController::class, 'show'])->name('html-format.show');
+Route::post('/html-format/track', [HtmlFormatController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('html-format.track');
+
+Route::get('/json-format', [JsonFormatController::class, 'show'])->name('json-format.show');
+Route::post('/json-format/track', [JsonFormatController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('json-format.track');
+
+Route::get('/url-encode', [UrlEncodeController::class, 'show'])->name('url-encode.show');
+Route::post('/url-encode/track', [UrlEncodeController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('url-encode.track');
+
+Route::get('/base64-encode', [Base64EncodeController::class, 'show'])->name('base64-encode.show');
+Route::post('/base64-encode/track', [Base64EncodeController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('base64-encode.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
