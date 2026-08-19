@@ -20,11 +20,19 @@ class FaviconGenerateService
      */
     public function generate(string $inputPath, string $outputDir): array
     {
-        $source = $this->makeManager()->read($inputPath);
+        // Crop to a square once at the largest target size, then downscale
+        // that (already-square) base for the remaining sizes. Cloning the
+        // full-resolution source for every size would hold up to six
+        // full-size copies in memory at once on shared hosting; resizing a
+        // square to a smaller square needs no further cropping, so this is
+        // visually identical to covering directly from the original for
+        // each size.
+        $maxSize = max(self::SIZES);
+        $base = $this->makeManager()->read($inputPath)->cover($maxSize, $maxSize);
         $files = [];
 
         foreach (self::SIZES as $filename => $size) {
-            $resized = (clone $source)->cover($size, $size);
+            $resized = $size === $maxSize ? $base : (clone $base)->cover($size, $size);
             $outputPath = rtrim($outputDir, '/').'/'.$filename;
             $resized->toPng()->save($outputPath);
 

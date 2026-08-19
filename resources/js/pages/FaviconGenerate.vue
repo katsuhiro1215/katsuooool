@@ -48,6 +48,7 @@ function onDrop(event: DragEvent) {
 
 function removeFile() {
     selectedFile.value = null;
+    response.value = null;
 }
 
 async function generate() {
@@ -72,9 +73,11 @@ async function generate() {
         );
 
         response.value = data;
-    } catch {
+    } catch (error) {
         errorMessage.value =
-            'faviconの生成に失敗しました。時間をおいて再度お試しください。';
+            axios.isAxiosError(error) && error.response?.status === 422
+                ? '対応していないファイル形式か、ファイルサイズが上限(10MB)を超えています。'
+                : 'faviconの生成に失敗しました。時間をおいて再度お試しください。';
     } finally {
         isProcessing.value = false;
     }
