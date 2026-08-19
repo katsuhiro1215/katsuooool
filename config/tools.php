@@ -120,4 +120,18 @@ return [
         'description' => '文字列のBase64エンコード・デコードを相互に変換します。',
         'href' => '/base64-encode',
     ],
+    [
+        'slug' => 'seo-title-check',
+        'name' => 'title文字数チェック',
+        'category' => 'seo',
+        'description' => 'titleタグの文字数・バイト数をチェックし、検索結果での表示可否目安を判定します。',
+        'href' => '/seo-title-check',
+    ],
+    [
+        'slug' => 'seo-description-check',
+        'name' => 'description文字数チェック',
+        'category' => 'seo',
+        'description' => 'meta descriptionの文字数・バイト数をチェックし、表示可否目安を判定します。',
+        'href' => '/seo-description-check',
+    ],
 ];

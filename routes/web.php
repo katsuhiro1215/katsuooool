@@ -16,6 +16,8 @@ use App\Http\Controllers\Tools\ImageResizeController;
 use App\Http\Controllers\Tools\ImageRotateController;
 use App\Http\Controllers\Tools\JsonFormatController;
 use App\Http\Controllers\Tools\OgpImageController;
+use App\Http\Controllers\Tools\SeoDescriptionCheckController;
+use App\Http\Controllers\Tools\SeoTitleCheckController;
 use App\Http\Controllers\Tools\SvgOptimizeController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use App\Http\Controllers\Tools\UrlEncodeController;
@@ -123,6 +125,16 @@ Route::get('/base64-encode', [Base64EncodeController::class, 'show'])->name('bas
 Route::post('/base64-encode/track', [Base64EncodeController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('base64-encode.track');
+
+Route::get('/seo-title-check', [SeoTitleCheckController::class, 'show'])->name('seo-title-check.show');
+Route::post('/seo-title-check/track', [SeoTitleCheckController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('seo-title-check.track');
+
+Route::get('/seo-description-check', [SeoDescriptionCheckController::class, 'show'])->name('seo-description-check.show');
+Route::post('/seo-description-check/track', [SeoDescriptionCheckController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('seo-description-check.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
