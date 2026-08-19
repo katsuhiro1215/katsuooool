@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Tools\Dns\DnsResolver;
+use App\Services\Tools\Dns\SystemDnsResolver;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
@@ -20,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(DnsResolver::class, SystemDnsResolver::class);
     }
 
     /**
