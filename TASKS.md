@@ -208,44 +208,45 @@
 
 ### 8.0 共通基盤
 
-- [ ] Vitest導入(`npm run test` 等のスクリプト追加)
-- [ ] 既存 `resources/js/lib/color.ts` に単体テスト追加(Phase 6で手動検証した参照値・`rotateHue`の0度恒等性等を自動テスト化)
-- [ ] Webテキストツール共通の軽量Controllerパターン確立(`Concerns/WebToolController`、`show()` + ログ専用POSTエンドポイント)
+- [x] Vitest導入(`npm run test` 等のスクリプト追加)
+- [x] 既存 `resources/js/lib/color.ts` に単体テスト追加(Phase 6で手動検証した参照値・`rotateHue`の0度恒等性等を自動テスト化)
+- [x] Webテキストツール共通の軽量Controllerパターン確立 — 設計時点では新規 `Concerns/WebToolController` を想定していたが、Color専用ロジックが無いことに気づき既存の `Concerns/ColorToolController` を `Concerns/TrackedToolController` にリネームしてColor/Web両カテゴリで共用する形に一般化(重複クラス回避)
 
 ### 8.1 SVG最適化(`/svg-optimize`)
 
-- [ ] `resources/js/lib/svg.ts` 作成(コメント・XML宣言・エディタメタデータ除去、単体テスト)
-- [ ] Controller・ルート・config/tools.php エントリ追加
-- [ ] Inertiaページ作成(テキストエリア + ファイル選択、削減率表示、コピー/ダウンロード)
+- [x] `resources/js/lib/svg.ts` 作成 — 初版は正規表現ベースだったが、レビューでCDATA境界誤爆・DOCTYPE内部サブセット未対応・シングルクォート属性未対応の3件の実データ破損バグが発覚したため、`DOMParser`+`XMLSerializer`によるDOMベース実装に全面書き換え(単体テスト18件)
+- [x] Controller・ルート・config/tools.php エントリ追加
+- [x] Inertiaページ作成(テキストエリア + ファイル選択、削減率表示、コピー/ダウンロード。ファイル読み込みのサイズ上限・エラーハンドリングもレビュー指摘により追加)
 
 ### 8.2 HTML Formatter(`/html-format`)
 
-- [ ] Controller・ルート・config/tools.php エントリ追加
-- [ ] Inertiaページ作成(テキストエリア、整形結果表示、コピー機能)
+- [x] `resources/js/lib/htmlFormat.ts` 作成 — レビューで発見されたエスケープ漏れ(既エスケープ済みマークアップが実行可能なタグに戻る不具合)・属性値未エスケープ・`<head>`欠落・`<pre>`/`<textarea>`のエスケープ漏れと子要素喪失を全て修正済み(単体テスト16件)
+- [x] Controller・ルート・config/tools.php エントリ追加
+- [x] Inertiaページ作成(テキストエリア、整形結果表示、コピー機能)
 
 ### 8.3 JSON Formatter(`/json-format`)
 
-- [ ] Controller・ルート・config/tools.php エントリ追加
-- [ ] Inertiaページ作成(テキストエリア、構文エラー表示、コピー機能)
+- [x] Controller・ルート・config/tools.php エントリ追加
+- [x] Inertiaページ作成(テキストエリア、構文エラー表示、コピー機能)
 
 ### 8.4 URL Encode/Decode(`/url-encode`)
 
-- [ ] Controller・ルート・config/tools.php エントリ追加
-- [ ] Inertiaページ作成(エンコード/デコードボタン、エラー表示)
+- [x] Controller・ルート・config/tools.php エントリ追加
+- [x] Inertiaページ作成(エンコード/デコードボタン、エラー表示)
 
 ### 8.5 Base64 Encode/Decode(`/base64-encode`)
 
-- [ ] Controller・ルート・config/tools.php エントリ追加
-- [ ] Inertiaページ作成(エンコード/デコードボタン、エラー表示)
+- [x] Controller・ルート・config/tools.php エントリ追加
+- [x] Inertiaページ作成(エンコード/デコードボタン、エラー表示。UTF-8対応のためTextEncoder/TextDecoder経由)
 
 ### 8.6 動作確認
 
-- [ ] `composer test` / `npm run test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
-- [ ] Playwrightで5ツールすべての実ブラウザ動作確認(スクリーンショット提示)
+- [x] `composer test` / `npm run test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
+- [x] Playwrightで5ツールすべての実ブラウザ動作確認(スクリーンショット提示、レビュー修正後のXSS再現テスト・`<pre><code>`保持テストも実機確認済み)
 
 ## 今後の実装順序
 
-画像の回転(Phase 5)→ Colorカテゴリ(Phase 6完了)→ Webカテゴリ 画像処理系2ツール(Phase 7完了)→ Webカテゴリ テキスト処理系5ツール(Phase 8、進行中)→ SEOカテゴリ → 画像の切り抜き(SPEC.md §15参照)。
+画像の回転(Phase 5)→ Colorカテゴリ(Phase 6完了)→ Webカテゴリ 画像処理系2ツール(Phase 7完了)→ Webカテゴリ テキスト処理系5ツール(Phase 8完了)→ SEOカテゴリ → 画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 
