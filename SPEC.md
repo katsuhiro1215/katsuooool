@@ -221,6 +221,35 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 - 画像の切り抜き(Image内で最後に着手)
 - Webカテゴリの残り5ツール(SVG最適化・HTML/JSONフォーマッタ・URL Encode/Decode・Base64 Encode/Decode。Phase 8で着手予定)
 - SEOカテゴリの各ツール(§15の順序で今後着手)
-- Premium機能・Stripe決済連携
+- Premium機能・Stripe決済連携(方向性は§21.2参照、範囲は未確定)
 - User(一般利用者)向けログイン・マイページ
 - より詳細な分析基盤(時系列グラフ、ツール別ファイル形式内訳など)
+- §21に記載のCSS/Pattern/UI Pattern/Generator/Developerカテゴリ拡張(方向性のみ、詳細仕様は未着手)
+
+## 21. 拡張ビジョン(参考・未確定)
+
+2026-08-19時点でユーザーから共有された、当初の4カテゴリ(Image/Color/Web/SEO)を超える長期的な方向性。すぐに全て実装するものではなく、今後のカテゴリ再編・拡張の参考として記録する。詳細な仕様化・実装順序は都度あらためて決定する。
+
+### 21.1 カテゴリ拡張案
+
+既存のImage/Colorに加えて、以下のカテゴリを将来追加する方向性:
+
+- **CSS**: Box Shadow・Border Radius・Glassmorphism・Flexbox・Grid ジェネレーター
+- **Pattern**: Background・Dot・Grid・Wave など、背景パターン生成(HTML/CSSをコピペで使える形で提供)
+- **UI Pattern**: Button・Card・Form・Header・Footer・Pagination・Modal・Toast・Loading・Skeleton など、UIコンポーネントのコードスニペット集
+- **Generator**: OGP画像・favicon(実装済み)・ダミーデータ生成
+- **Developer**: JSON Formatter・URL Encoder・HTML Formatter・Base64(Phase 8相当)
+
+WebカテゴリのPhase 8(SVG最適化・HTML/JSONフォーマッタ・URL Encode/Decode・Base64 Encode/Decode)は、上記案の「Developer」カテゴリにおおむね相当する。カテゴリ体系の正式な再編は、Phase 8完了後にあらためて検討する。
+
+### 21.2 Premium/Stripe(方向性のみ・未確定)
+
+- 月額500円のサブスクリプションで、Premium会員は全ツールを利用可能にする方向性。
+- どのツール・カテゴリを無料/有料の境界にするかは未決定。ユーザーとの合意により、Phase 8以降のツール増設を優先し、Premium設計は別途ブレインストーミングの場で決定する。
+- 開発用のStripe APIキー(`STRIPE_PUBLIC_KEY`・`STRIPE_SECRET_KEY`)は `.env` に設定済みだが、決済フロー自体は未着手。
+
+### 21.3 デザイン調整(要素が揃ってから着手)
+
+- ボタンをやや大きくし、押しやすくする。
+- カテゴリ切り替えを「すべて/画像/色/Web」等のタブ形式にする(現状はカード一覧のみ)。
+- ユーザーの意向により、全カテゴリ・全ツールが出揃ってからデザイン調整に着手する。
