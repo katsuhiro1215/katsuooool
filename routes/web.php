@@ -19,6 +19,7 @@ use App\Http\Controllers\Tools\OgpCheckController;
 use App\Http\Controllers\Tools\OgpImageController;
 use App\Http\Controllers\Tools\SeoDescriptionCheckController;
 use App\Http\Controllers\Tools\SeoTitleCheckController;
+use App\Http\Controllers\Tools\StructuredDataCheckController;
 use App\Http\Controllers\Tools\SvgOptimizeController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use App\Http\Controllers\Tools\UrlEncodeController;
@@ -141,6 +142,11 @@ Route::get('/ogp-check', [OgpCheckController::class, 'show'])->name('ogp-check.s
 Route::post('/ogp-check', [OgpCheckController::class, 'check'])
     ->middleware('throttle:10,1')
     ->name('ogp-check.check');
+
+Route::get('/structured-data-check', [StructuredDataCheckController::class, 'show'])->name('structured-data-check.show');
+Route::post('/structured-data-check', [StructuredDataCheckController::class, 'check'])
+    ->middleware('throttle:10,1')
+    ->name('structured-data-check.check');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

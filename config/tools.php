@@ -141,4 +141,11 @@ return [
         'description' => '指定したURLのOGP・Twitter Cardタグを取得し、SNSシェアカードのプレビューを表示します。',
         'href' => '/ogp-check',
     ],
+    [
+        'slug' => 'structured-data-check',
+        'name' => '構造化データ確認',
+        'category' => 'seo',
+        'description' => '指定したURLのJSON-LD構造化データを取得・検証します。',
+        'href' => '/structured-data-check',
+    ],
 ];
