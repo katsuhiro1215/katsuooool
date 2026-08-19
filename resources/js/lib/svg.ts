@@ -1,35 +1,99 @@
 /**
- * Lightweight, dependency-free SVG minifier. Strips the constructs that
- * bloat editor-exported SVGs (XML declaration, DOCTYPE, comments, Inkscape/
- * Sodipodi editor metadata, inter-tag whitespace) without attempting a full
- * SVGO-style optimization pass (path data re-serialization, unused
- * def-stripping, etc.).
+ * SVG minifier built on the browser's own XML parser rather than regexes.
+ *
+ * An earlier regex-based version was replaced after review found it could
+ * silently corrupt files: a comment-stripping regex matched literal
+ * "<!--" text inside a CDATA section (deleting everything up to the next
+ * real "-->"), a DOCTYPE regex couldn't span an internal entity subset
+ * (the classic Illustrator `ns_extend` export), and unconditional
+ * inter-tag whitespace removal changed how <text>/<tspan> content renders.
+ * Parsing as real XML makes all of these structural, not textual,
+ * problems — a literal "<!--" inside CDATA is never mistaken for a
+ * comment, an internal DOCTYPE subset is just part of the doctype node,
+ * and whitespace can be judged per-element instead of blindly.
  */
+
+// Elements where inter-node whitespace is part of the rendered output and
+// must not be stripped.
+const WHITESPACE_SIGNIFICANT_TAGS = new Set([
+    'text',
+    'tspan',
+    'textpath',
+    'style',
+    'title',
+    'desc',
+]);
+
+const EDITOR_NAMESPACE_PREFIXES = ['inkscape', 'sodipodi'];
+
 export function optimizeSvg(input: string): string {
-    let output = input;
+    const trimmed = input.trim();
 
-    // XML declaration, e.g. <?xml version="1.0" encoding="UTF-8"?>
-    output = output.replace(/^\s*<\?xml[^>]*\?>\s*/, '');
+    if (trimmed === '') {
+        return trimmed;
+    }
 
-    // DOCTYPE declaration
-    output = output.replace(/<!DOCTYPE[^>]*>\s*/gi, '');
+    const doc = new DOMParser().parseFromString(trimmed, 'image/svg+xml');
+    const root = doc.documentElement;
 
-    // Comments
-    output = output.replace(/<!--[\s\S]*?-->/g, '');
+    if (
+        !root ||
+        root.getElementsByTagName('parsererror').length > 0 ||
+        root.nodeName === 'parsererror'
+    ) {
+        // Not well-formed XML — leave the input untouched rather than risk
+        // emitting something worse than what the user pasted in.
+        return trimmed;
+    }
 
-    // <metadata>...</metadata> blocks (Illustrator/Inkscape provenance data)
-    output = output.replace(/<metadata[\s\S]*?<\/metadata>\s*/gi, '');
+    stripNode(root);
 
-    // Inkscape/Sodipodi namespaced attributes, e.g. inkscape:version="1.0"
-    output = output.replace(/\s(?:inkscape|sodipodi):[\w-]+="[^"]*"/g, '');
+    return new XMLSerializer().serializeToString(root);
+}
 
-    // The xmlns:inkscape / xmlns:sodipodi namespace declarations themselves
-    output = output.replace(/\s+xmlns:(?:inkscape|sodipodi)="[^"]*"/g, '');
+function stripNode(element: Element): void {
+    for (const attr of Array.from(element.attributes)) {
+        if (isEditorAttribute(attr.name)) {
+            element.removeAttribute(attr.name);
+        }
+    }
 
-    // Whitespace between tags (indentation, newlines from pretty-printed source)
-    output = output.replace(/>\s+</g, '><');
+    const preserveWhitespace = WHITESPACE_SIGNIFICANT_TAGS.has(
+        element.localName.toLowerCase(),
+    );
 
-    return output.trim();
+    for (const child of Array.from(element.childNodes)) {
+        if (child.nodeType === Node.COMMENT_NODE) {
+            element.removeChild(child);
+            continue;
+        }
+
+        if (child.nodeType === Node.ELEMENT_NODE) {
+            const childElement = child as Element;
+
+            if (childElement.localName.toLowerCase() === 'metadata') {
+                element.removeChild(child);
+                continue;
+            }
+
+            stripNode(childElement);
+            continue;
+        }
+
+        if (
+            child.nodeType === Node.TEXT_NODE &&
+            !preserveWhitespace &&
+            /^\s*$/.test(child.textContent ?? '')
+        ) {
+            element.removeChild(child);
+        }
+    }
+}
+
+function isEditorAttribute(name: string): boolean {
+    return EDITOR_NAMESPACE_PREFIXES.some(
+        (prefix) => name === `xmlns:${prefix}` || name.startsWith(`${prefix}:`),
+    );
 }
 
 export interface OptimizeSvgResult {

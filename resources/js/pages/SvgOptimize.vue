@@ -5,9 +5,12 @@ import { computed, ref } from 'vue';
 
 import { optimizeSvgWithStats } from '@/lib/svg';
 
+const MAX_FILE_BYTES = 5 * 1024 * 1024;
+
 const input = ref('');
 const result = ref<ReturnType<typeof optimizeSvgWithStats> | null>(null);
 const copied = ref(false);
+const errorMessage = ref('');
 
 const canOptimize = computed(() => input.value.trim() !== '');
 
@@ -29,11 +32,25 @@ function onFileInputChange(event: Event) {
         return;
     }
 
+    errorMessage.value = '';
+
+    if (file.size > MAX_FILE_BYTES) {
+        errorMessage.value = 'ファイルサイズが上限(5MB)を超えています。';
+
+        return;
+    }
+
     const reader = new FileReader();
+
     reader.onload = () => {
         input.value = String(reader.result ?? '');
         result.value = null;
     };
+
+    reader.onerror = () => {
+        errorMessage.value = 'ファイルの読み込みに失敗しました。';
+    };
+
     reader.readAsText(file);
 }
 
@@ -133,6 +150,10 @@ function track() {
             >
                 最適化する
             </button>
+
+            <p v-if="errorMessage" class="mt-4 text-sm text-red-600">
+                {{ errorMessage }}
+            </p>
 
             <div v-if="result" class="mt-8">
                 <div
