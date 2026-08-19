@@ -244,9 +244,56 @@
 - [x] `composer test` / `npm run test` / `npm run lint:check` / `format:check` / `types:check` / `npm run build` がグリーン
 - [x] Playwrightで5ツールすべての実ブラウザ動作確認(スクリーンショット提示、レビュー修正後のXSS再現テスト・`<pre><code>`保持テストも実機確認済み)
 
+## Phase 9 — SEOカテゴリ(4ツール)
+
+### 9.0 共通基盤
+
+- [x] `App\Services\Tools\Dns\IpGuard`・`DnsResolver`(インターフェース)・`SystemDnsResolver` 作成(private/reserved/link-local/IPv6ユニークローカルIPのブロック判定)
+- [x] `UrlFetchService` 作成(SSRF対策済みの共通URL取得基盤。許可スキームhttp/https限定、DNS rebinding対策として検証済みIPへ直接接続、リダイレクト再検証(最大3回)、接続5秒/合計10秒タイムアウト、レスポンス2MB上限、`text/html`以外拒否、固定User-Agent・Cookie/認証情報非送信)
+- [x] `UrlFetchException` 作成(理由コード: invalid_url/blocked_host/timeout/too_large/non_html/http_error/too_many_redirects)
+- [x] `AppServiceProvider` に `DnsResolver` → `SystemDnsResolver` のバインド追加
+- [x] 単体テスト(IpGuard 6件・UrlFetchService 9件)
+
+### 9.1 title文字数チェック(`/seo-title-check`)
+
+- [x] `resources/js/lib/seoTextCheck.ts` 作成(文字数・UTF-8バイト数計算、推奨レンジ判定)
+- [x] `SeoTitleCheckController` 作成(`TrackedToolController` 継承、クライアント完結)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/seo-title-check` Inertiaページ作成(全角30〜35字目安の警告表示)
+- [x] フロント単体テスト・バックエンドFeatureテスト
+
+### 9.2 description文字数チェック(`/seo-description-check`)
+
+- [x] `SeoDescriptionCheckController` 作成(同上パターン)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/seo-description-check` Inertiaページ作成(モバイル120字/デスクトップ160字目安の警告表示)
+- [x] バックエンドFeatureテスト
+
+### 9.3 OGPチェック(`/ogp-check`)
+
+- [x] `OgpCheckService` 作成(`og:*`・`twitter:*` metaタグ抽出、推奨タグ欠落判定)— DOMDocumentの既定ISO-8859-1解釈による日本語文字化けを発見・修正(XMLエンコーディング宣言を先頭付与)
+- [x] `OgpCheckController` 作成(`UrlFetchService` + `OgpCheckService` 連携、理由コード別エラーメッセージ返却)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ogp-check` Inertiaページ作成(SNSシェアカード風プレビュー、推奨タグ欠落の警告表示)
+- [x] 単体テスト3件・バックエンドFeatureテスト4件
+
+### 9.4 構造化データ確認(`/structured-data-check`)
+
+- [x] `StructuredDataCheckService` 作成(JSON-LDブロック抽出・パース、`@context`/`@type` 欠落警告。v1はJSON-LDのみ対応)
+- [x] `StructuredDataCheckController` 作成(同パターン)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/structured-data-check` Inertiaページ作成(ブロックごとのツリー表示、構文エラー表示)
+- [x] 単体テスト5件・バックエンドFeatureテスト3件
+
+### 9.5 動作確認
+
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を17→21に更新
+- [x] `composer ci:check`(lint:check/format:check/types:check/npm test/composer test)がグリーン
+- [x] `npm run build` がビルドエラーなしで成功
+
 ## 今後の実装順序
 
-画像の回転(Phase 5)→ Colorカテゴリ(Phase 6完了)→ Webカテゴリ 画像処理系2ツール(Phase 7完了)→ Webカテゴリ テキスト処理系5ツール(Phase 8完了)→ SEOカテゴリ → 画像の切り抜き(SPEC.md §15参照)。
+画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 
