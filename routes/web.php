@@ -23,6 +23,7 @@ use App\Http\Controllers\Tools\JsonFormatController;
 use App\Http\Controllers\Tools\OgpCheckController;
 use App\Http\Controllers\Tools\OgpImageController;
 use App\Http\Controllers\Tools\PatternCheckerboardController;
+use App\Http\Controllers\Tools\PatternChevronController;
 use App\Http\Controllers\Tools\PatternDotController;
 use App\Http\Controllers\Tools\PatternGridController;
 use App\Http\Controllers\Tools\PatternStripeController;
@@ -201,6 +202,11 @@ Route::get('/pattern-checkerboard', [PatternCheckerboardController::class, 'show
 Route::post('/pattern-checkerboard/track', [PatternCheckerboardController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('pattern-checkerboard.track');
+
+Route::get('/pattern-chevron', [PatternChevronController::class, 'show'])->name('pattern-chevron.show');
+Route::post('/pattern-chevron/track', [PatternChevronController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('pattern-chevron.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

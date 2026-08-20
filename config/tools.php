@@ -211,4 +211,11 @@ return [
         'description' => '背景色・パターン色・マス目サイズを調整して市松模様のCSSコードを生成します。',
         'href' => '/pattern-checkerboard',
     ],
+    [
+        'slug' => 'pattern-chevron',
+        'name' => 'ジグザグパターン',
+        'category' => 'pattern',
+        'description' => '背景色・パターン色・幅・高さを調整して山形(シェブロン)柄のCSSコードを生成します。',
+        'href' => '/pattern-chevron',
+    ],
 ];
