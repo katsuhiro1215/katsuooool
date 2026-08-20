@@ -1,6 +1,11 @@
 import { describe, expect, test } from 'vitest';
 
-import { buildButton, buildCard } from './uiPatternGenerators';
+import {
+    buildButton,
+    buildCard,
+    buildPagination,
+    computePaginationPages,
+} from './uiPatternGenerators';
 
 describe('buildButton', () => {
     test('builds the HTML snippet with a fixed class name', () => {
@@ -158,5 +163,89 @@ describe('buildCard', () => {
             'box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);',
         );
         expect(result.css).toContain('padding: 20px;');
+    });
+});
+
+describe('computePaginationPages', () => {
+    test('returns just [1] when there is only one page', () => {
+        expect(computePaginationPages(1, 1)).toEqual([1]);
+    });
+
+    test('shows all pages with no ellipsis when the total is small', () => {
+        expect(computePaginationPages(2, 3)).toEqual([1, 2, 3]);
+    });
+
+    test('inserts an ellipsis after page 2 when near the start', () => {
+        expect(computePaginationPages(1, 5)).toEqual([1, 2, 'ellipsis', 5]);
+    });
+
+    test('inserts ellipses on both sides when in the middle', () => {
+        expect(computePaginationPages(5, 10)).toEqual([
+            1,
+            'ellipsis',
+            4,
+            5,
+            6,
+            'ellipsis',
+            10,
+        ]);
+    });
+
+    test('inserts an ellipsis before the last pages when near the end', () => {
+        expect(computePaginationPages(10, 10)).toEqual([1, 'ellipsis', 9, 10]);
+    });
+});
+
+describe('buildPagination', () => {
+    test('marks the current page as active and disables nothing in the middle', () => {
+        const result = buildPagination({
+            currentPage: 5,
+            totalPages: 10,
+            accentColor: '#2563eb',
+        });
+
+        expect(result.html).toContain(
+            '<a href="#" class="pagination-page pagination-page-active">5</a>',
+        );
+        expect(result.html).toContain(
+            '<span class="pagination-ellipsis">…</span>',
+        );
+        expect(result.html).not.toContain('is-disabled');
+    });
+
+    test('disables the "prev" link on the first page', () => {
+        const result = buildPagination({
+            currentPage: 1,
+            totalPages: 10,
+            accentColor: '#2563eb',
+        });
+
+        expect(result.html).toContain(
+            '<a href="#" class="pagination-prev is-disabled">前へ</a>',
+        );
+        expect(result.html).not.toContain('pagination-next is-disabled');
+    });
+
+    test('disables the "next" link on the last page', () => {
+        const result = buildPagination({
+            currentPage: 10,
+            totalPages: 10,
+            accentColor: '#2563eb',
+        });
+
+        expect(result.html).toContain(
+            '<a href="#" class="pagination-next is-disabled">次へ</a>',
+        );
+        expect(result.html).not.toContain('pagination-prev is-disabled');
+    });
+
+    test('reflects the accent color on the active page in the CSS', () => {
+        const result = buildPagination({
+            currentPage: 3,
+            totalPages: 5,
+            accentColor: '#16a34a',
+        });
+
+        expect(result.css).toContain('background-color: #16a34a;');
     });
 });

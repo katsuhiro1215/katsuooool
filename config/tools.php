@@ -246,4 +246,11 @@ return [
         'description' => '通常/画像付きの2種類から選び、色・角丸・影を調整してカードのHTML/CSSコードを生成します。',
         'href' => '/ui-pattern-card',
     ],
+    [
+        'slug' => 'ui-pattern-pagination',
+        'name' => 'ページネーション',
+        'category' => 'ui-pattern',
+        'description' => '現在ページ・総ページ数・アクセントカラーを指定してページネーションのHTML/CSSコードを生成します。',
+        'href' => '/ui-pattern-pagination',
+    ],
 ];

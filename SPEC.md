@@ -235,11 +235,11 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 
 - **CSS**: Box Shadow・Border Radius・Glassmorphism・Flexbox・Grid ジェネレーター(Phase 10で実装済み、§24参照)
 - **Pattern**: ドット・グリッド・ストライプ・チェッカーボード・ジグザグ・波模様など、背景パターン生成(HTML/CSSをコピペで使える形で提供)(Phase 11で実装済み、§25参照)
-- **UI Pattern**: Button・Card(Phase 13で実装済み、§27参照)・Form・Header・Footer・Pagination・Modal・Toast・Loading・Skeleton など、UIコンポーネントのコードスニペット集
+- **UI Pattern**: Button・Card・Pagination(Phase 13で実装済み、§27参照)・Modal・Toast・Loading・Skeleton・Form・Header・Footer など、UIコンポーネントのコードスニペット集
 - **Generator**: OGP画像・favicon・ダミーデータ生成(すべて実装済み、ダミーデータ生成はPhase 12・§26参照)
 - **Developer**: JSON Formatter・URL Encoder・HTML Formatter・Base64(Phase 8相当、実装済み)
 
-カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`pattern`/`generator`/`developer`/`seo`/`ui-pattern` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。UI Patternカテゴリは Phase 13 でButton・Cardに着手し、残り8コンポーネントは未着手のまま残っている。
+カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`pattern`/`generator`/`developer`/`seo`/`ui-pattern` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。UI Patternカテゴリは Phase 13 でButton・Card・Paginationに着手し、残り7コンポーネント(Modal・Toast・Loading・Skeleton・Form・Header・Footer)は未着手のまま残っている。
 
 ### 21.2 Premium/Stripe(方向性のみ・未確定)
 
@@ -388,7 +388,7 @@ Patternカテゴリ6ツール(ドット・グリッド・ストライプ・チ�
 - データ内容: 氏名・住所・会社名は日本語のサンプルデータ(苗字・名前・都道府県・市区町村・企業名のプールからランダム抽出)で構成し、日本国内向けWeb制作でそのまま使える形にする。
 - 出力: 整形済みJSON(`JSON.stringify(..., null, 2)`)を表示し、コピーボタンでクリップボードにコピーできる(ファイルダウンロードは提供しない)。
 
-## 27. UI Patternカテゴリツール仕様(Phase 13 — ボタン・カード)
+## 27. UI Patternカテゴリツール仕様(Phase 13 — ボタン・カード・ページネーション)
 
 新カテゴリ「UI Pattern」を追加する。他のColor/CSS/Patternカテゴリと同じくブラウザ内完結型だが、生成物がCSS宣言のみではなくHTML+CSSの2ブロックになる点が異なる。フレームワーク非依存の素のHTML+CSSを出力し、Tailwind等特定のCSSフレームワークには依存しない。
 
@@ -403,3 +403,10 @@ Patternカテゴリ6ツール(ドット・グリッド・ストライプ・チ�
 - 通常バリエーション: `<div class="card">` の中にタイトル(`h3.card-title`)と本文(`p.card-text`)のみを配置する。
 - 画像付きバリエーション: `<img class="card-image" src="https://placehold.co/400x200" alt="">` をカード上部に配置し(プレースホルダーURL、利用者側で差し替え前提)、タイトル・本文は `.card-body` でラップしてパディングを適用する(画像自体にはパディングを付けない)。
 - 出力: HTML・CSSそれぞれに個別のコピーボタンを設置する。プレビューは実際に生成したスタイルを適用したカードをその場に表示する。
+
+### 27.3 ページネーション(`/ui-pattern-pagination`)
+
+- 操作: 現在ページ・総ページ数(数値入力)・アクセントカラーを調整すると、`<nav class="pagination">` の中に「前へ」リンク・ページ番号リンク・「次へ」リンクを並べたHTMLと対応するCSSが生成される。
+- ページ番号表示ロジック: 常に1ページ目・最終ページ・現在ページの前後1ページを表示し、間が空く場合は省略記号(…)を挿入する(例: 総10ページ・現在5ページ目 → `1 … 4 5 6 … 10`)。現在ページは `pagination-page-active` クラスでアクセントカラーに強調表示する。
+- 最初のページでは「前へ」リンクに、最後のページでは「次へ」リンクに `is-disabled` クラスを付与する。
+- 出力: HTML・CSSそれぞれに個別のコピーボタンを設置する。プレビューは実際のページ番号表示をその場に表示する。

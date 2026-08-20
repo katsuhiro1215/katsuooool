@@ -36,6 +36,7 @@ use App\Http\Controllers\Tools\SvgOptimizeController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use App\Http\Controllers\Tools\UiPatternButtonController;
 use App\Http\Controllers\Tools\UiPatternCardController;
+use App\Http\Controllers\Tools\UiPatternPaginationController;
 use App\Http\Controllers\Tools\UrlEncodeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -231,6 +232,11 @@ Route::get('/ui-pattern-card', [UiPatternCardController::class, 'show'])->name('
 Route::post('/ui-pattern-card/track', [UiPatternCardController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('ui-pattern-card.track');
+
+Route::get('/ui-pattern-pagination', [UiPatternPaginationController::class, 'show'])->name('ui-pattern-pagination.show');
+Route::post('/ui-pattern-pagination/track', [UiPatternPaginationController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-pagination.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

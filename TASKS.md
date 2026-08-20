@@ -437,9 +437,20 @@
 - [x] `composer ci:check` がグリーン
 - [x] Playwrightで実ブラウザ動作確認(通常/画像付きの両バリエーションでHTML/CSS出力が正しく切り替わることを確認)
 
+### 13.3 ページネーション(`/ui-pattern-pagination`)
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` に `computePaginationPages()`・`buildPagination()` 追加(1・最終ページ・現在ページ前後1ページを表示し、間が空く場合は省略記号を挿入。単体テスト9件)
+- [x] `UiPatternPaginationController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ui-pattern-pagination` Inertiaページ作成(現在ページ・総ページ数・アクセントカラーの調整UI、プレビュー、HTML/CSSそれぞれ独立したコピー機能。最初/最後のページで前へ/次へに`is-disabled`クラスを付与)
+- [x] バックエンドFeatureテスト
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を35→36に更新
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(省略記号を含むページ番号表示、最初のページで`前へ`が無効化されることを確認)
+
 ## 今後の実装順序
 
-UI Patternカテゴリの残り8コンポーネント(Form・Header・Footer・Pagination・Modal・Toast・Loading・Skeleton)、画像の切り抜き(SPEC.md §15参照)。
+UI Patternカテゴリの残り7コンポーネント(Modal・Toast・Loading・Skeleton・Form・Header・Footer)、画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 

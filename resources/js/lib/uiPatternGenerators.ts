@@ -145,3 +145,120 @@ export function buildCard(input: CardInput): CardOutput {
 
     return { html, css };
 }
+
+export interface PaginationInput {
+    currentPage: number;
+    totalPages: number;
+    accentColor: string;
+}
+
+export interface PaginationOutput {
+    html: string;
+    css: string;
+}
+
+export function computePaginationPages(
+    currentPage: number,
+    totalPages: number,
+): (number | 'ellipsis')[] {
+    const pages = new Set<number>();
+    pages.add(1);
+    pages.add(totalPages);
+
+    for (let page = currentPage - 1; page <= currentPage + 1; page++) {
+        if (page >= 1 && page <= totalPages) {
+            pages.add(page);
+        }
+    }
+
+    const sorted = Array.from(pages).sort((a, b) => a - b);
+    const result: (number | 'ellipsis')[] = [];
+    let previous: number | null = null;
+
+    for (const page of sorted) {
+        if (previous !== null && page - previous > 1) {
+            result.push('ellipsis');
+        }
+
+        result.push(page);
+        previous = page;
+    }
+
+    return result;
+}
+
+export function buildPagination(input: PaginationInput): PaginationOutput {
+    const pages = computePaginationPages(input.currentPage, input.totalPages);
+    const isFirst = input.currentPage <= 1;
+    const isLast = input.currentPage >= input.totalPages;
+
+    const prevClass = isFirst
+        ? 'pagination-prev is-disabled'
+        : 'pagination-prev';
+    const nextClass = isLast
+        ? 'pagination-next is-disabled'
+        : 'pagination-next';
+
+    const pageLinks = pages
+        .map((page) => {
+            if (page === 'ellipsis') {
+                return '    <span class="pagination-ellipsis">…</span>';
+            }
+
+            const activeClass =
+                page === input.currentPage ? ' pagination-page-active' : '';
+
+            return `    <a href="#" class="pagination-page${activeClass}">${page}</a>`;
+        })
+        .join('\n');
+
+    const html = [
+        '<nav class="pagination">',
+        `    <a href="#" class="${prevClass}">前へ</a>`,
+        pageLinks,
+        `    <a href="#" class="${nextClass}">次へ</a>`,
+        '</nav>',
+    ].join('\n');
+
+    const css = [
+        '.pagination {',
+        '    display: flex;',
+        '    align-items: center;',
+        '    gap: 4px;',
+        '}',
+        '',
+        '.pagination-prev,',
+        '.pagination-next,',
+        '.pagination-page {',
+        '    display: inline-block;',
+        '    padding: 6px 12px;',
+        '    border-radius: 4px;',
+        '    color: #333;',
+        '    text-decoration: none;',
+        '    font-size: 14px;',
+        '}',
+        '',
+        '.pagination-prev:hover,',
+        '.pagination-next:hover,',
+        '.pagination-page:hover {',
+        '    background-color: #f0f0f0;',
+        '}',
+        '',
+        '.pagination-page-active {',
+        `    background-color: ${input.accentColor};`,
+        '    color: #ffffff;',
+        '}',
+        '',
+        '.pagination-ellipsis {',
+        '    padding: 6px 4px;',
+        '    color: #999;',
+        '}',
+        '',
+        '.is-disabled {',
+        '    pointer-events: none;',
+        '    opacity: 0.4;',
+        '}',
+    ].join('\n');
+
+    return { html, css };
+}
