@@ -11,6 +11,7 @@ use App\Http\Controllers\Tools\CssBorderRadiusController;
 use App\Http\Controllers\Tools\CssBoxShadowController;
 use App\Http\Controllers\Tools\CssFlexboxController;
 use App\Http\Controllers\Tools\CssGlassmorphismController;
+use App\Http\Controllers\Tools\CssGridController;
 use App\Http\Controllers\Tools\FaviconGenerateController;
 use App\Http\Controllers\Tools\HtmlFormatController;
 use App\Http\Controllers\Tools\ImageColorExtractController;
@@ -146,6 +147,11 @@ Route::get('/css-flexbox', [CssFlexboxController::class, 'show'])->name('css-fle
 Route::post('/css-flexbox/track', [CssFlexboxController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('css-flexbox.track');
+
+Route::get('/css-grid', [CssGridController::class, 'show'])->name('css-grid.show');
+Route::post('/css-grid/track', [CssGridController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('css-grid.track');
 
 Route::get('/base64-encode', [Base64EncodeController::class, 'show'])->name('base64-encode.show');
 Route::post('/base64-encode/track', [Base64EncodeController::class, 'track'])
