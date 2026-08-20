@@ -22,6 +22,7 @@ use App\Http\Controllers\Tools\ImageRotateController;
 use App\Http\Controllers\Tools\JsonFormatController;
 use App\Http\Controllers\Tools\OgpCheckController;
 use App\Http\Controllers\Tools\OgpImageController;
+use App\Http\Controllers\Tools\PatternDotController;
 use App\Http\Controllers\Tools\SeoDescriptionCheckController;
 use App\Http\Controllers\Tools\SeoTitleCheckController;
 use App\Http\Controllers\Tools\StructuredDataCheckController;
@@ -177,6 +178,11 @@ Route::get('/structured-data-check', [StructuredDataCheckController::class, 'sho
 Route::post('/structured-data-check', [StructuredDataCheckController::class, 'check'])
     ->middleware('throttle:10,1')
     ->name('structured-data-check.check');
+
+Route::get('/pattern-dot', [PatternDotController::class, 'show'])->name('pattern-dot.show');
+Route::post('/pattern-dot/track', [PatternDotController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('pattern-dot.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

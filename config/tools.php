@@ -183,4 +183,11 @@ return [
         'description' => '指定したURLのJSON-LD構造化データを取得・検証します。',
         'href' => '/structured-data-check',
     ],
+    [
+        'slug' => 'pattern-dot',
+        'name' => 'ドットパターン',
+        'category' => 'pattern',
+        'description' => '背景色・パターン色・ドットサイズ・間隔を調整してドット柄のCSSコードを生成します。',
+        'href' => '/pattern-dot',
+    ],
 ];
