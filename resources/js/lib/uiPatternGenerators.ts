@@ -564,3 +564,137 @@ export function buildLoading(input: LoadingInput): LoadingOutput {
 
     return { html: '<div class="loading-spinner"></div>', css };
 }
+
+export type SkeletonType = 'text' | 'avatar' | 'card';
+
+export interface SkeletonInput {
+    type: SkeletonType;
+    lines: number;
+    color: string;
+}
+
+export interface SkeletonOutput {
+    html: string;
+    css: string;
+}
+
+function buildSkeletonTextLines(lines: number, indent: string): string[] {
+    const count = Math.max(1, lines);
+    const result: string[] = [];
+
+    for (let i = 0; i < count; i += 1) {
+        const isLast = i === count - 1;
+        const modifier = isLast && count > 1 ? ' skeleton-line-short' : '';
+        result.push(
+            `${indent}<div class="skeleton skeleton-line${modifier}"></div>`,
+        );
+    }
+
+    return result;
+}
+
+export function buildSkeleton(input: SkeletonInput): SkeletonOutput {
+    let html: string;
+
+    if (input.type === 'avatar') {
+        html = [
+            '<div class="skeleton-avatar-row">',
+            '    <div class="skeleton skeleton-circle"></div>',
+            '    <div class="skeleton-text">',
+            ...buildSkeletonTextLines(input.lines, '        '),
+            '    </div>',
+            '</div>',
+        ].join('\n');
+    } else if (input.type === 'card') {
+        html = [
+            '<div class="skeleton-card">',
+            '    <div class="skeleton skeleton-image"></div>',
+            '    <div class="skeleton-text">',
+            ...buildSkeletonTextLines(input.lines, '        '),
+            '    </div>',
+            '</div>',
+        ].join('\n');
+    } else {
+        html = [
+            '<div class="skeleton-text">',
+            ...buildSkeletonTextLines(input.lines, '    '),
+            '</div>',
+        ].join('\n');
+    }
+
+    const cssParts = [
+        '.skeleton {',
+        `    background-color: ${input.color};`,
+        '    background-image: linear-gradient(',
+        '        90deg,',
+        '        transparent 0%,',
+        '        rgba(255, 255, 255, 0.5) 50%,',
+        '        transparent 100%',
+        '    );',
+        '    background-size: 200% 100%;',
+        '    animation: skeleton-shimmer 1.5s ease-in-out infinite;',
+        '}',
+        '',
+        '.skeleton-text {',
+        '    display: flex;',
+        '    flex-direction: column;',
+        '    gap: 8px;',
+        '}',
+        '',
+        '.skeleton-line {',
+        '    height: 12px;',
+        '    border-radius: 4px;',
+        '}',
+        '',
+        '.skeleton-line-short {',
+        '    width: 60%;',
+        '}',
+    ];
+
+    if (input.type === 'avatar') {
+        cssParts.push(
+            '',
+            '.skeleton-avatar-row {',
+            '    display: flex;',
+            '    align-items: center;',
+            '    gap: 12px;',
+            '}',
+            '',
+            '.skeleton-circle {',
+            '    width: 48px;',
+            '    height: 48px;',
+            '    border-radius: 50%;',
+            '    flex-shrink: 0;',
+            '}',
+        );
+    } else if (input.type === 'card') {
+        cssParts.push(
+            '',
+            '.skeleton-card {',
+            '    display: flex;',
+            '    flex-direction: column;',
+            '    gap: 12px;',
+            '}',
+            '',
+            '.skeleton-image {',
+            '    width: 100%;',
+            '    height: 160px;',
+            '    border-radius: 8px;',
+            '}',
+        );
+    }
+
+    cssParts.push(
+        '',
+        '@keyframes skeleton-shimmer {',
+        '    0% {',
+        '        background-position: 200% 0;',
+        '    }',
+        '    100% {',
+        '        background-position: -200% 0;',
+        '    }',
+        '}',
+    );
+
+    return { html, css: cssParts.join('\n') };
+}

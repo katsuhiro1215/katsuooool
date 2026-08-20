@@ -481,9 +481,20 @@
 - [x] `composer ci:check` がグリーン
 - [x] Playwrightで実ブラウザ動作確認(スピナー・ドット・バーの3タイプすべてで色・サイズがプレビューに反映されアニメーションすることを確認)
 
+### 13.7 スケルトンローディング(`/ui-pattern-skeleton`)
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` に `buildSkeleton()` 追加(テキスト行/アバター行/カード型の3タイプ、行数・色を指定可能。シマー(光が左右に流れる)アニメーションはCSSの`linear-gradient`+`background-position`アニメーションのみでJS不要。単体テスト4件)
+- [x] `UiPatternSkeletonController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ui-pattern-skeleton` Inertiaページ作成(タイプ・行数・色の調整UI、`:style`バインディングで実際にシマーアニメーションするプレビュー、HTML/CSSそれぞれ独立したコピー機能)
+- [x] バックエンドFeatureテスト
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を39→40に更新
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(テキスト行・アバター行・カード型の3タイプすべてでプレビューが正しいレイアウトで表示され、シマーアニメーションが実際に動作することを確認)
+
 ## 今後の実装順序
 
-UI Patternカテゴリの残り4コンポーネント(Skeleton・Form・Header・Footer)、画像の切り抜き(SPEC.md §15参照)。
+UI Patternカテゴリの残り3コンポーネント(Form・Header・Footer、複雑なため最後に着手)、画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 

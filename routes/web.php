@@ -39,6 +39,7 @@ use App\Http\Controllers\Tools\UiPatternCardController;
 use App\Http\Controllers\Tools\UiPatternLoadingController;
 use App\Http\Controllers\Tools\UiPatternModalController;
 use App\Http\Controllers\Tools\UiPatternPaginationController;
+use App\Http\Controllers\Tools\UiPatternSkeletonController;
 use App\Http\Controllers\Tools\UiPatternToastController;
 use App\Http\Controllers\Tools\UrlEncodeController;
 use Illuminate\Support\Facades\Route;
@@ -255,6 +256,11 @@ Route::get('/ui-pattern-loading', [UiPatternLoadingController::class, 'show'])->
 Route::post('/ui-pattern-loading/track', [UiPatternLoadingController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('ui-pattern-loading.track');
+
+Route::get('/ui-pattern-skeleton', [UiPatternSkeletonController::class, 'show'])->name('ui-pattern-skeleton.show');
+Route::post('/ui-pattern-skeleton/track', [UiPatternSkeletonController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-skeleton.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

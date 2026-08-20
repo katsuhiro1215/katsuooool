@@ -274,4 +274,11 @@ return [
         'description' => 'スピナー/ドット/バーの3種類から選び、色・サイズを調整してローディングインジケーターのHTML/CSSコードを生成します。',
         'href' => '/ui-pattern-loading',
     ],
+    [
+        'slug' => 'ui-pattern-skeleton',
+        'name' => 'スケルトンローディング',
+        'category' => 'ui-pattern',
+        'description' => 'テキスト行/アバター行/カード型の3パターンから選び、行数・色を調整してスケルトンローディングのHTML/CSSコードを生成します。',
+        'href' => '/ui-pattern-skeleton',
+    ],
 ];

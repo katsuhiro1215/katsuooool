@@ -43,7 +43,7 @@ test('the dashboard renders zeroed stats when there is no data', function () {
     $response->assertSuccessful();
     $response->assertInertia(fn (Assert $page) => $page
         ->component('admin/Dashboard')
-        ->has('stats', 39)
+        ->has('stats', 40)
         ->where('stats.0.slug', 'image-compress')
         ->where('stats.0.total_executions', 0)
         ->where('stats.0.total_files', 0)

@@ -6,6 +6,7 @@ import {
     buildLoading,
     buildModal,
     buildPagination,
+    buildSkeleton,
     buildToast,
     computePaginationPages,
 } from './uiPatternGenerators';
@@ -441,5 +442,79 @@ describe('buildLoading', () => {
         expect(result.css).toContain('width: 160px;');
         expect(result.css).toContain('background-color: #dc2626;');
         expect(result.css).toContain('@keyframes loading-bar-move {');
+    });
+});
+
+describe('buildSkeleton', () => {
+    test('builds stacked text lines with the last line shortened', () => {
+        const result = buildSkeleton({
+            type: 'text',
+            lines: 3,
+            color: '#e5e5e5',
+        });
+
+        expect(result.html).toBe(
+            '<div class="skeleton-text">\n' +
+                '    <div class="skeleton skeleton-line"></div>\n' +
+                '    <div class="skeleton skeleton-line"></div>\n' +
+                '    <div class="skeleton skeleton-line skeleton-line-short"></div>\n' +
+                '</div>',
+        );
+        expect(result.css).toContain('background-color: #e5e5e5;');
+        expect(result.css).toContain('@keyframes skeleton-shimmer {');
+    });
+
+    test('does not shorten the line when only one line is requested', () => {
+        const result = buildSkeleton({
+            type: 'text',
+            lines: 1,
+            color: '#e5e5e5',
+        });
+
+        expect(result.html).toBe(
+            '<div class="skeleton-text">\n' +
+                '    <div class="skeleton skeleton-line"></div>\n' +
+                '</div>',
+        );
+    });
+
+    test('builds an avatar row with a circle and text lines', () => {
+        const result = buildSkeleton({
+            type: 'avatar',
+            lines: 2,
+            color: '#e5e5e5',
+        });
+
+        expect(result.html).toBe(
+            '<div class="skeleton-avatar-row">\n' +
+                '    <div class="skeleton skeleton-circle"></div>\n' +
+                '    <div class="skeleton-text">\n' +
+                '        <div class="skeleton skeleton-line"></div>\n' +
+                '        <div class="skeleton skeleton-line skeleton-line-short"></div>\n' +
+                '    </div>\n' +
+                '</div>',
+        );
+        expect(result.css).toContain('.skeleton-circle {');
+        expect(result.css).toContain('.skeleton-avatar-row {');
+    });
+
+    test('builds a card with an image block and text lines', () => {
+        const result = buildSkeleton({
+            type: 'card',
+            lines: 2,
+            color: '#e5e5e5',
+        });
+
+        expect(result.html).toBe(
+            '<div class="skeleton-card">\n' +
+                '    <div class="skeleton skeleton-image"></div>\n' +
+                '    <div class="skeleton-text">\n' +
+                '        <div class="skeleton skeleton-line"></div>\n' +
+                '        <div class="skeleton skeleton-line skeleton-line-short"></div>\n' +
+                '    </div>\n' +
+                '</div>',
+        );
+        expect(result.css).toContain('.skeleton-image {');
+        expect(result.css).toContain('.skeleton-card {');
     });
 });
