@@ -9,6 +9,7 @@ use App\Http\Controllers\Tools\ColorPaletteController;
 use App\Http\Controllers\Tools\ColorSchemeController;
 use App\Http\Controllers\Tools\CssBorderRadiusController;
 use App\Http\Controllers\Tools\CssBoxShadowController;
+use App\Http\Controllers\Tools\CssFlexboxController;
 use App\Http\Controllers\Tools\CssGlassmorphismController;
 use App\Http\Controllers\Tools\FaviconGenerateController;
 use App\Http\Controllers\Tools\HtmlFormatController;
@@ -140,6 +141,11 @@ Route::get('/css-glassmorphism', [CssGlassmorphismController::class, 'show'])->n
 Route::post('/css-glassmorphism/track', [CssGlassmorphismController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('css-glassmorphism.track');
+
+Route::get('/css-flexbox', [CssFlexboxController::class, 'show'])->name('css-flexbox.show');
+Route::post('/css-flexbox/track', [CssFlexboxController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('css-flexbox.track');
 
 Route::get('/base64-encode', [Base64EncodeController::class, 'show'])->name('base64-encode.show');
 Route::post('/base64-encode/track', [Base64EncodeController::class, 'track'])

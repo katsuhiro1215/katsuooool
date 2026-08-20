@@ -93,6 +93,13 @@ return [
         'href' => '/css-glassmorphism',
     ],
     [
+        'slug' => 'css-flexbox',
+        'name' => 'Flexbox ジェネレーター',
+        'category' => 'css',
+        'description' => 'プレイグラウンドでFlexboxのプロパティを調整し、CSSコードを生成します。',
+        'href' => '/css-flexbox',
+    ],
+    [
         'slug' => 'ogp-image',
         'name' => 'OGP画像サイズ作成',
         'category' => 'generator',
