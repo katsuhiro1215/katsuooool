@@ -262,3 +262,90 @@ export function buildPagination(input: PaginationInput): PaginationOutput {
 
     return { html, css };
 }
+
+export interface ModalInput {
+    title: string;
+    text: string;
+    backgroundColor: string;
+    borderRadius: number;
+    overlayOpacity: number;
+}
+
+export interface ModalOutput {
+    html: string;
+    css: string;
+    js: string;
+}
+
+export function buildModal(input: ModalInput): ModalOutput {
+    const html = [
+        '<button type="button" id="modal-trigger" class="modal-trigger">開く</button>',
+        '',
+        '<div id="modal-overlay" class="modal-overlay">',
+        '    <div class="modal">',
+        `        <h3 class="modal-title">${input.title}</h3>`,
+        `        <p class="modal-text">${input.text}</p>`,
+        '        <button type="button" id="modal-close" class="modal-close">閉じる</button>',
+        '    </div>',
+        '</div>',
+    ].join('\n');
+
+    const css = [
+        '.modal-overlay {',
+        '    display: none;',
+        '    position: fixed;',
+        '    inset: 0;',
+        `    background-color: rgba(0, 0, 0, ${input.overlayOpacity});`,
+        '    align-items: center;',
+        '    justify-content: center;',
+        '}',
+        '',
+        '.modal-overlay.is-open {',
+        '    display: flex;',
+        '}',
+        '',
+        '.modal {',
+        `    background-color: ${input.backgroundColor};`,
+        `    border-radius: ${input.borderRadius}px;`,
+        '    padding: 24px;',
+        '    max-width: 400px;',
+        '    width: 90%;',
+        '}',
+        '',
+        '.modal-title {',
+        '    margin: 0 0 12px;',
+        '    font-size: 18px;',
+        '    font-weight: bold;',
+        '}',
+        '',
+        '.modal-text {',
+        '    margin: 0 0 16px;',
+        '    font-size: 14px;',
+        '    color: #666;',
+        '}',
+        '',
+        '.modal-close {',
+        '    padding: 8px 16px;',
+        '    border: none;',
+        '    border-radius: 4px;',
+        '    background-color: #e5e5e5;',
+        '    cursor: pointer;',
+        '}',
+    ].join('\n');
+
+    const js = [
+        "const modalTrigger = document.getElementById('modal-trigger');",
+        "const modalOverlay = document.getElementById('modal-overlay');",
+        "const modalClose = document.getElementById('modal-close');",
+        '',
+        "modalTrigger.addEventListener('click', () => {",
+        "    modalOverlay.classList.add('is-open');",
+        '});',
+        '',
+        "modalClose.addEventListener('click', () => {",
+        "    modalOverlay.classList.remove('is-open');",
+        '});',
+    ].join('\n');
+
+    return { html, css, js };
+}

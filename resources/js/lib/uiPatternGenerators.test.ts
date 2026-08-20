@@ -3,6 +3,7 @@ import { describe, expect, test } from 'vitest';
 import {
     buildButton,
     buildCard,
+    buildModal,
     buildPagination,
     computePaginationPages,
 } from './uiPatternGenerators';
@@ -247,5 +248,58 @@ describe('buildPagination', () => {
         });
 
         expect(result.css).toContain('background-color: #16a34a;');
+    });
+});
+
+describe('buildModal', () => {
+    test('builds HTML with a trigger button, title, text, and a close button', () => {
+        const result = buildModal({
+            title: 'タイトル',
+            text: '本文テキストがここに入ります。',
+            backgroundColor: '#ffffff',
+            borderRadius: 8,
+            overlayOpacity: 0.5,
+        });
+
+        expect(result.html).toContain(
+            '<button type="button" id="modal-trigger" class="modal-trigger">開く</button>',
+        );
+        expect(result.html).toContain('<h3 class="modal-title">タイトル</h3>');
+        expect(result.html).toContain(
+            '<p class="modal-text">本文テキストがここに入ります。</p>',
+        );
+        expect(result.html).toContain(
+            '<button type="button" id="modal-close" class="modal-close">閉じる</button>',
+        );
+    });
+
+    test('reflects background color, border-radius, and overlay opacity in the CSS', () => {
+        const result = buildModal({
+            title: 'タイトル',
+            text: '本文',
+            backgroundColor: '#f5f5f5',
+            borderRadius: 12,
+            overlayOpacity: 0.7,
+        });
+
+        expect(result.css).toContain('background-color: #f5f5f5;');
+        expect(result.css).toContain('border-radius: 12px;');
+        expect(result.css).toContain('background-color: rgba(0, 0, 0, 0.7);');
+    });
+
+    test('builds JS that toggles the "is-open" class on trigger/close clicks', () => {
+        const result = buildModal({
+            title: 'タイトル',
+            text: '本文',
+            backgroundColor: '#ffffff',
+            borderRadius: 8,
+            overlayOpacity: 0.5,
+        });
+
+        expect(result.js).toContain("getElementById('modal-trigger')");
+        expect(result.js).toContain("getElementById('modal-overlay')");
+        expect(result.js).toContain("getElementById('modal-close')");
+        expect(result.js).toContain("classList.add('is-open')");
+        expect(result.js).toContain("classList.remove('is-open')");
     });
 });

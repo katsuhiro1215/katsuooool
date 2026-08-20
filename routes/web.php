@@ -36,6 +36,7 @@ use App\Http\Controllers\Tools\SvgOptimizeController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use App\Http\Controllers\Tools\UiPatternButtonController;
 use App\Http\Controllers\Tools\UiPatternCardController;
+use App\Http\Controllers\Tools\UiPatternModalController;
 use App\Http\Controllers\Tools\UiPatternPaginationController;
 use App\Http\Controllers\Tools\UrlEncodeController;
 use Illuminate\Support\Facades\Route;
@@ -237,6 +238,11 @@ Route::get('/ui-pattern-pagination', [UiPatternPaginationController::class, 'sho
 Route::post('/ui-pattern-pagination/track', [UiPatternPaginationController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('ui-pattern-pagination.track');
+
+Route::get('/ui-pattern-modal', [UiPatternModalController::class, 'show'])->name('ui-pattern-modal.show');
+Route::post('/ui-pattern-modal/track', [UiPatternModalController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-modal.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

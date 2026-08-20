@@ -253,4 +253,11 @@ return [
         'description' => '現在ページ・総ページ数・アクセントカラーを指定してページネーションのHTML/CSSコードを生成します。',
         'href' => '/ui-pattern-pagination',
     ],
+    [
+        'slug' => 'ui-pattern-modal',
+        'name' => 'モーダル',
+        'category' => 'ui-pattern',
+        'description' => 'タイトル・本文・色・角丸を調整してモーダルのHTML/CSS/JSコードを生成します。',
+        'href' => '/ui-pattern-modal',
+    ],
 ];

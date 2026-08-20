@@ -448,9 +448,20 @@
 - [x] `composer ci:check` がグリーン
 - [x] Playwrightで実ブラウザ動作確認(省略記号を含むページ番号表示、最初のページで`前へ`が無効化されることを確認)
 
+### 13.4 モーダル(`/ui-pattern-modal`)
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` に `buildModal()` 追加(HTML/CSSに加えJSも生成する初のUI Patternツール。単体テスト3件)
+- [x] `UiPatternModalController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ui-pattern-modal` Inertiaページ作成(タイトル・本文・背景色・角丸・オーバーレイ不透明度の調整UI、「開く」ボタンで実際に開閉できるプレビュー、HTML/CSS/JSそれぞれ独立したコピー機能)
+- [x] バックエンドFeatureテスト
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を36→37に更新
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(「開く」→モーダル表示→「閉じる」→非表示の一連の開閉動作を確認)
+
 ## 今後の実装順序
 
-UI Patternカテゴリの残り7コンポーネント(Modal・Toast・Loading・Skeleton・Form・Header・Footer)、画像の切り抜き(SPEC.md §15参照)。
+UI Patternカテゴリの残り6コンポーネント(Toast・Loading・Skeleton・Form・Header・Footer)、画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 
