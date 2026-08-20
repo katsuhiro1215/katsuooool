@@ -223,7 +223,7 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 - Premium機能・Stripe決済連携(方向性は§21.2参照、範囲は未確定)
 - User(一般利用者)向けログイン・マイページ
 - より詳細な分析基盤(時系列グラフ、ツール別ファイル形式内訳など)
-- §21に記載のUI Patternカテゴリの残りコンポーネント(Form要素のTextarea・Checkbox/Radio・Select・FormGroup、Header・Footer、方向性のみ、詳細仕様は未着手)
+- §21に記載のUI Patternカテゴリの残り2コンポーネント(Header・Footer、方向性のみ、詳細仕様は未着手)
 
 ## 21. 拡張ビジョン(参考・未確定)
 
@@ -239,7 +239,7 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 - **Generator**: OGP画像・favicon・ダミーデータ生成(すべて実装済み、ダミーデータ生成はPhase 12・§26参照)
 - **Developer**: JSON Formatter・URL Encoder・HTML Formatter・Base64(Phase 8相当、実装済み)
 
-カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`pattern`/`generator`/`developer`/`seo`/`ui-pattern` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。UI Patternカテゴリは Phase 13 でButton・Card・Pagination・Modal・Toast・Loading・Skeleton・Form Input(要素単位のForm群の1つ目)に着手し、Form要素の残り(Textarea・Checkbox/Radio・Select・FormGroup)とHeader・Footer(複雑なため最後に着手予定)は未着手のまま残っている。
+カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`pattern`/`generator`/`developer`/`seo`/`ui-pattern` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。UI Patternカテゴリは Phase 13 でButton・Card・Pagination・Modal・Toast・Loading・Skeleton・Form要素一式(Input・Textarea・Checkbox/Radio・Select・FormGroup)に着手し、残り2コンポーネント(Header・Footer、複雑なため最後に着手予定)は未着手のまま残っている。
 
 ### 21.2 Premium/Stripe(方向性のみ・未確定)
 
@@ -388,7 +388,7 @@ Patternカテゴリ6ツール(ドット・グリッド・ストライプ・チ�
 - データ内容: 氏名・住所・会社名は日本語のサンプルデータ(苗字・名前・都道府県・市区町村・企業名のプールからランダム抽出)で構成し、日本国内向けWeb制作でそのまま使える形にする。
 - 出力: 整形済みJSON(`JSON.stringify(..., null, 2)`)を表示し、コピーボタンでクリップボードにコピーできる(ファイルダウンロードは提供しない)。
 
-## 27. UI Patternカテゴリツール仕様(Phase 13 — ボタン・カード・ページネーション・モーダル・トースト通知・ローディング・スケルトンローディング・フォーム入力欄)
+## 27. UI Patternカテゴリツール仕様(Phase 13 — ボタン・カード・ページネーション・モーダル・トースト通知・ローディング・スケルトンローディング・フォーム要素一式)
 
 新カテゴリ「UI Pattern」を追加する。他のColor/CSS/Patternカテゴリと同じくブラウザ内完結型だが、生成物がCSS宣言のみではなくHTML+CSSの2ブロックになる点が異なる。フレームワーク非依存の素のHTML+CSSを出力し、Tailwind等特定のCSSフレームワークには依存しない。
 
@@ -442,3 +442,27 @@ Formは「Login Form」「Register Form」のような完成形テンプレー�
 - 操作: タイプ(text/email/password/numberの4種類)・プレースホルダーテキスト・角丸(0〜24px)・ボーダー色・無効化(disabled)有無を調整する。
 - 出力: `<input class="form-input" type="...">` のHTML(disabled時は`disabled`属性を付与)と、対応する`.form-input`のCSS(`:focus`のフォーカスリング、`:disabled`時のグレーアウトスタイルを含む)がそれぞれ独立して生成される。
 - 出力: HTML・CSSそれぞれに個別のコピーボタンを設置する。プレビューは実際の`<input>`要素にスタイルを適用し、タイプ・disabled状態の変化も反映してその場に表示する。
+
+### 27.9 フォームテキストエリア(`/ui-pattern-form-textarea`)
+
+- 操作: プレースホルダーテキスト・行数(2〜10)・角丸(0〜24px)・ボーダー色・無効化(disabled)有無を調整する。
+- 出力: `<textarea class="form-textarea" rows="...">` のHTML(disabled時は`disabled`属性を付与)と、対応する`.form-textarea`のCSS(縦方向のみリサイズ可能`resize: vertical`、`:focus`のフォーカスリング、`:disabled`時はリサイズ不可+グレーアウトを含む)がそれぞれ独立して生成される。
+- 出力: HTML・CSSそれぞれに個別のコピーボタンを設置する。プレビューは実際の`<textarea>`要素にスタイルを適用してその場に表示する。
+
+### 27.10 チェックボックス/ラジオボタン(`/ui-pattern-form-check`)
+
+- 操作: タイプ(checkbox/radio)・ラベルテキスト・選択状態(checked)・無効化(disabled)有無を調整する。
+- 出力: `<label class="form-check">` の中に`<input class="form-check-input">`とラベル用の`<span class="form-check-label">`を配置したHTML(checked/disabled時はそれぞれ属性を付与)と、対応するCSS(`.form-check-input`はcheckboxで角丸4px、radioで角丸50%、`accent-color`でチェック時の色を指定)がそれぞれ独立して生成される。
+- 出力: HTML・CSSそれぞれに個別のコピーボタンを設置する。プレビューはタイプ・checked・disabledの状態を反映した実際の入力要素をその場に表示する。
+
+### 27.11 セレクトボックス(`/ui-pattern-form-select`)
+
+- 操作: 選択肢リスト(1行に1つのテキストエリアで編集し、`<option>`へ可変変換)・角丸(0〜24px)・ボーダー色・無効化(disabled)有無を調整する。
+- 出力: `<select class="form-select">` の中に選択肢の数だけ`<option>`を並べたHTML(disabled時は`disabled`属性を付与)と、対応する`.form-select`のCSS(`:focus`のフォーカスリング、`:disabled`時のグレーアウトスタイルを含む)がそれぞれ独立して生成される。
+- 出力: HTML・CSSそれぞれに個別のコピーボタンを設置する。プレビューは実際の`<select>`要素にスタイルを適用し、選択肢の追加・編集も反映してその場に表示する。
+
+### 27.12 フォームグループ(`/ui-pattern-form-group`)
+
+- 操作: ラベルテキスト・プレースホルダーテキスト・ヘルパーテキスト・エラー状態(hasError)の有無を調整する。
+- 出力: `<div class="form-group">` の中にラベル(`.form-group-label`)・入力欄(`.form-group-input`)・ヘルパーテキスト(`.form-group-helper`)を配置したHTML(エラー状態時は入力欄・ヘルパーテキストの両方に`is-invalid`クラスを付与)と、対応するCSS(通常時のスタイルに加え、`.is-invalid`時は入力欄のボーダー色・ヘルパーテキストの文字色が赤系に変化)がそれぞれ独立して生成される。
+- 出力: HTML・CSSそれぞれに個別のコピーボタンを設置する。プレビューはラベル・入力欄・ヘルパーテキストを実際に組み合わせた状態で表示し、エラー状態の切り替えによる配色変化も反映する。

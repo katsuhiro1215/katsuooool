@@ -744,3 +744,234 @@ export function buildFormInput(input: FormInputInput): FormInputOutput {
 
     return { html, css };
 }
+
+export interface FormTextareaInput {
+    placeholder: string;
+    rows: number;
+    borderRadius: number;
+    borderColor: string;
+    disabled: boolean;
+}
+
+export interface FormTextareaOutput {
+    html: string;
+    css: string;
+}
+
+export function buildFormTextarea(
+    input: FormTextareaInput,
+): FormTextareaOutput {
+    const disabledAttr = input.disabled ? ' disabled' : '';
+    const html = `<textarea class="form-textarea" rows="${input.rows}" placeholder="${input.placeholder}"${disabledAttr}></textarea>`;
+
+    const css = [
+        '.form-textarea {',
+        '    display: block;',
+        '    width: 100%;',
+        '    padding: 8px 12px;',
+        '    font-size: 14px;',
+        '    font-family: inherit;',
+        '    resize: vertical;',
+        `    border: 1px solid ${input.borderColor};`,
+        `    border-radius: ${input.borderRadius}px;`,
+        '    box-sizing: border-box;',
+        '}',
+        '',
+        '.form-textarea:focus {',
+        '    outline: none;',
+        `    border-color: ${input.borderColor};`,
+        '    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);',
+        '}',
+        '',
+        '.form-textarea:disabled {',
+        '    background-color: #f5f5f5;',
+        '    color: #999;',
+        '    cursor: not-allowed;',
+        '    resize: none;',
+        '}',
+    ].join('\n');
+
+    return { html, css };
+}
+
+export type FormCheckType = 'checkbox' | 'radio';
+
+export interface FormCheckInput {
+    type: FormCheckType;
+    label: string;
+    checked: boolean;
+    disabled: boolean;
+}
+
+export interface FormCheckOutput {
+    html: string;
+    css: string;
+}
+
+export function buildFormCheck(input: FormCheckInput): FormCheckOutput {
+    const checkedAttr = input.checked ? ' checked' : '';
+    const disabledAttr = input.disabled ? ' disabled' : '';
+
+    const html = [
+        '<label class="form-check">',
+        `    <input class="form-check-input" type="${input.type}"${checkedAttr}${disabledAttr}>`,
+        `    <span class="form-check-label">${input.label}</span>`,
+        '</label>',
+    ].join('\n');
+
+    const borderRadius = input.type === 'radio' ? '50%' : '4px';
+
+    const css = [
+        '.form-check {',
+        '    display: inline-flex;',
+        '    align-items: center;',
+        '    gap: 8px;',
+        '    cursor: pointer;',
+        '}',
+        '',
+        '.form-check-input {',
+        '    width: 18px;',
+        '    height: 18px;',
+        `    border-radius: ${borderRadius};`,
+        '    accent-color: #2563eb;',
+        '    cursor: pointer;',
+        '}',
+        '',
+        '.form-check-input:disabled {',
+        '    cursor: not-allowed;',
+        '    opacity: 0.5;',
+        '}',
+        '',
+        '.form-check-label {',
+        '    font-size: 14px;',
+        '}',
+    ].join('\n');
+
+    return { html, css };
+}
+
+export interface FormSelectInput {
+    options: string[];
+    borderRadius: number;
+    borderColor: string;
+    disabled: boolean;
+}
+
+export interface FormSelectOutput {
+    html: string;
+    css: string;
+}
+
+export function buildFormSelect(input: FormSelectInput): FormSelectOutput {
+    const disabledAttr = input.disabled ? ' disabled' : '';
+    const optionLines = input.options
+        .map((option) => `    <option>${option}</option>`)
+        .join('\n');
+
+    const html = [
+        `<select class="form-select"${disabledAttr}>`,
+        optionLines,
+        '</select>',
+    ].join('\n');
+
+    const css = [
+        '.form-select {',
+        '    display: block;',
+        '    width: 100%;',
+        '    padding: 8px 12px;',
+        '    font-size: 14px;',
+        '    background-color: #ffffff;',
+        `    border: 1px solid ${input.borderColor};`,
+        `    border-radius: ${input.borderRadius}px;`,
+        '    box-sizing: border-box;',
+        '}',
+        '',
+        '.form-select:focus {',
+        '    outline: none;',
+        `    border-color: ${input.borderColor};`,
+        '    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);',
+        '}',
+        '',
+        '.form-select:disabled {',
+        '    background-color: #f5f5f5;',
+        '    color: #999;',
+        '    cursor: not-allowed;',
+        '}',
+    ].join('\n');
+
+    return { html, css };
+}
+
+export interface FormGroupInput {
+    label: string;
+    placeholder: string;
+    helperText: string;
+    hasError: boolean;
+}
+
+export interface FormGroupOutput {
+    html: string;
+    css: string;
+}
+
+export function buildFormGroup(input: FormGroupInput): FormGroupOutput {
+    const inputClass = input.hasError
+        ? 'form-group-input is-invalid'
+        : 'form-group-input';
+    const helperClass = input.hasError
+        ? 'form-group-helper is-invalid'
+        : 'form-group-helper';
+
+    const html = [
+        '<div class="form-group">',
+        `    <label class="form-group-label">${input.label}</label>`,
+        `    <input class="${inputClass}" type="text" placeholder="${input.placeholder}">`,
+        `    <p class="${helperClass}">${input.helperText}</p>`,
+        '</div>',
+    ].join('\n');
+
+    const css = [
+        '.form-group {',
+        '    display: flex;',
+        '    flex-direction: column;',
+        '    gap: 4px;',
+        '}',
+        '',
+        '.form-group-label {',
+        '    font-size: 14px;',
+        '    font-weight: bold;',
+        '}',
+        '',
+        '.form-group-input {',
+        '    display: block;',
+        '    width: 100%;',
+        '    padding: 8px 12px;',
+        '    font-size: 14px;',
+        '    border: 1px solid #d1d5db;',
+        '    border-radius: 6px;',
+        '    box-sizing: border-box;',
+        '}',
+        '',
+        '.form-group-input:focus {',
+        '    outline: none;',
+        '    border-color: #2563eb;',
+        '    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);',
+        '}',
+        '',
+        '.form-group-input.is-invalid {',
+        '    border-color: #dc2626;',
+        '}',
+        '',
+        '.form-group-helper {',
+        '    margin: 0;',
+        '    font-size: 12px;',
+        '    color: #666;',
+        '}',
+        '',
+        '.form-group-helper.is-invalid {',
+        '    color: #dc2626;',
+        '}',
+    ].join('\n');
+
+    return { html, css };
+}

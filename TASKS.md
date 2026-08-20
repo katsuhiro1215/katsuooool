@@ -505,9 +505,52 @@ Form・Header・Footerは複雑なため最後に着手する方針だが、Form
 - [x] `composer ci:check` がグリーン
 - [x] Playwrightで実ブラウザ動作確認(タイプ切り替え・disabled切り替えがプレビュー・生成HTMLの両方に反映されることを確認)
 
+### 13.9 フォームテキストエリア(`/ui-pattern-form-textarea`)
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` に `buildFormTextarea()` 追加(プレースホルダー・行数・角丸・ボーダー色・disabled状態を指定可能。単体テスト2件)
+- [x] `UiPatternFormTextareaController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ui-pattern-form-textarea` Inertiaページ作成(プレースホルダー・行数・角丸・ボーダー色・disabledの調整UI、実際の`<textarea>`要素に`:style`バインディングして反映するプレビュー、HTML/CSSそれぞれ独立したコピー機能)
+- [x] バックエンドFeatureテスト
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認
+
+### 13.10 チェックボックス/ラジオボタン(`/ui-pattern-form-check`)
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` に `buildFormCheck()` 追加(checkbox/radioの2タイプ、ラベル・選択状態(checked)・disabled状態を指定可能。radioは角丸50%で丸型に。単体テスト2件)
+- [x] `UiPatternFormCheckController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ui-pattern-form-check` Inertiaページ作成(タイプ・ラベル・checked・disabledの調整UI、`:style`バインディングして反映するプレビュー、HTML/CSSそれぞれ独立したコピー機能)
+- [x] バックエンドFeatureテスト
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(checkbox/radio双方の切り替え、radio選択時に角丸50%が反映されることを確認)
+
+### 13.11 セレクトボックス(`/ui-pattern-form-select`)
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` に `buildFormSelect()` 追加(選択肢の配列から`<option>`を可変生成、角丸・ボーダー色・disabled状態を指定可能。単体テスト2件)
+- [x] `UiPatternFormSelectController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ui-pattern-form-select` Inertiaページ作成(選択肢を1行1つのテキストエリアで編集・角丸・ボーダー色・disabledの調整UI、実際の`<select>`要素に`:style`バインディングして反映するプレビュー、HTML/CSSそれぞれ独立したコピー機能)
+- [x] バックエンドFeatureテスト
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(選択肢の追加・編集がプレビュー・生成HTMLの両方に反映されることを確認)
+
+### 13.12 フォームグループ(`/ui-pattern-form-group`)
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` に `buildFormGroup()` 追加(ラベル+入力欄+ヘルパーテキストを組み合わせ、エラー状態(hasError)で`.is-invalid`クラスを付与。単体テスト2件)
+- [x] `UiPatternFormGroupController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ui-pattern-form-group` Inertiaページ作成(ラベル・プレースホルダー・ヘルパーテキスト・エラー状態の調整UI、`:style`バインディングして反映するプレビュー、HTML/CSSそれぞれ独立したコピー機能)
+- [x] バックエンドFeatureテスト
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を41→45に更新(13.9〜13.12の4ツール分をまとめて反映)
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(エラー状態の切り替えでボーダー色・ヘルパーテキスト色が変化することを確認)
+
+Form要素(Input・Textarea・Checkbox/Radio・Select・FormGroup)が完了。
+
 ## 今後の実装順序
 
-UI PatternのForm要素の残り(Textarea・Checkbox/Radio・Select・FormGroup)、Header・Footer(複雑なため最後に着手)、画像の切り抜き(SPEC.md §15参照)。
+UI Patternカテゴリの残り2コンポーネント(Header・Footer、複雑なため最後に着手)、画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 

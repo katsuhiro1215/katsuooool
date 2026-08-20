@@ -3,7 +3,11 @@ import { describe, expect, test } from 'vitest';
 import {
     buildButton,
     buildCard,
+    buildFormCheck,
+    buildFormGroup,
     buildFormInput,
+    buildFormSelect,
+    buildFormTextarea,
     buildLoading,
     buildModal,
     buildPagination,
@@ -567,4 +571,140 @@ describe('buildFormInput', () => {
             expect(result.html).toContain(`type="${type}"`);
         },
     );
+});
+
+describe('buildFormTextarea', () => {
+    test('builds a textarea tag with the given rows and placeholder', () => {
+        const result = buildFormTextarea({
+            placeholder: 'コメントを入力',
+            rows: 4,
+            borderRadius: 6,
+            borderColor: '#d1d5db',
+            disabled: false,
+        });
+
+        expect(result.html).toBe(
+            '<textarea class="form-textarea" rows="4" placeholder="コメントを入力"></textarea>',
+        );
+        expect(result.css).toContain('resize: vertical;');
+        expect(result.css).toContain('border-radius: 6px;');
+    });
+
+    test('adds the disabled attribute and disables resize when disabled', () => {
+        const result = buildFormTextarea({
+            placeholder: 'コメントを入力',
+            rows: 4,
+            borderRadius: 6,
+            borderColor: '#d1d5db',
+            disabled: true,
+        });
+
+        expect(result.html).toBe(
+            '<textarea class="form-textarea" rows="4" placeholder="コメントを入力" disabled></textarea>',
+        );
+        expect(result.css).toContain('.form-textarea:disabled {');
+        expect(result.css).toContain('resize: none;');
+    });
+});
+
+describe('buildFormCheck', () => {
+    test('builds a checkbox with a label', () => {
+        const result = buildFormCheck({
+            type: 'checkbox',
+            label: '利用規約に同意する',
+            checked: false,
+            disabled: false,
+        });
+
+        expect(result.html).toBe(
+            '<label class="form-check">\n' +
+                '    <input class="form-check-input" type="checkbox">\n' +
+                '    <span class="form-check-label">利用規約に同意する</span>\n' +
+                '</label>',
+        );
+        expect(result.css).toContain('border-radius: 4px;');
+    });
+
+    test('builds a checked, disabled radio button with rounded styling', () => {
+        const result = buildFormCheck({
+            type: 'radio',
+            label: 'プラン A',
+            checked: true,
+            disabled: true,
+        });
+
+        expect(result.html).toBe(
+            '<label class="form-check">\n' +
+                '    <input class="form-check-input" type="radio" checked disabled>\n' +
+                '    <span class="form-check-label">プラン A</span>\n' +
+                '</label>',
+        );
+        expect(result.css).toContain('border-radius: 50%;');
+    });
+});
+
+describe('buildFormSelect', () => {
+    test('builds a select with one option per entry', () => {
+        const result = buildFormSelect({
+            options: ['東京都', '大阪府', '愛知県'],
+            borderRadius: 6,
+            borderColor: '#d1d5db',
+            disabled: false,
+        });
+
+        expect(result.html).toBe(
+            '<select class="form-select">\n' +
+                '    <option>東京都</option>\n' +
+                '    <option>大阪府</option>\n' +
+                '    <option>愛知県</option>\n' +
+                '</select>',
+        );
+        expect(result.css).toContain('border-radius: 6px;');
+    });
+
+    test('adds the disabled attribute when disabled', () => {
+        const result = buildFormSelect({
+            options: ['A', 'B'],
+            borderRadius: 6,
+            borderColor: '#d1d5db',
+            disabled: true,
+        });
+
+        expect(result.html).toContain('<select class="form-select" disabled>');
+        expect(result.css).toContain('.form-select:disabled {');
+    });
+});
+
+describe('buildFormGroup', () => {
+    test('builds a label, input, and helper text', () => {
+        const result = buildFormGroup({
+            label: 'メールアドレス',
+            placeholder: 'you@example.com',
+            helperText: '登録用のメールアドレスを入力してください',
+            hasError: false,
+        });
+
+        expect(result.html).toBe(
+            '<div class="form-group">\n' +
+                '    <label class="form-group-label">メールアドレス</label>\n' +
+                '    <input class="form-group-input" type="text" placeholder="you@example.com">\n' +
+                '    <p class="form-group-helper">登録用のメールアドレスを入力してください</p>\n' +
+                '</div>',
+        );
+        expect(result.css).toContain('.form-group {');
+    });
+
+    test('applies invalid styling classes when hasError is true', () => {
+        const result = buildFormGroup({
+            label: 'メールアドレス',
+            placeholder: 'you@example.com',
+            helperText: '有効なメールアドレスを入力してください',
+            hasError: true,
+        });
+
+        expect(result.html).toContain('class="form-group-input is-invalid"');
+        expect(result.html).toContain('class="form-group-helper is-invalid"');
+        expect(result.css).toContain('.form-group-input.is-invalid {');
+        expect(result.css).toContain('.form-group-helper.is-invalid {');
+    });
 });

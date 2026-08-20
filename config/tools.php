@@ -288,4 +288,32 @@ return [
         'description' => 'text/email/password/numberの4種類から選び、プレースホルダー・角丸・ボーダー色・無効化状態を調整して入力欄のHTML/CSSコードを生成します。',
         'href' => '/ui-pattern-form-input',
     ],
+    [
+        'slug' => 'ui-pattern-form-textarea',
+        'name' => 'フォームテキストエリア',
+        'category' => 'ui-pattern',
+        'description' => '行数・角丸・ボーダー色・無効化状態を調整して複数行テキスト入力欄のHTML/CSSコードを生成します。',
+        'href' => '/ui-pattern-form-textarea',
+    ],
+    [
+        'slug' => 'ui-pattern-form-check',
+        'name' => 'チェックボックス/ラジオボタン',
+        'category' => 'ui-pattern',
+        'description' => 'チェックボックス/ラジオボタンを切り替え、ラベル・選択状態・無効化状態を調整してHTML/CSSコードを生成します。',
+        'href' => '/ui-pattern-form-check',
+    ],
+    [
+        'slug' => 'ui-pattern-form-select',
+        'name' => 'セレクトボックス',
+        'category' => 'ui-pattern',
+        'description' => '選択肢リスト・角丸・ボーダー色・無効化状態を調整してドロップダウン選択欄のHTML/CSSコードを生成します。',
+        'href' => '/ui-pattern-form-select',
+    ],
+    [
+        'slug' => 'ui-pattern-form-group',
+        'name' => 'フォームグループ',
+        'category' => 'ui-pattern',
+        'description' => 'ラベル・入力欄・ヘルパーテキストを組み合わせ、エラー状態の有無を切り替えてフォーム項目一式のHTML/CSSコードを生成します。',
+        'href' => '/ui-pattern-form-group',
+    ],
 ];

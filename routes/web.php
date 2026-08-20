@@ -36,7 +36,11 @@ use App\Http\Controllers\Tools\SvgOptimizeController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use App\Http\Controllers\Tools\UiPatternButtonController;
 use App\Http\Controllers\Tools\UiPatternCardController;
+use App\Http\Controllers\Tools\UiPatternFormCheckController;
+use App\Http\Controllers\Tools\UiPatternFormGroupController;
 use App\Http\Controllers\Tools\UiPatternFormInputController;
+use App\Http\Controllers\Tools\UiPatternFormSelectController;
+use App\Http\Controllers\Tools\UiPatternFormTextareaController;
 use App\Http\Controllers\Tools\UiPatternLoadingController;
 use App\Http\Controllers\Tools\UiPatternModalController;
 use App\Http\Controllers\Tools\UiPatternPaginationController;
@@ -267,6 +271,26 @@ Route::get('/ui-pattern-form-input', [UiPatternFormInputController::class, 'show
 Route::post('/ui-pattern-form-input/track', [UiPatternFormInputController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('ui-pattern-form-input.track');
+
+Route::get('/ui-pattern-form-textarea', [UiPatternFormTextareaController::class, 'show'])->name('ui-pattern-form-textarea.show');
+Route::post('/ui-pattern-form-textarea/track', [UiPatternFormTextareaController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-form-textarea.track');
+
+Route::get('/ui-pattern-form-check', [UiPatternFormCheckController::class, 'show'])->name('ui-pattern-form-check.show');
+Route::post('/ui-pattern-form-check/track', [UiPatternFormCheckController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-form-check.track');
+
+Route::get('/ui-pattern-form-select', [UiPatternFormSelectController::class, 'show'])->name('ui-pattern-form-select.show');
+Route::post('/ui-pattern-form-select/track', [UiPatternFormSelectController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-form-select.track');
+
+Route::get('/ui-pattern-form-group', [UiPatternFormGroupController::class, 'show'])->name('ui-pattern-form-group.show');
+Route::post('/ui-pattern-form-group/track', [UiPatternFormGroupController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-form-group.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
