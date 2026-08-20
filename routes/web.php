@@ -36,6 +36,7 @@ use App\Http\Controllers\Tools\SvgOptimizeController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use App\Http\Controllers\Tools\UiPatternButtonController;
 use App\Http\Controllers\Tools\UiPatternCardController;
+use App\Http\Controllers\Tools\UiPatternLoadingController;
 use App\Http\Controllers\Tools\UiPatternModalController;
 use App\Http\Controllers\Tools\UiPatternPaginationController;
 use App\Http\Controllers\Tools\UiPatternToastController;
@@ -249,6 +250,11 @@ Route::get('/ui-pattern-toast', [UiPatternToastController::class, 'show'])->name
 Route::post('/ui-pattern-toast/track', [UiPatternToastController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('ui-pattern-toast.track');
+
+Route::get('/ui-pattern-loading', [UiPatternLoadingController::class, 'show'])->name('ui-pattern-loading.show');
+Route::post('/ui-pattern-loading/track', [UiPatternLoadingController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-loading.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

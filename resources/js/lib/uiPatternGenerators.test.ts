@@ -3,6 +3,7 @@ import { describe, expect, test } from 'vitest';
 import {
     buildButton,
     buildCard,
+    buildLoading,
     buildModal,
     buildPagination,
     buildToast,
@@ -368,5 +369,77 @@ describe('buildToast', () => {
         expect(result.js).toContain("getElementById('toast-close')");
         expect(result.js).toContain("classList.add('is-open')");
         expect(result.js).toContain("classList.remove('is-open')");
+    });
+});
+
+describe('buildLoading', () => {
+    test('builds a spinner with size, color, and a rotate keyframe', () => {
+        const result = buildLoading({
+            type: 'spinner',
+            color: '#2563eb',
+            size: 40,
+        });
+
+        expect(result.html).toBe('<div class="loading-spinner"></div>');
+        expect(result.css).toContain('width: 40px;');
+        expect(result.css).toContain('height: 40px;');
+        expect(result.css).toContain('border-top-color: #2563eb;');
+        expect(result.css).toContain('@keyframes loading-spin {');
+        expect(result.css).toContain('transform: rotate(360deg);');
+    });
+
+    test('scales the spinner border width with size', () => {
+        const small = buildLoading({
+            type: 'spinner',
+            color: '#000000',
+            size: 20,
+        });
+        const large = buildLoading({
+            type: 'spinner',
+            color: '#000000',
+            size: 80,
+        });
+
+        expect(small.css).toContain('border: 2px solid #e5e5e5;');
+        expect(large.css).toContain('border: 8px solid #e5e5e5;');
+    });
+
+    test('builds three staggered dots', () => {
+        const result = buildLoading({
+            type: 'dots',
+            color: '#16a34a',
+            size: 40,
+        });
+
+        expect(result.html).toBe(
+            '<div class="loading-dots">\n' +
+                '    <span></span>\n' +
+                '    <span></span>\n' +
+                '    <span></span>\n' +
+                '</div>',
+        );
+        expect(result.css).toContain('background-color: #16a34a;');
+        expect(result.css).toContain('.loading-dots span:nth-child(2) {');
+        expect(result.css).toContain('animation-delay: 0.15s;');
+        expect(result.css).toContain('.loading-dots span:nth-child(3) {');
+        expect(result.css).toContain('animation-delay: 0.3s;');
+        expect(result.css).toContain('@keyframes loading-bounce {');
+    });
+
+    test('builds an indeterminate bar whose width scales with size', () => {
+        const result = buildLoading({
+            type: 'bar',
+            color: '#dc2626',
+            size: 40,
+        });
+
+        expect(result.html).toBe(
+            '<div class="loading-bar">\n' +
+                '    <div class="loading-bar-fill"></div>\n' +
+                '</div>',
+        );
+        expect(result.css).toContain('width: 160px;');
+        expect(result.css).toContain('background-color: #dc2626;');
+        expect(result.css).toContain('@keyframes loading-bar-move {');
     });
 });

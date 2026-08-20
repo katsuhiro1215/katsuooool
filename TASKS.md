@@ -470,9 +470,20 @@
 - [x] `composer ci:check` がグリーン
 - [x] Playwrightで実ブラウザ動作確認(表示・手動クローズ・指定時間経過後の自動消滅をすべて確認。動作確認中、ツール呼び出し間の往復遅延がToastの表示時間(3秒)を超えることがあり、別々の呼び出しで見た目上「表示されない」ように見えるテスト起因の誤検知が発生した — 単一の評価呼び出し内でクリック・待機・確認を完結させることで実装が正しく動作していることを確認した)
 
+### 13.6 ローディング(`/ui-pattern-loading`)
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` に `buildLoading()` 追加(スピナー/ドット/バーの3タイプ、すべてCSSアニメーションのみでJS不要。単体テスト4件)
+- [x] `UiPatternLoadingController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ui-pattern-loading` Inertiaページ作成(タイプ・色・サイズの調整UI、タイプごとに個別の`:style`バインディングで実際にアニメーションするプレビュー、HTML/CSSそれぞれ独立したコピー機能)
+- [x] バックエンドFeatureテスト
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を38→39に更新
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(スピナー・ドット・バーの3タイプすべてで色・サイズがプレビューに反映されアニメーションすることを確認)
+
 ## 今後の実装順序
 
-UI Patternカテゴリの残り5コンポーネント(Loading・Skeleton・Form・Header・Footer)、画像の切り抜き(SPEC.md §15参照)。
+UI Patternカテゴリの残り4コンポーネント(Skeleton・Form・Header・Footer)、画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 

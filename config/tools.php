@@ -267,4 +267,11 @@ return [
         'description' => 'success/error/info/warningのバリエーション・メッセージ・表示時間を指定してトースト通知のHTML/CSS/JSコードを生成します。',
         'href' => '/ui-pattern-toast',
     ],
+    [
+        'slug' => 'ui-pattern-loading',
+        'name' => 'ローディング',
+        'category' => 'ui-pattern',
+        'description' => 'スピナー/ドット/バーの3種類から選び、色・サイズを調整してローディングインジケーターのHTML/CSSコードを生成します。',
+        'href' => '/ui-pattern-loading',
+    ],
 ];

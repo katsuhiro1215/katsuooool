@@ -443,3 +443,124 @@ export function buildToast(input: ToastInput): ToastOutput {
 
     return { html, css, js };
 }
+
+export type LoadingType = 'spinner' | 'dots' | 'bar';
+
+export interface LoadingInput {
+    type: LoadingType;
+    color: string;
+    size: number;
+}
+
+export interface LoadingOutput {
+    html: string;
+    css: string;
+}
+
+export function buildLoading(input: LoadingInput): LoadingOutput {
+    if (input.type === 'dots') {
+        const dotSize = Math.round(input.size / 4);
+
+        const html = [
+            '<div class="loading-dots">',
+            '    <span></span>',
+            '    <span></span>',
+            '    <span></span>',
+            '</div>',
+        ].join('\n');
+
+        const css = [
+            '.loading-dots {',
+            '    display: flex;',
+            '    gap: 6px;',
+            '}',
+            '',
+            '.loading-dots span {',
+            `    width: ${dotSize}px;`,
+            `    height: ${dotSize}px;`,
+            '    border-radius: 50%;',
+            `    background-color: ${input.color};`,
+            '    animation: loading-bounce 0.6s ease-in-out infinite;',
+            '}',
+            '',
+            '.loading-dots span:nth-child(2) {',
+            '    animation-delay: 0.15s;',
+            '}',
+            '',
+            '.loading-dots span:nth-child(3) {',
+            '    animation-delay: 0.3s;',
+            '}',
+            '',
+            '@keyframes loading-bounce {',
+            '    0%, 80%, 100% {',
+            '        transform: scale(0.6);',
+            '        opacity: 0.5;',
+            '    }',
+            '    40% {',
+            '        transform: scale(1);',
+            '        opacity: 1;',
+            '    }',
+            '}',
+        ].join('\n');
+
+        return { html, css };
+    }
+
+    if (input.type === 'bar') {
+        const html = [
+            '<div class="loading-bar">',
+            '    <div class="loading-bar-fill"></div>',
+            '</div>',
+        ].join('\n');
+
+        const css = [
+            '.loading-bar {',
+            `    width: ${input.size * 4}px;`,
+            '    height: 6px;',
+            '    background-color: #e5e5e5;',
+            '    border-radius: 3px;',
+            '    overflow: hidden;',
+            '}',
+            '',
+            '.loading-bar-fill {',
+            '    width: 40%;',
+            '    height: 100%;',
+            `    background-color: ${input.color};`,
+            '    border-radius: 3px;',
+            '    animation: loading-bar-move 1.2s ease-in-out infinite;',
+            '}',
+            '',
+            '@keyframes loading-bar-move {',
+            '    0% {',
+            '        transform: translateX(-100%);',
+            '    }',
+            '    100% {',
+            '        transform: translateX(350%);',
+            '    }',
+            '}',
+        ].join('\n');
+
+        return { html, css };
+    }
+
+    const borderWidth = Math.max(2, Math.round(input.size / 10));
+
+    const css = [
+        '.loading-spinner {',
+        `    width: ${input.size}px;`,
+        `    height: ${input.size}px;`,
+        `    border: ${borderWidth}px solid #e5e5e5;`,
+        `    border-top-color: ${input.color};`,
+        '    border-radius: 50%;',
+        '    animation: loading-spin 0.8s linear infinite;',
+        '}',
+        '',
+        '@keyframes loading-spin {',
+        '    to {',
+        '        transform: rotate(360deg);',
+        '    }',
+        '}',
+    ].join('\n');
+
+    return { html: '<div class="loading-spinner"></div>', css };
+}
