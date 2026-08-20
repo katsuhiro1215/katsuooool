@@ -339,9 +339,64 @@
 - [x] `npm run build` がビルドエラーなしで成功
 - [x] Playwrightで5ツールすべての実ブラウザ動作確認(各ツールでスライダー・セレクト操作により生成CSSコードが連動して変化すること、Flexbox/Gridはプレビューが実際に並び替わる/セル数が変わることを確認)
 
+## Phase 11 — Patternカテゴリ(6ツール)
+
+### 11.0 共通基盤
+
+- [x] `resources/js/lib/patternGenerators.ts` 作成(ドット/グリッド/ストライプ/チェッカーボード/ジグザグ/波模様の各入力型とCSSコード生成関数を集約。単体テスト)
+
+### 11.1 ドット(`/pattern-dot`)
+
+- [x] `PatternDotController` 作成(`TrackedToolController` 継承、クライアント完結)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/pattern-dot` Inertiaページ作成(背景色・パターン色・ドットサイズ・間隔のスライダー、プレビューと生成CSSコードのコピー機能)
+- [x] バックエンドFeatureテスト
+
+### 11.2 グリッド(`/pattern-grid`)
+
+- [x] `PatternGridController` 作成(同パターン)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/pattern-grid` Inertiaページ作成(背景色・線の色・線の太さ・マス目サイズのスライダー、プレビューと生成CSSコードのコピー機能)
+- [x] バックエンドFeatureテスト
+
+### 11.3 ストライプ(`/pattern-stripe`)
+
+- [x] `PatternStripeController` 作成(同パターン)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/pattern-stripe` Inertiaページ作成(背景色・パターン色・ストライプ幅・角度のスライダー、プレビューと生成CSSコードのコピー機能)
+- [x] バックエンドFeatureテスト
+
+### 11.4 チェッカーボード(`/pattern-checkerboard`)
+
+- [x] `PatternCheckerboardController` 作成(同パターン)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/pattern-checkerboard` Inertiaページ作成(背景色・パターン色・マス目サイズのスライダー、プレビューと生成CSSコードのコピー機能)
+- [x] バックエンドFeatureテスト
+
+### 11.5 ジグザグ(`/pattern-chevron`)
+
+- [x] `PatternChevronController` 作成(同パターン)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/pattern-chevron` Inertiaページ作成(背景色・パターン色・幅・高さのスライダー、プレビューと生成CSSコードのコピー機能)
+- [x] バックエンドFeatureテスト
+
+### 11.6 波模様(`/pattern-wave`)
+
+- [x] `PatternWaveController` 作成(同パターン)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/pattern-wave` Inertiaページ作成(背景色・パターン色・波の高さ・波長のスライダー、インラインSVGによるプレビューと生成CSSコードのコピー機能)
+- [x] バックエンドFeatureテスト
+
+### 11.7 動作確認
+
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を26→32に更新(Task 2〜7で1ツールずつ段階的に反映済み)
+- [x] `composer ci:check`(lint:check/format:check/types:check/npm test/composer test)がグリーン
+- [x] `npm run build` がビルドエラーなしで成功
+- [x] Playwrightで6ツールすべての実ブラウザ動作確認(ドット・グリッド・ストライプ・チェッカーボード・ジグザグは色・サイズ調整で生成CSSコードが連動して変化すること、波模様は波の高さ・波長調整でSVGプレビューと生成CSSコードが連動して変化し、`background-image: url("data:image/svg+xml,...")` 形式であることを確認)
+
 ## 今後の実装順序
 
-Patternカテゴリ・UI Patternカテゴリ・Generatorカテゴリへのツール追加、画像の切り抜き(SPEC.md §15参照)。
+UI Patternカテゴリ・Generatorカテゴリへのツール追加、画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 

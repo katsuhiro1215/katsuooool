@@ -223,7 +223,7 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 - Premium機能・Stripe決済連携(方向性は§21.2参照、範囲は未確定)
 - User(一般利用者)向けログイン・マイページ
 - より詳細な分析基盤(時系列グラフ、ツール別ファイル形式内訳など)
-- §21に記載のPattern・UI Pattern・Generatorカテゴリへのツール追加(方向性のみ、詳細仕様は未着手)
+- §21に記載のUI Pattern・Generatorカテゴリへのツール追加(方向性のみ、詳細仕様は未着手)
 
 ## 21. 拡張ビジョン(参考・未確定)
 
@@ -234,12 +234,12 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 既存のImage/Colorに加えて、以下のカテゴリを将来追加する方向性:
 
 - **CSS**: Box Shadow・Border Radius・Glassmorphism・Flexbox・Grid ジェネレーター(Phase 10で実装済み、§24参照)
-- **Pattern**: Background・Dot・Grid・Wave など、背景パターン生成(HTML/CSSをコピペで使える形で提供)
+- **Pattern**: Background・Dot・Grid・Wave など、背景パターン生成(HTML/CSSをコピペで使える形で提供)(Phase 11で実装済み、§25参照)
 - **UI Pattern**: Button・Card・Form・Header・Footer・Pagination・Modal・Toast・Loading・Skeleton など、UIコンポーネントのコードスニペット集
 - **Generator**: OGP画像・favicon(実装済み)・ダミーデータ生成
 - **Developer**: JSON Formatter・URL Encoder・HTML Formatter・Base64(Phase 8相当、実装済み)
 
-カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`generator`/`developer`/`seo` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。上記案のうちPattern・UI Patternの追加は未着手のまま残っている。
+カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`pattern`/`generator`/`developer`/`seo` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。上記案のうちUI Patternの追加は未着手のまま残っている。
 
 ### 21.2 Premium/Stripe(方向性のみ・未確定)
 
@@ -349,3 +349,31 @@ CSSカテゴリ5ツール(Box Shadow・Border Radius・Glassmorphism・Flexbox�
 ### 24.5 Grid(`/css-grid`)
 
 - 操作: 列数(1〜6)・行数(1〜6)・`gap`(0〜50px)を調整すると、画面下のプレイグラウンド領域(列数×行数分のダミーboxを表示)に反映され、CSS Grid(`grid-template-columns`/`grid-template-rows`/`gap`)のコードが生成される。
+
+## 25. Patternカテゴリツール仕様(Phase 11)
+
+Patternカテゴリ6ツール(ドット・グリッド・ストライプ・チェッカーボード・ジグザグ・波模様)。CSSカテゴリ(Phase 10)と同じ「ブラウザ内完結型」パターンで、ファイルアップロードを伴わず、共通の軽量Controller(`Concerns/TrackedToolController`)を継承してページ表示とイベントログ記録のみを行う。CSSコード生成ロジックは `resources/js/lib/patternGenerators.ts` に切り出し、6ツールで共用する。
+
+### 25.1 ドット(`/pattern-dot`)
+
+- 操作: 背景色・パターン色・ドットサイズ(半径1〜20px)・間隔(10〜100px)を調整すると、`radial-gradient` による水玉模様の背景CSSコードがリアルタイムに生成される。
+
+### 25.2 グリッド(`/pattern-grid`)
+
+- 操作: 背景色・線の色・線の太さ(1〜5px)・マス目サイズ(10〜100px)を調整すると、縦横2方向の `linear-gradient` を重ねた格子柄の背景CSSコードが生成される。
+
+### 25.3 ストライプ(`/pattern-stripe`)
+
+- 操作: 背景色・パターン色・ストライプ幅(2〜50px)・角度(0〜180度)を調整すると、`repeating-linear-gradient` による斜線模様の背景CSSコードが生成される。
+
+### 25.4 チェッカーボード(`/pattern-checkerboard`)
+
+- 操作: 背景色・パターン色・マス目サイズ(10〜100px)を調整すると、`linear-gradient` を2枚重ねてずらした市松模様の背景CSSコードが生成される。
+
+### 25.5 ジグザグ(`/pattern-chevron`)
+
+- 操作: 背景色・パターン色・幅(10〜100px)・高さ(5〜50px)を調整すると、4方向の `linear-gradient` を組み合わせたシェブロン(山形)柄の背景CSSコードが生成される。
+
+### 25.6 波模様(`/pattern-wave`)
+
+- 操作: 背景色・パターン色・波の高さ(5〜30px)・波長(20〜200px)を調整すると、波形を描くインラインSVGを `data:image/svg+xml,...` としてURLエンコードした `background-image` のCSSコードが生成される。他5ツールとは異なりグラデーションではなくSVG画像を用いる点が特徴。
