@@ -7,6 +7,7 @@ use App\Http\Controllers\Tools\ColorConvertController;
 use App\Http\Controllers\Tools\ColorGradientController;
 use App\Http\Controllers\Tools\ColorPaletteController;
 use App\Http\Controllers\Tools\ColorSchemeController;
+use App\Http\Controllers\Tools\CssBoxShadowController;
 use App\Http\Controllers\Tools\FaviconGenerateController;
 use App\Http\Controllers\Tools\HtmlFormatController;
 use App\Http\Controllers\Tools\ImageColorExtractController;
@@ -122,6 +123,11 @@ Route::get('/url-encode', [UrlEncodeController::class, 'show'])->name('url-encod
 Route::post('/url-encode/track', [UrlEncodeController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('url-encode.track');
+
+Route::get('/css-box-shadow', [CssBoxShadowController::class, 'show'])->name('css-box-shadow.show');
+Route::post('/css-box-shadow/track', [CssBoxShadowController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('css-box-shadow.track');
 
 Route::get('/base64-encode', [Base64EncodeController::class, 'show'])->name('base64-encode.show');
 Route::post('/base64-encode/track', [Base64EncodeController::class, 'track'])

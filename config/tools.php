@@ -72,6 +72,13 @@ return [
         'href' => '/color-scheme',
     ],
     [
+        'slug' => 'css-box-shadow',
+        'name' => 'Box Shadow ジェネレーター',
+        'category' => 'css',
+        'description' => 'オフセット・ぼかし・色を調整してbox-shadowのCSSコードを生成します。',
+        'href' => '/css-box-shadow',
+    ],
+    [
         'slug' => 'ogp-image',
         'name' => 'OGP画像サイズ作成',
         'category' => 'generator',
