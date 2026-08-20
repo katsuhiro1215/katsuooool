@@ -197,4 +197,11 @@ return [
         'description' => '背景色・線の色・線の太さ・マス目サイズを調整して格子柄のCSSコードを生成します。',
         'href' => '/pattern-grid',
     ],
+    [
+        'slug' => 'pattern-stripe',
+        'name' => 'ストライプパターン',
+        'category' => 'pattern',
+        'description' => '背景色・パターン色・幅・角度を調整してストライプ柄のCSSコードを生成します。',
+        'href' => '/pattern-stripe',
+    ],
 ];

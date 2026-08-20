@@ -24,6 +24,7 @@ use App\Http\Controllers\Tools\OgpCheckController;
 use App\Http\Controllers\Tools\OgpImageController;
 use App\Http\Controllers\Tools\PatternDotController;
 use App\Http\Controllers\Tools\PatternGridController;
+use App\Http\Controllers\Tools\PatternStripeController;
 use App\Http\Controllers\Tools\SeoDescriptionCheckController;
 use App\Http\Controllers\Tools\SeoTitleCheckController;
 use App\Http\Controllers\Tools\StructuredDataCheckController;
@@ -189,6 +190,11 @@ Route::get('/pattern-grid', [PatternGridController::class, 'show'])->name('patte
 Route::post('/pattern-grid/track', [PatternGridController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('pattern-grid.track');
+
+Route::get('/pattern-stripe', [PatternStripeController::class, 'show'])->name('pattern-stripe.show');
+Route::post('/pattern-stripe/track', [PatternStripeController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('pattern-stripe.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
