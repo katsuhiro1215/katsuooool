@@ -38,6 +38,7 @@ use App\Http\Controllers\Tools\UiPatternButtonController;
 use App\Http\Controllers\Tools\UiPatternCardController;
 use App\Http\Controllers\Tools\UiPatternModalController;
 use App\Http\Controllers\Tools\UiPatternPaginationController;
+use App\Http\Controllers\Tools\UiPatternToastController;
 use App\Http\Controllers\Tools\UrlEncodeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -243,6 +244,11 @@ Route::get('/ui-pattern-modal', [UiPatternModalController::class, 'show'])->name
 Route::post('/ui-pattern-modal/track', [UiPatternModalController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('ui-pattern-modal.track');
+
+Route::get('/ui-pattern-toast', [UiPatternToastController::class, 'show'])->name('ui-pattern-toast.show');
+Route::post('/ui-pattern-toast/track', [UiPatternToastController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-toast.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

@@ -5,6 +5,7 @@ import {
     buildCard,
     buildModal,
     buildPagination,
+    buildToast,
     computePaginationPages,
 } from './uiPatternGenerators';
 
@@ -299,6 +300,72 @@ describe('buildModal', () => {
         expect(result.js).toContain("getElementById('modal-trigger')");
         expect(result.js).toContain("getElementById('modal-overlay')");
         expect(result.js).toContain("getElementById('modal-close')");
+        expect(result.js).toContain("classList.add('is-open')");
+        expect(result.js).toContain("classList.remove('is-open')");
+    });
+});
+
+describe('buildToast', () => {
+    test('builds HTML with a trigger, the message, a close button, and the variant class', () => {
+        const result = buildToast({
+            variant: 'success',
+            message: '保存しました。',
+            duration: 3,
+        });
+
+        expect(result.html).toContain(
+            '<button type="button" id="toast-trigger" class="toast-trigger">表示する</button>',
+        );
+        expect(result.html).toContain(
+            '<div id="toast" class="toast toast-success">',
+        );
+        expect(result.html).toContain(
+            '<span class="toast-message">保存しました。</span>',
+        );
+        expect(result.html).toContain(
+            '<button type="button" id="toast-close" class="toast-close">×</button>',
+        );
+    });
+
+    test.each([
+        ['success', '#16a34a'],
+        ['error', '#dc2626'],
+        ['info', '#2563eb'],
+        ['warning', '#d97706'],
+    ] as const)(
+        'includes a .toast-%s rule with background-color %s in the CSS',
+        (variant, color) => {
+            const result = buildToast({
+                variant,
+                message: 'テスト',
+                duration: 3,
+            });
+
+            expect(result.css).toContain(`.toast-${variant} {`);
+            expect(result.css).toContain(`background-color: ${color};`);
+        },
+    );
+
+    test('reflects the duration (in ms) in the auto-dismiss setTimeout', () => {
+        const result = buildToast({
+            variant: 'info',
+            message: 'テスト',
+            duration: 5,
+        });
+
+        expect(result.js).toContain('}, 5000);');
+    });
+
+    test('builds JS that shows on trigger click and dismisses on close click', () => {
+        const result = buildToast({
+            variant: 'info',
+            message: 'テスト',
+            duration: 3,
+        });
+
+        expect(result.js).toContain("getElementById('toast-trigger')");
+        expect(result.js).toContain("getElementById('toast')");
+        expect(result.js).toContain("getElementById('toast-close')");
         expect(result.js).toContain("classList.add('is-open')");
         expect(result.js).toContain("classList.remove('is-open')");
     });

@@ -260,4 +260,11 @@ return [
         'description' => 'タイトル・本文・色・角丸を調整してモーダルのHTML/CSS/JSコードを生成します。',
         'href' => '/ui-pattern-modal',
     ],
+    [
+        'slug' => 'ui-pattern-toast',
+        'name' => 'トースト通知',
+        'category' => 'ui-pattern',
+        'description' => 'success/error/info/warningのバリエーション・メッセージ・表示時間を指定してトースト通知のHTML/CSS/JSコードを生成します。',
+        'href' => '/ui-pattern-toast',
+    ],
 ];

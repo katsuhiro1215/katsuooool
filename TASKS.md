@@ -459,9 +459,20 @@
 - [x] `composer ci:check` がグリーン
 - [x] Playwrightで実ブラウザ動作確認(「開く」→モーダル表示→「閉じる」→非表示の一連の開閉動作を確認)
 
+### 13.5 トースト通知(`/ui-pattern-toast`)
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` に `buildToast()` 追加(success/error/info/warningの4色プリセット、CSSは常に4色分のクラスを出力しコンポーネントライブラリとして再利用可能にする。単体テスト7件)
+- [x] `UiPatternToastController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ui-pattern-toast` Inertiaページ作成(バリエーション・メッセージ・表示時間の調整UI、「表示する」ボタンで実際に表示→指定時間後に自動消滅するプレビュー、HTML/CSS/JSそれぞれ独立したコピー機能)
+- [x] バックエンドFeatureテスト
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を37→38に更新
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(表示・手動クローズ・指定時間経過後の自動消滅をすべて確認。動作確認中、ツール呼び出し間の往復遅延がToastの表示時間(3秒)を超えることがあり、別々の呼び出しで見た目上「表示されない」ように見えるテスト起因の誤検知が発生した — 単一の評価呼び出し内でクリック・待機・確認を完結させることで実装が正しく動作していることを確認した)
+
 ## 今後の実装順序
 
-UI Patternカテゴリの残り6コンポーネント(Toast・Loading・Skeleton・Form・Header・Footer)、画像の切り抜き(SPEC.md §15参照)。
+UI Patternカテゴリの残り5コンポーネント(Loading・Skeleton・Form・Header・Footer)、画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 

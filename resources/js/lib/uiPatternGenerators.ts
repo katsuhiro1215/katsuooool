@@ -349,3 +349,97 @@ export function buildModal(input: ModalInput): ModalOutput {
 
     return { html, css, js };
 }
+
+export type ToastVariant = 'success' | 'error' | 'info' | 'warning';
+
+export interface ToastInput {
+    variant: ToastVariant;
+    message: string;
+    duration: number;
+}
+
+export interface ToastOutput {
+    html: string;
+    css: string;
+    js: string;
+}
+
+const TOAST_COLORS: Record<ToastVariant, string> = {
+    success: '#16a34a',
+    error: '#dc2626',
+    info: '#2563eb',
+    warning: '#d97706',
+};
+
+export function buildToast(input: ToastInput): ToastOutput {
+    const html = [
+        '<button type="button" id="toast-trigger" class="toast-trigger">表示する</button>',
+        '',
+        `<div id="toast" class="toast toast-${input.variant}">`,
+        `    <span class="toast-message">${input.message}</span>`,
+        '    <button type="button" id="toast-close" class="toast-close">×</button>',
+        '</div>',
+    ].join('\n');
+
+    const css = [
+        '.toast {',
+        '    display: none;',
+        '    position: fixed;',
+        '    right: 16px;',
+        '    bottom: 16px;',
+        '    align-items: center;',
+        '    gap: 12px;',
+        '    padding: 12px 16px;',
+        '    border-radius: 6px;',
+        '    color: #ffffff;',
+        '    font-size: 14px;',
+        '}',
+        '',
+        '.toast.is-open {',
+        '    display: flex;',
+        '}',
+        '',
+        '.toast-success {',
+        `    background-color: ${TOAST_COLORS.success};`,
+        '}',
+        '',
+        '.toast-error {',
+        `    background-color: ${TOAST_COLORS.error};`,
+        '}',
+        '',
+        '.toast-info {',
+        `    background-color: ${TOAST_COLORS.info};`,
+        '}',
+        '',
+        '.toast-warning {',
+        `    background-color: ${TOAST_COLORS.warning};`,
+        '}',
+        '',
+        '.toast-close {',
+        '    background: none;',
+        '    border: none;',
+        '    color: inherit;',
+        '    font-size: 16px;',
+        '    cursor: pointer;',
+        '}',
+    ].join('\n');
+
+    const js = [
+        "const toastTrigger = document.getElementById('toast-trigger');",
+        "const toast = document.getElementById('toast');",
+        "const toastClose = document.getElementById('toast-close');",
+        '',
+        "toastTrigger.addEventListener('click', () => {",
+        "    toast.classList.add('is-open');",
+        '    setTimeout(() => {',
+        "        toast.classList.remove('is-open');",
+        `    }, ${input.duration * 1000});`,
+        '});',
+        '',
+        "toastClose.addEventListener('click', () => {",
+        "    toast.classList.remove('is-open');",
+        '});',
+    ].join('\n');
+
+    return { html, css, js };
+}

@@ -235,11 +235,11 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 
 - **CSS**: Box Shadow・Border Radius・Glassmorphism・Flexbox・Grid ジェネレーター(Phase 10で実装済み、§24参照)
 - **Pattern**: ドット・グリッド・ストライプ・チェッカーボード・ジグザグ・波模様など、背景パターン生成(HTML/CSSをコピペで使える形で提供)(Phase 11で実装済み、§25参照)
-- **UI Pattern**: Button・Card・Pagination・Modal(Phase 13で実装済み、§27参照)・Toast・Loading・Skeleton・Form・Header・Footer など、UIコンポーネントのコードスニペット集
+- **UI Pattern**: Button・Card・Pagination・Modal・Toast(Phase 13で実装済み、§27参照)・Loading・Skeleton・Form・Header・Footer など、UIコンポーネントのコードスニペット集
 - **Generator**: OGP画像・favicon・ダミーデータ生成(すべて実装済み、ダミーデータ生成はPhase 12・§26参照)
 - **Developer**: JSON Formatter・URL Encoder・HTML Formatter・Base64(Phase 8相当、実装済み)
 
-カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`pattern`/`generator`/`developer`/`seo`/`ui-pattern` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。UI Patternカテゴリは Phase 13 でButton・Card・Pagination・Modalに着手し、残り6コンポーネント(Toast・Loading・Skeleton・Form・Header・Footer)は未着手のまま残っている。
+カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`pattern`/`generator`/`developer`/`seo`/`ui-pattern` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。UI Patternカテゴリは Phase 13 でButton・Card・Pagination・Modal・Toastに着手し、残り5コンポーネント(Loading・Skeleton・Form・Header・Footer)は未着手のまま残っている。
 
 ### 21.2 Premium/Stripe(方向性のみ・未確定)
 
@@ -388,7 +388,7 @@ Patternカテゴリ6ツール(ドット・グリッド・ストライプ・チ�
 - データ内容: 氏名・住所・会社名は日本語のサンプルデータ(苗字・名前・都道府県・市区町村・企業名のプールからランダム抽出)で構成し、日本国内向けWeb制作でそのまま使える形にする。
 - 出力: 整形済みJSON(`JSON.stringify(..., null, 2)`)を表示し、コピーボタンでクリップボードにコピーできる(ファイルダウンロードは提供しない)。
 
-## 27. UI Patternカテゴリツール仕様(Phase 13 — ボタン・カード・ページネーション・モーダル)
+## 27. UI Patternカテゴリツール仕様(Phase 13 — ボタン・カード・ページネーション・モーダル・トースト通知)
 
 新カテゴリ「UI Pattern」を追加する。他のColor/CSS/Patternカテゴリと同じくブラウザ内完結型だが、生成物がCSS宣言のみではなくHTML+CSSの2ブロックになる点が異なる。フレームワーク非依存の素のHTML+CSSを出力し、Tailwind等特定のCSSフレームワークには依存しない。
 
@@ -416,3 +416,9 @@ Patternカテゴリ6ツール(ドット・グリッド・ストライプ・チ�
 - 操作: タイトル・本文テキスト・モーダル背景色・角丸(0〜24px)・オーバーレイの不透明度(0〜1)を調整する。UI Patternカテゴリで初めてHTML・CSSに加えJSも生成するツール(モーダルの開閉はCSSのみでは実現できないため)。
 - 出力: トリガーボタン・オーバーレイ・モーダル本体(タイトル・本文・閉じるボタン)のHTML、`.modal-overlay`の表示切り替え(`is-open`クラス)を含むCSS、トリガー/閉じるボタンのクリックで`is-open`クラスを追加・削除する最小限のJSの3ブロックを、それぞれ個別のコピーボタンで提供する。
 - プレビュー: ページ上の「開く」ボタンを押すと実際にモーダルが開閉する動作を確認できる。
+
+### 27.5 トースト通知(`/ui-pattern-toast`)
+
+- 操作: バリエーション(success/error/info/warningの4色プリセット)・メッセージテキスト・表示時間(1〜10秒)を調整する。
+- 出力: トリガーボタン+トースト本体(メッセージ・閉じるボタン)のHTML、画面右下固定表示+4色分の`.toast-{variant}`クラスをすべて含むCSS(コンポーネントライブラリとして他バリエーションもそのまま再利用できる)、トリガークリックで表示し指定秒数後に自動的に非表示にする(`setTimeout`)JSの3ブロックを、それぞれ個別のコピーボタンで提供する。
+- プレビュー: ページ上の「表示する」ボタンを押すと実際にトーストが表示され、指定時間後に自動的に消える動作(および閉じるボタンによる即時消去)を確認できる。
