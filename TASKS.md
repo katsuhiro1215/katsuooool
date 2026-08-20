@@ -413,9 +413,22 @@
 - [x] `composer ci:check` がグリーン
 - [x] Playwrightで実ブラウザ動作確認(フィールド選択・件数指定・生成ボタンでJSON配列が正しく生成されることを確認)
 
+## Phase 13 — UI Patternカテゴリ(ボタン)
+
+### 13.1 ボタン(`/ui-pattern-button`)
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` 作成(`buildButton()`。素のHTML+CSS(フレームワーク非依存)を生成。単体テスト7件)
+- [x] `UiPatternButtonController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加(新カテゴリ`category: 'ui-pattern'`)
+- [x] `/ui-pattern-button` Inertiaページ作成(背景色・文字色・サイズ・角丸・ボーダーの調整UI、プレビュー、HTML/CSSそれぞれ独立したコピー機能)
+- [x] バックエンドFeatureテスト
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を33→34に更新
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(サイズ・ボーダー変更でプレビューとCSS出力が連動することを確認)
+
 ## 今後の実装順序
 
-UI Patternカテゴリへのツール追加、画像の切り抜き(SPEC.md §15参照)。
+UI Patternカテゴリの残り9コンポーネント(Card・Form・Header・Footer・Pagination・Modal・Toast・Loading・Skeleton)、画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 

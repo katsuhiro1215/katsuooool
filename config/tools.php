@@ -232,4 +232,11 @@ return [
         'description' => '背景色・パターン色・波の高さ・波長を調整して波模様のCSSコードを生成します。',
         'href' => '/pattern-wave',
     ],
+    [
+        'slug' => 'ui-pattern-button',
+        'name' => 'ボタン',
+        'category' => 'ui-pattern',
+        'description' => '色・サイズ・角丸・ボーダーを調整してボタンのHTML/CSSコードを生成します。',
+        'href' => '/ui-pattern-button',
+    ],
 ];

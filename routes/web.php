@@ -34,6 +34,7 @@ use App\Http\Controllers\Tools\SeoTitleCheckController;
 use App\Http\Controllers\Tools\StructuredDataCheckController;
 use App\Http\Controllers\Tools\SvgOptimizeController;
 use App\Http\Controllers\Tools\ToolDownloadController;
+use App\Http\Controllers\Tools\UiPatternButtonController;
 use App\Http\Controllers\Tools\UrlEncodeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -219,6 +220,11 @@ Route::get('/generator-dummy-data', [GeneratorDummyDataController::class, 'show'
 Route::post('/generator-dummy-data/track', [GeneratorDummyDataController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('generator-dummy-data.track');
+
+Route::get('/ui-pattern-button', [UiPatternButtonController::class, 'show'])->name('ui-pattern-button.show');
+Route::post('/ui-pattern-button/track', [UiPatternButtonController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-button.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
