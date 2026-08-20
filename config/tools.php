@@ -239,4 +239,11 @@ return [
         'description' => '色・サイズ・角丸・ボーダーを調整してボタンのHTML/CSSコードを生成します。',
         'href' => '/ui-pattern-button',
     ],
+    [
+        'slug' => 'ui-pattern-card',
+        'name' => 'カード',
+        'category' => 'ui-pattern',
+        'description' => '通常/画像付きの2種類から選び、色・角丸・影を調整してカードのHTML/CSSコードを生成します。',
+        'href' => '/ui-pattern-card',
+    ],
 ];

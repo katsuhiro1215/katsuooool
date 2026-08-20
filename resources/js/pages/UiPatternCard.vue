@@ -1,0 +1,233 @@
+<script setup lang="ts">
+import { Head } from '@inertiajs/vue3';
+import axios from 'axios';
+import { computed, ref, watch } from 'vue';
+
+import { buildCard } from '@/lib/uiPatternGenerators';
+import type { CardVariant } from '@/lib/uiPatternGenerators';
+
+const variant = ref<CardVariant>('plain');
+const backgroundColor = ref('#ffffff');
+const borderRadius = ref(8);
+const shadowEnabled = ref(true);
+const padding = ref(16);
+const title = ref('タイトル');
+const text = ref('本文テキストがここに入ります。');
+
+const output = computed(() =>
+    buildCard({
+        variant: variant.value,
+        backgroundColor: backgroundColor.value,
+        borderRadius: borderRadius.value,
+        shadowEnabled: shadowEnabled.value,
+        padding: padding.value,
+        title: title.value,
+        text: text.value,
+    }),
+);
+
+const cardStyle = computed(() => ({
+    backgroundColor: backgroundColor.value,
+    borderRadius: `${borderRadius.value}px`,
+    boxShadow: shadowEnabled.value ? '0 1px 3px rgba(0, 0, 0, 0.1)' : 'none',
+    overflow: variant.value === 'image' ? ('hidden' as const) : undefined,
+    padding: variant.value === 'plain' ? `${padding.value}px` : undefined,
+}));
+
+const bodyStyle = computed(() => ({
+    padding: `${padding.value}px`,
+}));
+
+const copiedHtml = ref(false);
+const copiedCss = ref(false);
+
+async function copyHtml() {
+    try {
+        await navigator.clipboard.writeText(output.value.html);
+        copiedHtml.value = true;
+        setTimeout(() => {
+            copiedHtml.value = false;
+        }, 1500);
+    } catch {
+        // Clipboard unavailable; the value is still visible as text.
+    }
+}
+
+async function copyCss() {
+    try {
+        await navigator.clipboard.writeText(output.value.css);
+        copiedCss.value = true;
+        setTimeout(() => {
+            copiedCss.value = false;
+        }, 1500);
+    } catch {
+        // Clipboard unavailable; the value is still visible as text.
+    }
+}
+
+let trackTimeout: ReturnType<typeof setTimeout> | null = null;
+
+watch(
+    [
+        variant,
+        backgroundColor,
+        borderRadius,
+        shadowEnabled,
+        padding,
+        title,
+        text,
+    ],
+    () => {
+        if (trackTimeout) {
+            clearTimeout(trackTimeout);
+        }
+
+        trackTimeout = setTimeout(() => {
+            axios.post('/ui-pattern-card/track').catch(() => {
+                // Analytics-only endpoint; ignore failures.
+            });
+        }, 500);
+    },
+);
+</script>
+
+<template>
+    <Head title="カード - katsuooool" />
+
+    <div class="min-h-screen bg-gray-50">
+        <header class="border-b border-gray-200 bg-white">
+            <div class="mx-auto max-w-3xl px-6 py-10">
+                <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
+                    >← トップに戻る</a
+                >
+                <h1 class="mt-2 text-2xl font-bold text-gray-900">カード</h1>
+                <p class="mt-2 text-sm text-gray-600">
+                    値を調整すると、カードのHTML/CSSコードがリアルタイムで生成されます。
+                </p>
+            </div>
+        </header>
+
+        <main class="mx-auto max-w-3xl px-6 py-10">
+            <div
+                class="mb-8 flex items-center justify-center rounded-md border border-gray-200 bg-white p-8"
+            >
+                <div class="w-64" :style="cardStyle">
+                    <img
+                        v-if="variant === 'image'"
+                        src="https://placehold.co/400x200"
+                        alt=""
+                        class="block h-40 w-full object-cover"
+                    />
+                    <div :style="variant === 'image' ? bodyStyle : undefined">
+                        <h3 class="mb-2 text-lg font-bold">{{ title }}</h3>
+                        <p class="text-sm text-gray-600">{{ text }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <label class="text-sm text-gray-700 sm:col-span-2">
+                    バリエーション
+                    <div class="mt-1 flex gap-4">
+                        <label class="flex items-center gap-1 text-sm">
+                            <input
+                                v-model="variant"
+                                type="radio"
+                                value="plain"
+                            />
+                            通常
+                        </label>
+                        <label class="flex items-center gap-1 text-sm">
+                            <input
+                                v-model="variant"
+                                type="radio"
+                                value="image"
+                            />
+                            画像付き
+                        </label>
+                    </div>
+                </label>
+                <label class="text-sm text-gray-700">
+                    タイトル
+                    <input
+                        v-model="title"
+                        type="text"
+                        class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                    />
+                </label>
+                <label class="text-sm text-gray-700">
+                    本文
+                    <input
+                        v-model="text"
+                        type="text"
+                        class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                    />
+                </label>
+                <label class="text-sm text-gray-700">
+                    背景色
+                    <input
+                        v-model="backgroundColor"
+                        type="color"
+                        class="mt-1 h-9 w-full"
+                    />
+                </label>
+                <label class="text-sm text-gray-700">
+                    角丸: {{ borderRadius }}px
+                    <input
+                        v-model.number="borderRadius"
+                        type="range"
+                        min="0"
+                        max="24"
+                        class="mt-1 w-full"
+                    />
+                </label>
+                <label class="text-sm text-gray-700">
+                    パディング: {{ padding }}px
+                    <input
+                        v-model.number="padding"
+                        type="range"
+                        min="8"
+                        max="32"
+                        class="mt-1 w-full"
+                    />
+                </label>
+                <label class="flex items-center gap-2 text-sm text-gray-700">
+                    <input v-model="shadowEnabled" type="checkbox" />
+                    影を表示する
+                </label>
+            </div>
+
+            <div class="mt-6">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-gray-700">HTML</span>
+                    <button
+                        type="button"
+                        class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                        @click="copyHtml"
+                    >
+                        {{ copiedHtml ? 'コピーしました' : 'コピー' }}
+                    </button>
+                </div>
+                <pre
+                    class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                    >{{ output.html }}</pre>
+            </div>
+
+            <div class="mt-6">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-gray-700">CSS</span>
+                    <button
+                        type="button"
+                        class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                        @click="copyCss"
+                    >
+                        {{ copiedCss ? 'コピーしました' : 'コピー' }}
+                    </button>
+                </div>
+                <pre
+                    class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                    >{{ output.css }}</pre>
+            </div>
+        </main>
+    </div>
+</template>

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { buildButton } from './uiPatternGenerators';
+import { buildButton, buildCard } from './uiPatternGenerators';
 
 describe('buildButton', () => {
     test('builds the HTML snippet with a fixed class name', () => {
@@ -84,5 +84,79 @@ describe('buildButton', () => {
         });
 
         expect(result.css).toContain('border-radius: 24px;');
+    });
+});
+
+describe('buildCard', () => {
+    test('builds a plain card with title, text, and no image markup', () => {
+        const result = buildCard({
+            variant: 'plain',
+            backgroundColor: '#ffffff',
+            borderRadius: 8,
+            shadowEnabled: true,
+            padding: 16,
+            title: 'タイトル',
+            text: '本文テキストがここに入ります。',
+        });
+
+        expect(result.html).toBe(
+            '<div class="card">\n' +
+                '    <h3 class="card-title">タイトル</h3>\n' +
+                '    <p class="card-text">本文テキストがここに入ります。</p>\n' +
+                '</div>',
+        );
+        expect(result.html).not.toContain('<img');
+        expect(result.css).toContain('padding: 16px;');
+    });
+
+    test('builds a plain card with box-shadow: none when shadowEnabled is false', () => {
+        const result = buildCard({
+            variant: 'plain',
+            backgroundColor: '#ffffff',
+            borderRadius: 8,
+            shadowEnabled: false,
+            padding: 16,
+            title: 'タイトル',
+            text: '本文',
+        });
+
+        expect(result.css).toContain('box-shadow: none;');
+    });
+
+    test('builds an image card with a placeholder <img> and a .card-body wrapper', () => {
+        const result = buildCard({
+            variant: 'image',
+            backgroundColor: '#ffffff',
+            borderRadius: 8,
+            shadowEnabled: true,
+            padding: 16,
+            title: 'タイトル',
+            text: '本文',
+        });
+
+        expect(result.html).toContain(
+            '<img class="card-image" src="https://placehold.co/400x200" alt="">',
+        );
+        expect(result.html).toContain('<div class="card-body">');
+        expect(result.css).toContain('.card-image {');
+        expect(result.css).toContain('.card-body {');
+    });
+
+    test('reflects the border-radius and shadow value for the image variant', () => {
+        const result = buildCard({
+            variant: 'image',
+            backgroundColor: '#f5f5f5',
+            borderRadius: 12,
+            shadowEnabled: true,
+            padding: 20,
+            title: 'タイトル',
+            text: '本文',
+        });
+
+        expect(result.css).toContain('border-radius: 12px;');
+        expect(result.css).toContain(
+            'box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);',
+        );
+        expect(result.css).toContain('padding: 20px;');
     });
 });

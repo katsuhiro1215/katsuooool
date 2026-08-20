@@ -46,3 +46,102 @@ export function buildButton(input: ButtonInput): ButtonOutput {
         css,
     };
 }
+
+export type CardVariant = 'plain' | 'image';
+
+export interface CardInput {
+    variant: CardVariant;
+    backgroundColor: string;
+    borderRadius: number;
+    shadowEnabled: boolean;
+    padding: number;
+    title: string;
+    text: string;
+}
+
+export interface CardOutput {
+    html: string;
+    css: string;
+}
+
+const CARD_SHADOW = '0 1px 3px rgba(0, 0, 0, 0.1)';
+
+export function buildCard(input: CardInput): CardOutput {
+    const boxShadow = input.shadowEnabled ? CARD_SHADOW : 'none';
+
+    if (input.variant === 'image') {
+        const html = [
+            '<div class="card">',
+            '    <img class="card-image" src="https://placehold.co/400x200" alt="">',
+            '    <div class="card-body">',
+            `        <h3 class="card-title">${input.title}</h3>`,
+            `        <p class="card-text">${input.text}</p>`,
+            '    </div>',
+            '</div>',
+        ].join('\n');
+
+        const css = [
+            '.card {',
+            `    background-color: ${input.backgroundColor};`,
+            `    border-radius: ${input.borderRadius}px;`,
+            `    box-shadow: ${boxShadow};`,
+            '    overflow: hidden;',
+            '}',
+            '',
+            '.card-image {',
+            '    display: block;',
+            '    width: 100%;',
+            '    height: 160px;',
+            '    object-fit: cover;',
+            '}',
+            '',
+            '.card-body {',
+            `    padding: ${input.padding}px;`,
+            '}',
+            '',
+            '.card-title {',
+            '    margin: 0 0 8px;',
+            '    font-size: 18px;',
+            '    font-weight: bold;',
+            '}',
+            '',
+            '.card-text {',
+            '    margin: 0;',
+            '    font-size: 14px;',
+            '    color: #666;',
+            '}',
+        ].join('\n');
+
+        return { html, css };
+    }
+
+    const html = [
+        '<div class="card">',
+        `    <h3 class="card-title">${input.title}</h3>`,
+        `    <p class="card-text">${input.text}</p>`,
+        '</div>',
+    ].join('\n');
+
+    const css = [
+        '.card {',
+        `    background-color: ${input.backgroundColor};`,
+        `    border-radius: ${input.borderRadius}px;`,
+        `    box-shadow: ${boxShadow};`,
+        `    padding: ${input.padding}px;`,
+        '}',
+        '',
+        '.card-title {',
+        '    margin: 0 0 8px;',
+        '    font-size: 18px;',
+        '    font-weight: bold;',
+        '}',
+        '',
+        '.card-text {',
+        '    margin: 0;',
+        '    font-size: 14px;',
+        '    color: #666;',
+        '}',
+    ].join('\n');
+
+    return { html, css };
+}

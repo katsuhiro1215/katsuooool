@@ -426,9 +426,20 @@
 - [x] `composer ci:check` がグリーン
 - [x] Playwrightで実ブラウザ動作確認(サイズ・ボーダー変更でプレビューとCSS出力が連動することを確認)
 
+### 13.2 カード(`/ui-pattern-card`)
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` に `buildCard()` 追加(通常/画像付きの2バリエーション。単体テスト4件)
+- [x] `UiPatternCardController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ui-pattern-card` Inertiaページ作成(バリエーション切替ラジオボタン・背景色・角丸・パディング・影の調整UI、プレビュー、HTML/CSSそれぞれ独立したコピー機能。画像付きは`https://placehold.co/`のプレースホルダーURLを使用)
+- [x] バックエンドFeatureテスト
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を34→35に更新
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(通常/画像付きの両バリエーションでHTML/CSS出力が正しく切り替わることを確認)
+
 ## 今後の実装順序
 
-UI Patternカテゴリの残り9コンポーネント(Card・Form・Header・Footer・Pagination・Modal・Toast・Loading・Skeleton)、画像の切り抜き(SPEC.md §15参照)。
+UI Patternカテゴリの残り8コンポーネント(Form・Header・Footer・Pagination・Modal・Toast・Loading・Skeleton)、画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 

@@ -35,6 +35,7 @@ use App\Http\Controllers\Tools\StructuredDataCheckController;
 use App\Http\Controllers\Tools\SvgOptimizeController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use App\Http\Controllers\Tools\UiPatternButtonController;
+use App\Http\Controllers\Tools\UiPatternCardController;
 use App\Http\Controllers\Tools\UrlEncodeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -225,6 +226,11 @@ Route::get('/ui-pattern-button', [UiPatternButtonController::class, 'show'])->na
 Route::post('/ui-pattern-button/track', [UiPatternButtonController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('ui-pattern-button.track');
+
+Route::get('/ui-pattern-card', [UiPatternCardController::class, 'show'])->name('ui-pattern-card.show');
+Route::post('/ui-pattern-card/track', [UiPatternCardController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-card.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
