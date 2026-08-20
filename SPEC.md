@@ -223,7 +223,7 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 - Premium機能・Stripe決済連携(方向性は§21.2参照、範囲は未確定)
 - User(一般利用者)向けログイン・マイページ
 - より詳細な分析基盤(時系列グラフ、ツール別ファイル形式内訳など)
-- §21に記載のCSS/Pattern/UI Pattern/Generator/Developerカテゴリ拡張(方向性のみ、詳細仕様は未着手)
+- §21に記載のPattern・UI Pattern・Generatorカテゴリへのツール追加(方向性のみ、詳細仕様は未着手)
 
 ## 21. 拡張ビジョン(参考・未確定)
 
@@ -233,13 +233,13 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 
 既存のImage/Colorに加えて、以下のカテゴリを将来追加する方向性:
 
-- **CSS**: Box Shadow・Border Radius・Glassmorphism・Flexbox・Grid ジェネレーター
+- **CSS**: Box Shadow・Border Radius・Glassmorphism・Flexbox・Grid ジェネレーター(Phase 10で実装済み、§24参照)
 - **Pattern**: Background・Dot・Grid・Wave など、背景パターン生成(HTML/CSSをコピペで使える形で提供)
 - **UI Pattern**: Button・Card・Form・Header・Footer・Pagination・Modal・Toast・Loading・Skeleton など、UIコンポーネントのコードスニペット集
 - **Generator**: OGP画像・favicon(実装済み)・ダミーデータ生成
-- **Developer**: JSON Formatter・URL Encoder・HTML Formatter・Base64(Phase 8相当)
+- **Developer**: JSON Formatter・URL Encoder・HTML Formatter・Base64(Phase 8相当、実装済み)
 
-WebカテゴリのPhase 8(SVG最適化・HTML/JSONフォーマッタ・URL Encode/Decode・Base64 Encode/Decode)は、上記案の「Developer」カテゴリにおおむね相当する。カテゴリ体系の正式な再編は、Phase 8完了後にあらためて検討する。
+カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`generator`/`developer`/`seo` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。上記案のうちPattern・UI Patternの追加は未着手のまま残っている。
 
 ### 21.2 Premium/Stripe(方向性のみ・未確定)
 
@@ -325,3 +325,27 @@ SEOカテゴリ4ツール。「クライアント完結型」の文字数チェ�
 - 操作: URL入力欄にチェック対象のページURLを入力し「チェックする」ボタンを押すと、`UrlFetchService` でHTMLを取得し `<script type="application/ld+json">` を全て抽出してJSONパースする。
 - 出力: 各スクリプトブロックのパース結果をツリー表示する。JSON構文エラーの場合はその旨を、`@context`・`@type` が欠落している場合は警告を表示する。
 - スコープ: v1はJSON-LDのみを対象とし、Microdata・RDFaは対象外とする(将来検討)。
+
+## 24. CSSカテゴリツール仕様(Phase 10)
+
+CSSカテゴリ5ツール(Box Shadow・Border Radius・Glassmorphism・Flexbox・Grid)。いずれもColorカテゴリ・Webテキスト処理系ツールと同じ「ブラウザ内完結型」パターンで、ファイルアップロードを伴わず、共通の軽量Controller(`Concerns/TrackedToolController`)を継承してページ表示とイベントログ記録のみを行う。CSSコード生成ロジックは `resources/js/lib/cssGenerators.ts` に切り出し、5ツールで共用する。
+
+### 24.1 Box Shadow(`/css-box-shadow`)
+
+- 操作: X/Yオフセット(各-50〜50px)・ぼかし(0〜100px)・スプレッド(-50〜50px)・色・inset有無を調整すると、`box-shadow` のCSSコードがリアルタイムに生成される。単一シャドウのみ対応(複数シャドウの重ね合わせは非対応)。
+
+### 24.2 Border Radius(`/css-border-radius`)
+
+- 操作: 4隅(左上・右上・右下・左下、各0〜200px)を個別に調整すると、`border-radius` のCSSコードが生成される。4値がすべて同じ場合でも単一値には丸めず、常に4値並べて出力する。
+
+### 24.3 Glassmorphism(`/css-glassmorphism`)
+
+- 操作: 背景の透明度(0〜1)・ぼかし量(0〜40px)・境界線の透明度(0〜1)・影の強さ(0〜1)を調整すると、ガラス風カードのCSSコード(`background`・`backdrop-filter`・`border`・`box-shadow` の4行)が生成される。
+
+### 24.4 Flexbox(`/css-flexbox`)
+
+- 操作: `flex-direction`・`justify-content`・`align-items`・`flex-wrap` をドロップダウンで、`gap`(0〜50px)をスライダーで調整すると、画面下のプレイグラウンド領域(ダミーboxを表示)がリアルタイムに並び替わり、対応するCSSコードが生成される。
+
+### 24.5 Grid(`/css-grid`)
+
+- 操作: 列数(1〜6)・行数(1〜6)・`gap`(0〜50px)を調整すると、画面下のプレイグラウンド領域(列数×行数分のダミーboxを表示)に反映され、CSS Grid(`grid-template-columns`/`grid-template-rows`/`gap`)のコードが生成される。
