@@ -13,6 +13,7 @@ use App\Http\Controllers\Tools\CssFlexboxController;
 use App\Http\Controllers\Tools\CssGlassmorphismController;
 use App\Http\Controllers\Tools\CssGridController;
 use App\Http\Controllers\Tools\FaviconGenerateController;
+use App\Http\Controllers\Tools\GeneratorDummyDataController;
 use App\Http\Controllers\Tools\HtmlFormatController;
 use App\Http\Controllers\Tools\ImageColorExtractController;
 use App\Http\Controllers\Tools\ImageCompressController;
@@ -213,6 +214,11 @@ Route::get('/pattern-wave', [PatternWaveController::class, 'show'])->name('patte
 Route::post('/pattern-wave/track', [PatternWaveController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('pattern-wave.track');
+
+Route::get('/generator-dummy-data', [GeneratorDummyDataController::class, 'show'])->name('generator-dummy-data.show');
+Route::post('/generator-dummy-data/track', [GeneratorDummyDataController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('generator-dummy-data.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

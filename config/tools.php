@@ -121,6 +121,13 @@ return [
         'href' => '/favicon-generate',
     ],
     [
+        'slug' => 'generator-dummy-data',
+        'name' => 'ダミーデータ生成',
+        'category' => 'generator',
+        'description' => '氏名・メールアドレス・住所などのフィールドを選んでJSON形式のダミーデータを生成します。',
+        'href' => '/generator-dummy-data',
+    ],
+    [
         'slug' => 'svg-optimize',
         'name' => 'SVG最適化',
         'category' => 'developer',

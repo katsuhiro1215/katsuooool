@@ -394,9 +394,28 @@
 - [x] `npm run build` がビルドエラーなしで成功
 - [x] Playwrightで6ツールすべての実ブラウザ動作確認(ドット・グリッド・ストライプ・チェッカーボード・ジグザグは色・サイズ調整で生成CSSコードが連動して変化すること、波模様は波の高さ・波長調整でSVGプレビューと生成CSSコードが連動して変化し、`background-image: url("data:image/svg+xml,...")` 形式であることを確認)
 
+## トップページのカテゴリタブ(SPEC.md §21.3)
+
+- [x] `resources/js/lib/toolFilter.ts` 作成(`filterTools()` でカテゴリ・キーワードのAND条件フィルタ、`CATEGORY_TABS` でタブ定義。単体テスト8件)
+- [x] `Home.vue` にタブUI追加(すべて/画像/色/CSS/Pattern/Generator/Developer/SEOの8タブ、検索ボックスと併用可能)
+- [x] Playwrightで実ブラウザ動作確認(タブ切り替え・検索との組み合わせフィルタが正しく動作することを確認)
+
+## Phase 12 — Generatorカテゴリ拡張(ダミーデータ生成)
+
+### 12.1 ダミーデータ生成(`/generator-dummy-data`)
+
+- [x] `resources/js/lib/dummyData.ts` 作成(10種類のフィールド生成関数+`generateDummyData()`。単体テスト13件)
+- [x] `GeneratorDummyDataController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加(`category: 'generator'`)
+- [x] `/generator-dummy-data` Inertiaページ作成(フィールド選択チェックボックス・件数入力・「生成する」ボタン・JSON表示とコピー機能)
+- [x] バックエンドFeatureテスト
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を32→33に更新
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(フィールド選択・件数指定・生成ボタンでJSON配列が正しく生成されることを確認)
+
 ## 今後の実装順序
 
-UI Patternカテゴリ・Generatorカテゴリへのツール追加、画像の切り抜き(SPEC.md §15参照)。
+UI Patternカテゴリへのツール追加、画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 
