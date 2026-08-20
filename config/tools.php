@@ -190,4 +190,11 @@ return [
         'description' => '背景色・パターン色・ドットサイズ・間隔を調整してドット柄のCSSコードを生成します。',
         'href' => '/pattern-dot',
     ],
+    [
+        'slug' => 'pattern-grid',
+        'name' => 'グリッドパターン',
+        'category' => 'pattern',
+        'description' => '背景色・線の色・線の太さ・マス目サイズを調整して格子柄のCSSコードを生成します。',
+        'href' => '/pattern-grid',
+    ],
 ];
