@@ -27,6 +27,7 @@ use App\Http\Controllers\Tools\PatternChevronController;
 use App\Http\Controllers\Tools\PatternDotController;
 use App\Http\Controllers\Tools\PatternGridController;
 use App\Http\Controllers\Tools\PatternStripeController;
+use App\Http\Controllers\Tools\PatternWaveController;
 use App\Http\Controllers\Tools\SeoDescriptionCheckController;
 use App\Http\Controllers\Tools\SeoTitleCheckController;
 use App\Http\Controllers\Tools\StructuredDataCheckController;
@@ -207,6 +208,11 @@ Route::get('/pattern-chevron', [PatternChevronController::class, 'show'])->name(
 Route::post('/pattern-chevron/track', [PatternChevronController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('pattern-chevron.track');
+
+Route::get('/pattern-wave', [PatternWaveController::class, 'show'])->name('pattern-wave.show');
+Route::post('/pattern-wave/track', [PatternWaveController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('pattern-wave.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

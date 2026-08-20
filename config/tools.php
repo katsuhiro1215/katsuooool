@@ -218,4 +218,11 @@ return [
         'description' => '背景色・パターン色・幅・高さを調整して山形(シェブロン)柄のCSSコードを生成します。',
         'href' => '/pattern-chevron',
     ],
+    [
+        'slug' => 'pattern-wave',
+        'name' => '波模様パターン',
+        'category' => 'pattern',
+        'description' => '背景色・パターン色・波の高さ・波長を調整して波模様のCSSコードを生成します。',
+        'href' => '/pattern-wave',
+    ],
 ];
