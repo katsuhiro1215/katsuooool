@@ -281,4 +281,11 @@ return [
         'description' => 'テキスト行/アバター行/カード型の3パターンから選び、行数・色を調整してスケルトンローディングのHTML/CSSコードを生成します。',
         'href' => '/ui-pattern-skeleton',
     ],
+    [
+        'slug' => 'ui-pattern-form-input',
+        'name' => 'フォーム入力欄',
+        'category' => 'ui-pattern',
+        'description' => 'text/email/password/numberの4種類から選び、プレースホルダー・角丸・ボーダー色・無効化状態を調整して入力欄のHTML/CSSコードを生成します。',
+        'href' => '/ui-pattern-form-input',
+    ],
 ];

@@ -492,9 +492,22 @@
 - [x] `composer ci:check` がグリーン
 - [x] Playwrightで実ブラウザ動作確認(テキスト行・アバター行・カード型の3タイプすべてでプレビューが正しいレイアウトで表示され、シマーアニメーションが実際に動作することを確認)
 
+### 13.8 フォーム入力欄(`/ui-pattern-form-input`)
+
+Form・Header・Footerは複雑なため最後に着手する方針だが、Formはボタン等と同じく「要素単位(Input・Textarea・Checkbox/Radio・Select・FormGroup)」に分解して1つずつ実装する。実装しやすい順序として Input → Textarea → Checkbox/Radio → Select → FormGroup の順で進める。
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` に `buildFormInput()` 追加(text/email/password/numberの4タイプ、プレースホルダー・角丸・ボーダー色・disabled状態を指定可能。単体テスト6件)
+- [x] `UiPatternFormInputController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ui-pattern-form-input` Inertiaページ作成(タイプ・プレースホルダー・角丸・ボーダー色・disabledの調整UI、実際の`<input>`要素に`:style`バインディングして反映するプレビュー、HTML/CSSそれぞれ独立したコピー機能)
+- [x] バックエンドFeatureテスト
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を40→41に更新
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(タイプ切り替え・disabled切り替えがプレビュー・生成HTMLの両方に反映されることを確認)
+
 ## 今後の実装順序
 
-UI Patternカテゴリの残り3コンポーネント(Form・Header・Footer、複雑なため最後に着手)、画像の切り抜き(SPEC.md §15参照)。
+UI PatternのForm要素の残り(Textarea・Checkbox/Radio・Select・FormGroup)、Header・Footer(複雑なため最後に着手)、画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 

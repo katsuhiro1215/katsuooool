@@ -223,7 +223,7 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 - Premium機能・Stripe決済連携(方向性は§21.2参照、範囲は未確定)
 - User(一般利用者)向けログイン・マイページ
 - より詳細な分析基盤(時系列グラフ、ツール別ファイル形式内訳など)
-- §21に記載のUI Patternカテゴリの残り3コンポーネント(Form・Header・Footer、方向性のみ、詳細仕様は未着手)
+- §21に記載のUI Patternカテゴリの残りコンポーネント(Form要素のTextarea・Checkbox/Radio・Select・FormGroup、Header・Footer、方向性のみ、詳細仕様は未着手)
 
 ## 21. 拡張ビジョン(参考・未確定)
 
@@ -239,7 +239,7 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 - **Generator**: OGP画像・favicon・ダミーデータ生成(すべて実装済み、ダミーデータ生成はPhase 12・§26参照)
 - **Developer**: JSON Formatter・URL Encoder・HTML Formatter・Base64(Phase 8相当、実装済み)
 
-カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`pattern`/`generator`/`developer`/`seo`/`ui-pattern` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。UI Patternカテゴリは Phase 13 でButton・Card・Pagination・Modal・Toast・Loading・Skeletonに着手し、残り3コンポーネント(Form・Header・Footer、複雑なため最後に着手予定)は未着手のまま残っている。
+カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`pattern`/`generator`/`developer`/`seo`/`ui-pattern` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。UI Patternカテゴリは Phase 13 でButton・Card・Pagination・Modal・Toast・Loading・Skeleton・Form Input(要素単位のForm群の1つ目)に着手し、Form要素の残り(Textarea・Checkbox/Radio・Select・FormGroup)とHeader・Footer(複雑なため最後に着手予定)は未着手のまま残っている。
 
 ### 21.2 Premium/Stripe(方向性のみ・未確定)
 
@@ -388,7 +388,7 @@ Patternカテゴリ6ツール(ドット・グリッド・ストライプ・チ�
 - データ内容: 氏名・住所・会社名は日本語のサンプルデータ(苗字・名前・都道府県・市区町村・企業名のプールからランダム抽出)で構成し、日本国内向けWeb制作でそのまま使える形にする。
 - 出力: 整形済みJSON(`JSON.stringify(..., null, 2)`)を表示し、コピーボタンでクリップボードにコピーできる(ファイルダウンロードは提供しない)。
 
-## 27. UI Patternカテゴリツール仕様(Phase 13 — ボタン・カード・ページネーション・モーダル・トースト通知・ローディング・スケルトンローディング)
+## 27. UI Patternカテゴリツール仕様(Phase 13 — ボタン・カード・ページネーション・モーダル・トースト通知・ローディング・スケルトンローディング・フォーム入力欄)
 
 新カテゴリ「UI Pattern」を追加する。他のColor/CSS/Patternカテゴリと同じくブラウザ内完結型だが、生成物がCSS宣言のみではなくHTML+CSSの2ブロックになる点が異なる。フレームワーク非依存の素のHTML+CSSを出力し、Tailwind等特定のCSSフレームワークには依存しない。
 
@@ -434,3 +434,11 @@ Patternカテゴリ6ツール(ドット・グリッド・ストライプ・チ�
 - 操作: タイプ(テキスト行/アバター行/カード型の3種類)・行数(1〜5)・色を調整する。すべてCSSアニメーション(`@keyframes`によるシマー: `linear-gradient`+`background-position`の移動)のみで実現し、JSは不要。
 - テキスト行: 指定行数の横棒を縦に並べる(1行のみの場合を除き、最終行は60%幅にして自然なテキストの見た目にする)。アバター行: 円形アバター(48px)の右にテキスト行を配置する。カード型: 上部に画像相当の矩形ブロック、下部にテキスト行を配置する。
 - 出力: HTML・CSSそれぞれに個別のコピーボタンを設置する。プレビューは選択中のタイプ・行数・色が実際にシマーアニメーションする状態でその場に表示する。
+
+### 27.8 フォーム入力欄(`/ui-pattern-form-input`)
+
+Formは「Login Form」「Register Form」のような完成形テンプレートではなく、Input・Textarea・Checkbox/Radio・Select・FormGroup(ラベル+入力+ヘルパー/エラー表示)といった要素単位のツール群として提供する方針とした(既存のUI Patternツールと同じ「パーツを組み合わせて使う」設計に揃え、1ツールあたりのスコープを小さく保つため)。本節はその1つ目、Input(`.form-input`)。
+
+- 操作: タイプ(text/email/password/numberの4種類)・プレースホルダーテキスト・角丸(0〜24px)・ボーダー色・無効化(disabled)有無を調整する。
+- 出力: `<input class="form-input" type="...">` のHTML(disabled時は`disabled`属性を付与)と、対応する`.form-input`のCSS(`:focus`のフォーカスリング、`:disabled`時のグレーアウトスタイルを含む)がそれぞれ独立して生成される。
+- 出力: HTML・CSSそれぞれに個別のコピーボタンを設置する。プレビューは実際の`<input>`要素にスタイルを適用し、タイプ・disabled状態の変化も反映してその場に表示する。

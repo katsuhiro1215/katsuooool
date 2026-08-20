@@ -36,6 +36,7 @@ use App\Http\Controllers\Tools\SvgOptimizeController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use App\Http\Controllers\Tools\UiPatternButtonController;
 use App\Http\Controllers\Tools\UiPatternCardController;
+use App\Http\Controllers\Tools\UiPatternFormInputController;
 use App\Http\Controllers\Tools\UiPatternLoadingController;
 use App\Http\Controllers\Tools\UiPatternModalController;
 use App\Http\Controllers\Tools\UiPatternPaginationController;
@@ -261,6 +262,11 @@ Route::get('/ui-pattern-skeleton', [UiPatternSkeletonController::class, 'show'])
 Route::post('/ui-pattern-skeleton/track', [UiPatternSkeletonController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('ui-pattern-skeleton.track');
+
+Route::get('/ui-pattern-form-input', [UiPatternFormInputController::class, 'show'])->name('ui-pattern-form-input.show');
+Route::post('/ui-pattern-form-input/track', [UiPatternFormInputController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-form-input.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

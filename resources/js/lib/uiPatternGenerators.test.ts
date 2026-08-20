@@ -3,6 +3,7 @@ import { describe, expect, test } from 'vitest';
 import {
     buildButton,
     buildCard,
+    buildFormInput,
     buildLoading,
     buildModal,
     buildPagination,
@@ -517,4 +518,53 @@ describe('buildSkeleton', () => {
         expect(result.css).toContain('.skeleton-image {');
         expect(result.css).toContain('.skeleton-card {');
     });
+});
+
+describe('buildFormInput', () => {
+    test('builds an input tag with the given type and placeholder', () => {
+        const result = buildFormInput({
+            type: 'email',
+            placeholder: 'you@example.com',
+            borderRadius: 6,
+            borderColor: '#d1d5db',
+            disabled: false,
+        });
+
+        expect(result.html).toBe(
+            '<input class="form-input" type="email" placeholder="you@example.com">',
+        );
+        expect(result.css).toContain('border-radius: 6px;');
+        expect(result.css).toContain('border: 1px solid #d1d5db;');
+    });
+
+    test('adds the disabled attribute and disabled styling when disabled', () => {
+        const result = buildFormInput({
+            type: 'text',
+            placeholder: '名前',
+            borderRadius: 4,
+            borderColor: '#d1d5db',
+            disabled: true,
+        });
+
+        expect(result.html).toBe(
+            '<input class="form-input" type="text" placeholder="名前" disabled>',
+        );
+        expect(result.css).toContain('.form-input:disabled {');
+        expect(result.css).toContain('cursor: not-allowed;');
+    });
+
+    test.each(['text', 'email', 'password', 'number'] as const)(
+        'supports the %s input type',
+        (type) => {
+            const result = buildFormInput({
+                type,
+                placeholder: 'placeholder',
+                borderRadius: 4,
+                borderColor: '#d1d5db',
+                disabled: false,
+            });
+
+            expect(result.html).toContain(`type="${type}"`);
+        },
+    );
 });

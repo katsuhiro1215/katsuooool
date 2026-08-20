@@ -698,3 +698,49 @@ export function buildSkeleton(input: SkeletonInput): SkeletonOutput {
 
     return { html, css: cssParts.join('\n') };
 }
+
+export type FormInputType = 'text' | 'email' | 'password' | 'number';
+
+export interface FormInputInput {
+    type: FormInputType;
+    placeholder: string;
+    borderRadius: number;
+    borderColor: string;
+    disabled: boolean;
+}
+
+export interface FormInputOutput {
+    html: string;
+    css: string;
+}
+
+export function buildFormInput(input: FormInputInput): FormInputOutput {
+    const disabledAttr = input.disabled ? ' disabled' : '';
+    const html = `<input class="form-input" type="${input.type}" placeholder="${input.placeholder}"${disabledAttr}>`;
+
+    const css = [
+        '.form-input {',
+        '    display: block;',
+        '    width: 100%;',
+        '    padding: 8px 12px;',
+        '    font-size: 14px;',
+        `    border: 1px solid ${input.borderColor};`,
+        `    border-radius: ${input.borderRadius}px;`,
+        '    box-sizing: border-box;',
+        '}',
+        '',
+        '.form-input:focus {',
+        '    outline: none;',
+        `    border-color: ${input.borderColor};`,
+        '    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);',
+        '}',
+        '',
+        '.form-input:disabled {',
+        '    background-color: #f5f5f5;',
+        '    color: #999;',
+        '    cursor: not-allowed;',
+        '}',
+    ].join('\n');
+
+    return { html, css };
+}
