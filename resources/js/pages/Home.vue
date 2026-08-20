@@ -3,32 +3,17 @@ import { Head } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 import ToolCard from '@/components/tools/ToolCard.vue';
-
-interface Tool {
-    slug: string;
-    name: string;
-    category: string;
-    description: string;
-    href: string;
-}
+import { CATEGORY_TABS, filterTools } from '@/lib/toolFilter';
+import type { Tool } from '@/lib/toolFilter';
 
 const props = defineProps<{ tools: Tool[] }>();
 
 const query = ref('');
+const activeCategory = ref('all');
 
-const filteredTools = computed(() => {
-    const keyword = query.value.trim().toLowerCase();
-
-    if (keyword === '') {
-        return props.tools;
-    }
-
-    return props.tools.filter(
-        (tool) =>
-            tool.name.toLowerCase().includes(keyword) ||
-            tool.description.toLowerCase().includes(keyword),
-    );
-});
+const filteredTools = computed(() =>
+    filterTools(props.tools, activeCategory.value, query.value),
+);
 </script>
 
 <template>
@@ -48,6 +33,25 @@ const filteredTools = computed(() => {
                     placeholder="ツールを検索..."
                     class="mt-6 w-full max-w-md rounded-md border border-gray-300 px-4 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
                 />
+
+                <div class="-mx-6 mt-4 overflow-x-auto px-6">
+                    <div class="flex gap-2">
+                        <button
+                            v-for="tab in CATEGORY_TABS"
+                            :key="tab.key"
+                            type="button"
+                            class="shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium transition"
+                            :class="
+                                activeCategory === tab.key
+                                    ? 'border-gray-900 bg-gray-900 text-white'
+                                    : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400'
+                            "
+                            @click="activeCategory = tab.key"
+                        >
+                            {{ tab.label }}
+                        </button>
+                    </div>
+                </div>
             </div>
         </header>
 
