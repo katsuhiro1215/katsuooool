@@ -86,6 +86,13 @@ return [
         'href' => '/css-border-radius',
     ],
     [
+        'slug' => 'css-glassmorphism',
+        'name' => 'Glassmorphism ジェネレーター',
+        'category' => 'css',
+        'description' => '透明度・ぼかし・影を調整してガラス風カードのCSSコードを生成します。',
+        'href' => '/css-glassmorphism',
+    ],
+    [
         'slug' => 'ogp-image',
         'name' => 'OGP画像サイズ作成',
         'category' => 'generator',
