@@ -22,6 +22,7 @@ use App\Http\Controllers\Tools\ImageRotateController;
 use App\Http\Controllers\Tools\JsonFormatController;
 use App\Http\Controllers\Tools\OgpCheckController;
 use App\Http\Controllers\Tools\OgpImageController;
+use App\Http\Controllers\Tools\PatternCheckerboardController;
 use App\Http\Controllers\Tools\PatternDotController;
 use App\Http\Controllers\Tools\PatternGridController;
 use App\Http\Controllers\Tools\PatternStripeController;
@@ -195,6 +196,11 @@ Route::get('/pattern-stripe', [PatternStripeController::class, 'show'])->name('p
 Route::post('/pattern-stripe/track', [PatternStripeController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('pattern-stripe.track');
+
+Route::get('/pattern-checkerboard', [PatternCheckerboardController::class, 'show'])->name('pattern-checkerboard.show');
+Route::post('/pattern-checkerboard/track', [PatternCheckerboardController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('pattern-checkerboard.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

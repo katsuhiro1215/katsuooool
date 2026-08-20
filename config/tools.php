@@ -204,4 +204,11 @@ return [
         'description' => '背景色・パターン色・幅・角度を調整してストライプ柄のCSSコードを生成します。',
         'href' => '/pattern-stripe',
     ],
+    [
+        'slug' => 'pattern-checkerboard',
+        'name' => 'チェッカーボードパターン',
+        'category' => 'pattern',
+        'description' => '背景色・パターン色・マス目サイズを調整して市松模様のCSSコードを生成します。',
+        'href' => '/pattern-checkerboard',
+    ],
 ];
