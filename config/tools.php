@@ -79,6 +79,13 @@ return [
         'href' => '/css-box-shadow',
     ],
     [
+        'slug' => 'css-border-radius',
+        'name' => 'Border Radius ジェネレーター',
+        'category' => 'css',
+        'description' => '4隅を個別に調整してborder-radiusのCSSコードを生成します。',
+        'href' => '/css-border-radius',
+    ],
+    [
         'slug' => 'ogp-image',
         'name' => 'OGP画像サイズ作成',
         'category' => 'generator',

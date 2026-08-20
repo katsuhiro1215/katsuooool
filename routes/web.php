@@ -7,6 +7,7 @@ use App\Http\Controllers\Tools\ColorConvertController;
 use App\Http\Controllers\Tools\ColorGradientController;
 use App\Http\Controllers\Tools\ColorPaletteController;
 use App\Http\Controllers\Tools\ColorSchemeController;
+use App\Http\Controllers\Tools\CssBorderRadiusController;
 use App\Http\Controllers\Tools\CssBoxShadowController;
 use App\Http\Controllers\Tools\FaviconGenerateController;
 use App\Http\Controllers\Tools\HtmlFormatController;
@@ -128,6 +129,11 @@ Route::get('/css-box-shadow', [CssBoxShadowController::class, 'show'])->name('cs
 Route::post('/css-box-shadow/track', [CssBoxShadowController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('css-box-shadow.track');
+
+Route::get('/css-border-radius', [CssBorderRadiusController::class, 'show'])->name('css-border-radius.show');
+Route::post('/css-border-radius/track', [CssBorderRadiusController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('css-border-radius.track');
 
 Route::get('/base64-encode', [Base64EncodeController::class, 'show'])->name('base64-encode.show');
 Route::post('/base64-encode/track', [Base64EncodeController::class, 'track'])
