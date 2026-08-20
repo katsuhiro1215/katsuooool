@@ -291,9 +291,57 @@
 - [x] `composer ci:check`(lint:check/format:check/types:check/npm test/composer test)がグリーン
 - [x] `npm run build` がビルドエラーなしで成功
 
+## Phase 10 — CSSカテゴリ(5ツール)
+
+### 10.0 共通基盤
+
+- [x] `resources/js/lib/cssGenerators.ts` 作成(Box Shadow/Border Radius/Glassmorphism/Flexbox/Gridの各入力型とCSSコード生成関数を集約。単体テスト8件)
+
+### 10.1 Box Shadow(`/css-box-shadow`)
+
+- [x] `CssBoxShadowController` 作成(`TrackedToolController` 継承、クライアント完結)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/css-box-shadow` Inertiaページ作成(X/Y/ぼかし/広がり・色・inset切り替えのスライダー、プレビューと生成CSSコードのコピー機能)
+- [x] バックエンドFeatureテスト
+
+### 10.2 Border Radius(`/css-border-radius`)
+
+- [x] `CssBorderRadiusController` 作成(同パターン)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/css-border-radius` Inertiaページ作成(4隅個別のスライダー、プレビューと生成CSSコードのコピー機能)
+- [x] バックエンドFeatureテスト
+
+### 10.3 Glassmorphism(`/css-glassmorphism`)
+
+- [x] `CssGlassmorphismController` 作成(同パターン)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/css-glassmorphism` Inertiaページ作成(背景不透明度・ぼかし・枠線不透明度・影不透明度のスライダー、プレビューと生成CSSコードのコピー機能)
+- [x] バックエンドFeatureテスト
+
+### 10.4 Flexbox(`/css-flexbox`)
+
+- [x] `CssFlexboxController` 作成(同パターン)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/css-flexbox` Inertiaページ作成(`flex-direction`/`justify-content`/`align-items`/`flex-wrap`/`gap`の切り替え、4つのboxがプレビュー上で実際に並び替わる、生成CSSコードのコピー機能)
+- [x] バックエンドFeatureテスト
+
+### 10.5 Grid(`/css-grid`)
+
+- [x] `CssGridController` 作成(同パターン)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/css-grid` Inertiaページ作成(列数・行数・gapの指定、プレビューのセル数が連動して変化、生成CSSコードのコピー機能)
+- [x] バックエンドFeatureテスト
+
+### 10.6 動作確認
+
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を21→26に更新(Task 2〜6で1ツールずつ段階的に反映済み)
+- [x] `composer ci:check`(lint:check/format:check/types:check/npm test/composer test)がグリーン
+- [x] `npm run build` がビルドエラーなしで成功
+- [x] Playwrightで5ツールすべての実ブラウザ動作確認(各ツールでスライダー・セレクト操作により生成CSSコードが連動して変化すること、Flexbox/Gridはプレビューが実際に並び替わる/セル数が変わることを確認)
+
 ## 今後の実装順序
 
-画像の切り抜き(SPEC.md §15参照)。
+Patternカテゴリ・UI Patternカテゴリ・Generatorカテゴリへのツール追加、画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 
