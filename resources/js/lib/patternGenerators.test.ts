@@ -90,7 +90,7 @@ describe('buildCheckerboardPattern', () => {
 });
 
 describe('buildChevronPattern', () => {
-    test('builds a four-gradient chevron pattern', () => {
+    test('builds an SVG data URI chevron (zigzag) pattern with URL-encoded content', () => {
         const result = buildChevronPattern({
             backgroundColor: '#ffffff',
             patternColor: '#000000',
@@ -98,11 +98,22 @@ describe('buildChevronPattern', () => {
             height: 20,
         });
 
-        expect(result).toBe(
-            'background-color: #ffffff;\n' +
-                'background-image: linear-gradient(135deg, #000000 25%, transparent 25%), linear-gradient(225deg, #000000 25%, transparent 25%), linear-gradient(315deg, #000000 25%, transparent 25%), linear-gradient(45deg, #000000 25%, transparent 25%);\n' +
-                'background-size: 40px 20px;',
-        );
+        expect(result).toContain('background-color: #ffffff;');
+        expect(result).toContain('background-image: url("data:image/svg+xml,');
+        expect(result).toContain('background-size: 40px 20px;');
+        expect(result).not.toContain("#000000'");
+        expect(result).toContain('%23000000');
+    });
+
+    test('scales the SVG dimensions with width and height', () => {
+        const result = buildChevronPattern({
+            backgroundColor: '#fafafa',
+            patternColor: '#111111',
+            width: 60,
+            height: 30,
+        });
+
+        expect(result).toContain('background-size: 60px 30px;');
     });
 });
 

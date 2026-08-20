@@ -20,11 +20,11 @@ const css = computed(() =>
     }),
 );
 
-const previewStyle = computed(() => ({
-    backgroundColor: backgroundColor.value,
-    backgroundImage: `linear-gradient(135deg, ${patternColor.value} 25%, transparent 25%), linear-gradient(225deg, ${patternColor.value} 25%, transparent 25%), linear-gradient(315deg, ${patternColor.value} 25%, transparent 25%), linear-gradient(45deg, ${patternColor.value} 25%, transparent 25%)`,
-    backgroundSize: `${width.value}px ${height.value}px`,
-}));
+// The preview reuses the same generated CSS string directly: unlike the
+// gradient-based tools, the chevron pattern's background-image is a single
+// SVG data URI, so there is no separate object-form property list to
+// bind — the css string IS the complete, valid background shorthand set.
+const previewStyle = computed(() => css.value);
 
 async function copy() {
     try {

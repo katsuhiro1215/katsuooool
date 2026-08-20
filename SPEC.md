@@ -234,7 +234,7 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 既存のImage/Colorに加えて、以下のカテゴリを将来追加する方向性:
 
 - **CSS**: Box Shadow・Border Radius・Glassmorphism・Flexbox・Grid ジェネレーター(Phase 10で実装済み、§24参照)
-- **Pattern**: Background・Dot・Grid・Wave など、背景パターン生成(HTML/CSSをコピペで使える形で提供)(Phase 11で実装済み、§25参照)
+- **Pattern**: ドット・グリッド・ストライプ・チェッカーボード・ジグザグ・波模様など、背景パターン生成(HTML/CSSをコピペで使える形で提供)(Phase 11で実装済み、§25参照)
 - **UI Pattern**: Button・Card・Form・Header・Footer・Pagination・Modal・Toast・Loading・Skeleton など、UIコンポーネントのコードスニペット集
 - **Generator**: OGP画像・favicon(実装済み)・ダミーデータ生成
 - **Developer**: JSON Formatter・URL Encoder・HTML Formatter・Base64(Phase 8相当、実装済み)
@@ -372,8 +372,8 @@ Patternカテゴリ6ツール(ドット・グリッド・ストライプ・チ�
 
 ### 25.5 ジグザグ(`/pattern-chevron`)
 
-- 操作: 背景色・パターン色・幅(10〜100px)・高さ(5〜50px)を調整すると、4方向の `linear-gradient` を組み合わせたシェブロン(山形)柄の背景CSSコードが生成される。
+- 操作: 背景色・パターン色・幅(10〜100px)・高さ(5〜50px)を調整すると、山形(V字)を描くインラインSVGを `data:image/svg+xml,...` としてURLエンコードした `background-image` のCSSコードが生成される。幅・高さの比に関わらず正しいシェブロン(山形)柄になるよう、グラデーションではなくSVG画像を用いる。
 
 ### 25.6 波模様(`/pattern-wave`)
 
-- 操作: 背景色・パターン色・波の高さ(5〜30px)・波長(20〜200px)を調整すると、波形を描くインラインSVGを `data:image/svg+xml,...` としてURLエンコードした `background-image` のCSSコードが生成される。他5ツールとは異なりグラデーションではなくSVG画像を用いる点が特徴。
+- 操作: 背景色・パターン色・波の高さ(5〜30px)・波長(20〜200px)を調整すると、波形を描くインラインSVGを `data:image/svg+xml,...` としてURLエンコードした `background-image` のCSSコードが生成される。ジグザグと同様、グラデーションではなくSVG画像を用いる点が特徴。

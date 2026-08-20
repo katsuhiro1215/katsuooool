@@ -69,9 +69,16 @@ export interface ChevronPatternInput {
 }
 
 export function buildChevronPattern(input: ChevronPatternInput): string {
+    const svg =
+        `<svg xmlns='http://www.w3.org/2000/svg' width='${input.width}' height='${input.height}' ` +
+        `viewBox='0 0 ${input.width} ${input.height}'>` +
+        `<polyline points='0,${input.height} ${input.width / 2},0 ${input.width},${input.height}' ` +
+        `stroke='${input.patternColor}' fill='none' stroke-width='2'/></svg>`;
+    const encoded = encodeURIComponent(svg);
+
     return [
         `background-color: ${input.backgroundColor};`,
-        `background-image: linear-gradient(135deg, ${input.patternColor} 25%, transparent 25%), linear-gradient(225deg, ${input.patternColor} 25%, transparent 25%), linear-gradient(315deg, ${input.patternColor} 25%, transparent 25%), linear-gradient(45deg, ${input.patternColor} 25%, transparent 25%);`,
+        `background-image: url("data:image/svg+xml,${encoded}");`,
         `background-size: ${input.width}px ${input.height}px;`,
     ].join('\n');
 }
