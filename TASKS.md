@@ -575,9 +575,24 @@ Footerはトグル操作が不要なためシンプルにHTML/CSSの2ブロッ�
 
 UI PatternカテゴリのPhase 13計画分(Button・Card・Pagination・Modal・Toast・Loading・Skeleton・Form要素一式・Header・Footer)が全て完了。
 
+## Phase 14 — 画像の切り抜き
+
+- [x] `app/Services/Tools/ImageCropService.php` 作成(Intervention Imageの`crop(width, height, x, y)`を利用。他画像ツールと同じくGD/Imagickをランタイム検出)
+- [x] `ImageCropController` 作成(単一ファイルのみ受け付け、`x`/`y`/`width`/`height`をバリデーション。切り抜き範囲が画像サイズを超える場合や解像度上限(2500万ピクセル)超過は`failed`として返す。既存の`ToolUploadService`/`ToolDownloadService`/`ToolEventLogger`パターンを踏襲、単一ファイルのためZIPは不要)
+- [x] ルート・`config/tools.php` エントリ追加(`/image-crop`)
+- [x] `/image-crop` Inertiaページ作成。ブレインストーミングで「単一画像処理(ドラッグで正確に選択)」を選定(複数枚バッチだと画像ごとに構図が異なり比率ベースの一律適用は実用性が低いため)。実装内容:
+  - ドロップゾーンで1枚アップロード → プレビュー画像上に切り抜き矩形をオーバーレイ表示(初期値は画像中央80%)
+  - 矩形は`pointerdown`/`pointermove`/`pointerup`によるドラッグで移動、4隅のハンドルでリサイズ(ライブラリ非依存の自前実装)
+  - アスペクト比プリセット(フリー/1:1/4:3/16:9/3:2)をボタンで切り替え可能、選択中はリサイズ時も比率を維持
+  - 「切り抜く」ボタンでプレビュー座標を元画像の実ピクセル座標にスケール変換して送信
+- [x] バックエンドFeatureテスト(6件: 正常系、範囲超過、非対応形式、解像度超過、バリデーションエラー)
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を47→48に更新
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認。実装直後、アスペクト比プリセット(1:1)適用時に矩形の高さのみが個別にプレビュー高さでクランプされ、正方形にならない不具合を発見・修正(`resetBox()`で幅・高さを比率を保ったまま同時にクランプするよう修正)。修正後、1:1での正方形表示・ドラッグ移動・角ハンドルでの比率維持リサイズ・フリー切り替え・実際のダウンロードURL(200・image/jpeg)まで一連の動作を確認。
+
 ## 今後の実装順序
 
-画像の切り抜き(SPEC.md §15参照)。
+現時点で計画済みタスクは全て完了。次のフェーズ(Adminダッシュボード改善・User管理・Premium機能)は着手前にあらためてブレインストーミングする。
 
 ## 完了の定義(Definition of Done)
 

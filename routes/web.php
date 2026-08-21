@@ -18,6 +18,7 @@ use App\Http\Controllers\Tools\HtmlFormatController;
 use App\Http\Controllers\Tools\ImageColorExtractController;
 use App\Http\Controllers\Tools\ImageCompressController;
 use App\Http\Controllers\Tools\ImageConvertController;
+use App\Http\Controllers\Tools\ImageCropController;
 use App\Http\Controllers\Tools\ImageResizeController;
 use App\Http\Controllers\Tools\ImageRotateController;
 use App\Http\Controllers\Tools\JsonFormatController;
@@ -91,6 +92,12 @@ Route::get('/image-rotate', [ImageRotateController::class, 'show'])->name('image
 Route::post('/image-rotate', [ImageRotateController::class, 'process'])
     ->middleware('throttle:10,1')
     ->name('image-rotate.process');
+
+Route::get('/image-crop', [ImageCropController::class, 'show'])->name('image-crop.show');
+
+Route::post('/image-crop', [ImageCropController::class, 'process'])
+    ->middleware('throttle:10,1')
+    ->name('image-crop.process');
 
 Route::get('/color-convert', [ColorConvertController::class, 'show'])->name('color-convert.show');
 Route::post('/color-convert/track', [ColorConvertController::class, 'track'])

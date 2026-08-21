@@ -37,6 +37,13 @@ return [
         'href' => '/image-rotate',
     ],
     [
+        'slug' => 'image-crop',
+        'name' => '画像の切り抜き',
+        'category' => 'image',
+        'description' => 'ドラッグ操作で範囲を選択し、画像を任意のアスペクト比で切り抜きます。',
+        'href' => '/image-crop',
+    ],
+    [
         'slug' => 'color-convert',
         'name' => 'HEX/RGB/HSL変換',
         'category' => 'color',
