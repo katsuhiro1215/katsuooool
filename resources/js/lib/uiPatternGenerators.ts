@@ -975,3 +975,193 @@ export function buildFormGroup(input: FormGroupInput): FormGroupOutput {
 
     return { html, css };
 }
+
+export interface HeaderInput {
+    logoText: string;
+    navLinks: string[];
+    backgroundColor: string;
+    shadowEnabled: boolean;
+}
+
+export interface HeaderOutput {
+    html: string;
+    css: string;
+    js: string;
+}
+
+export function buildHeader(input: HeaderInput): HeaderOutput {
+    const navLinkLines = input.navLinks
+        .map((link) => `        <a href="#" class="site-nav-link">${link}</a>`)
+        .join('\n');
+
+    const html = [
+        '<header class="site-header">',
+        '    <div class="site-header-inner">',
+        `        <a href="#" class="site-header-logo">${input.logoText}</a>`,
+        '        <button class="site-header-toggle" type="button" aria-expanded="false" aria-label="メニューを開く">',
+        '            <span></span>',
+        '            <span></span>',
+        '            <span></span>',
+        '        </button>',
+        '        <nav class="site-nav">',
+        navLinkLines,
+        '        </nav>',
+        '    </div>',
+        '</header>',
+    ].join('\n');
+
+    const boxShadow = input.shadowEnabled
+        ? '0 1px 3px rgba(0, 0, 0, 0.1)'
+        : 'none';
+
+    const css = [
+        '.site-header {',
+        `    background-color: ${input.backgroundColor};`,
+        `    box-shadow: ${boxShadow};`,
+        '}',
+        '',
+        '.site-header-inner {',
+        '    display: flex;',
+        '    align-items: center;',
+        '    justify-content: space-between;',
+        '    max-width: 1024px;',
+        '    margin: 0 auto;',
+        '    padding: 16px 24px;',
+        '}',
+        '',
+        '.site-header-logo {',
+        '    font-size: 18px;',
+        '    font-weight: bold;',
+        '    color: inherit;',
+        '    text-decoration: none;',
+        '}',
+        '',
+        '.site-nav {',
+        '    display: flex;',
+        '    gap: 24px;',
+        '}',
+        '',
+        '.site-nav-link {',
+        '    color: inherit;',
+        '    text-decoration: none;',
+        '    font-size: 14px;',
+        '}',
+        '',
+        '.site-header-toggle {',
+        '    display: none;',
+        '    flex-direction: column;',
+        '    gap: 4px;',
+        '    width: 24px;',
+        '    background: none;',
+        '    border: none;',
+        '    cursor: pointer;',
+        '    padding: 0;',
+        '}',
+        '',
+        '.site-header-toggle span {',
+        '    display: block;',
+        '    height: 2px;',
+        '    background-color: currentColor;',
+        '}',
+        '',
+        '@media (max-width: 768px) {',
+        '    .site-header-toggle {',
+        '        display: flex;',
+        '    }',
+        '',
+        '    .site-nav {',
+        '        display: none;',
+        '        flex-direction: column;',
+        '        gap: 12px;',
+        '        padding: 0 24px 16px;',
+        '    }',
+        '',
+        '    .site-nav.is-open {',
+        '        display: flex;',
+        '    }',
+        '}',
+    ].join('\n');
+
+    const js = [
+        "document.querySelector('.site-header-toggle').addEventListener('click', function () {",
+        "    var nav = document.querySelector('.site-nav');",
+        "    var isOpen = nav.classList.toggle('is-open');",
+        "    this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');",
+        '});',
+    ].join('\n');
+
+    return { html, css, js };
+}
+
+export interface FooterInput {
+    copyrightText: string;
+    links: string[];
+    backgroundColor: string;
+}
+
+export interface FooterOutput {
+    html: string;
+    css: string;
+}
+
+export function buildFooter(input: FooterInput): FooterOutput {
+    const linkLines = input.links
+        .map(
+            (link) =>
+                `        <a href="#" class="site-footer-link">${link}</a>`,
+        )
+        .join('\n');
+
+    const html = [
+        '<footer class="site-footer">',
+        '    <div class="site-footer-inner">',
+        '        <nav class="site-footer-nav">',
+        linkLines,
+        '        </nav>',
+        `        <p class="site-footer-copyright">${input.copyrightText}</p>`,
+        '    </div>',
+        '</footer>',
+    ].join('\n');
+
+    const css = [
+        '.site-footer {',
+        `    background-color: ${input.backgroundColor};`,
+        '}',
+        '',
+        '.site-footer-inner {',
+        '    display: flex;',
+        '    align-items: center;',
+        '    justify-content: space-between;',
+        '    max-width: 1024px;',
+        '    margin: 0 auto;',
+        '    padding: 24px;',
+        '}',
+        '',
+        '.site-footer-nav {',
+        '    display: flex;',
+        '    gap: 16px;',
+        '}',
+        '',
+        '.site-footer-link {',
+        '    color: inherit;',
+        '    text-decoration: none;',
+        '    font-size: 14px;',
+        '}',
+        '',
+        '.site-footer-copyright {',
+        '    margin: 0;',
+        '    font-size: 12px;',
+        '    opacity: 0.7;',
+        '}',
+        '',
+        '@media (max-width: 768px) {',
+        '    .site-footer-inner {',
+        '        flex-direction: column;',
+        '        gap: 12px;',
+        '        text-align: center;',
+        '    }',
+        '}',
+    ].join('\n');
+
+    return { html, css };
+}

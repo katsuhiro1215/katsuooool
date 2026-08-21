@@ -548,9 +548,36 @@ Form・Header・Footerは複雑なため最後に着手する方針だが、Form
 
 Form要素(Input・Textarea・Checkbox/Radio・Select・FormGroup)が完了。
 
+### 13.13 ヘッダー(`/ui-pattern-header`)
+
+Headerはナビゲーション+レスポンシブ対応のモバイル用トグル(ハンバーガーメニュー)を含める方針とした。Modalと同様、開閉操作にJSが必要なためHTML/CSS/JSの3ブロック構成。
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` に `buildHeader()` 追加(ロゴ・可変長ナビリンク・背景色・影の有無を指定可能。`.site-header-toggle`クリックで`.site-nav`に`is-open`クラスをトグルするJSと、`max-width: 768px`でトグル表示+ナビ非表示に切り替わる`@media`クエリを含むCSS。単体テスト2件)
+- [x] `UiPatternHeaderController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ui-pattern-header` Inertiaページ作成(ロゴ・ナビリンク・背景色・影の調整UI。実際の`@media`クエリはプレビュー領域の見た目上の幅に依存しないため、「モバイル表示をシミュレート」チェックボックスで表示状態を切り替え、トグルボタンのクリックでナビの開閉を実際に確認できるプレビューを実装。HTML/CSS/JSそれぞれ独立したコピー機能)
+- [x] バックエンドFeatureテスト
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(デスクトップ表示でのナビ表示、モバイル表示シミュレート時のトグルボタン表示、クリックによるナビ開閉を確認)
+
+### 13.14 フッター(`/ui-pattern-footer`)
+
+Footerはトグル操作が不要なためシンプルにHTML/CSSの2ブロック構成とした。
+
+- [x] `resources/js/lib/uiPatternGenerators.ts` に `buildFooter()` 追加(コピーライトテキスト・可変長リンク一覧・背景色を指定可能。`max-width: 768px`でコンテンツを縦積み+中央寄せに切り替わる`@media`クエリを含むCSS。単体テスト1件)
+- [x] `UiPatternFooterController` 作成(`TrackedToolController` 継承)
+- [x] ルート・`config/tools.php` エントリ追加
+- [x] `/ui-pattern-footer` Inertiaページ作成(コピーライトテキスト・リンク一覧・背景色の調整UI、「モバイル表示をシミュレート」チェックボックスで縦積みレイアウトを確認できるプレビュー、HTML/CSSそれぞれ独立したコピー機能)
+- [x] バックエンドFeatureテスト
+- [x] `tests/Feature/Admin/DashboardControllerTest.php` のツール数を45→47に更新(13.13〜13.14の2ツール分をまとめて反映)
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(デスクトップ表示での横並び、モバイル表示シミュレート時の縦積み+中央寄せレイアウトを確認)
+
+UI PatternカテゴリのPhase 13計画分(Button・Card・Pagination・Modal・Toast・Loading・Skeleton・Form要素一式・Header・Footer)が全て完了。
+
 ## 今後の実装順序
 
-UI Patternカテゴリの残り2コンポーネント(Header・Footer、複雑なため最後に着手)、画像の切り抜き(SPEC.md §15参照)。
+画像の切り抜き(SPEC.md §15参照)。
 
 ## 完了の定義(Definition of Done)
 

@@ -316,4 +316,18 @@ return [
         'description' => 'ラベル・入力欄・ヘルパーテキストを組み合わせ、エラー状態の有無を切り替えてフォーム項目一式のHTML/CSSコードを生成します。',
         'href' => '/ui-pattern-form-group',
     ],
+    [
+        'slug' => 'ui-pattern-header',
+        'name' => 'ヘッダー',
+        'category' => 'ui-pattern',
+        'description' => 'ロゴ・ナビリンク・背景色・影の有無を調整し、モバイル用の開閉トグル付きヘッダーのHTML/CSS/JSコードを生成します。',
+        'href' => '/ui-pattern-header',
+    ],
+    [
+        'slug' => 'ui-pattern-footer',
+        'name' => 'フッター',
+        'category' => 'ui-pattern',
+        'description' => 'コピーライト・リンク一覧・背景色を調整し、レスポンシブ対応のフッターのHTML/CSSコードを生成します。',
+        'href' => '/ui-pattern-footer',
+    ],
 ];

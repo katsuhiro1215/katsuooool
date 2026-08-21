@@ -36,11 +36,13 @@ use App\Http\Controllers\Tools\SvgOptimizeController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use App\Http\Controllers\Tools\UiPatternButtonController;
 use App\Http\Controllers\Tools\UiPatternCardController;
+use App\Http\Controllers\Tools\UiPatternFooterController;
 use App\Http\Controllers\Tools\UiPatternFormCheckController;
 use App\Http\Controllers\Tools\UiPatternFormGroupController;
 use App\Http\Controllers\Tools\UiPatternFormInputController;
 use App\Http\Controllers\Tools\UiPatternFormSelectController;
 use App\Http\Controllers\Tools\UiPatternFormTextareaController;
+use App\Http\Controllers\Tools\UiPatternHeaderController;
 use App\Http\Controllers\Tools\UiPatternLoadingController;
 use App\Http\Controllers\Tools\UiPatternModalController;
 use App\Http\Controllers\Tools\UiPatternPaginationController;
@@ -291,6 +293,16 @@ Route::get('/ui-pattern-form-group', [UiPatternFormGroupController::class, 'show
 Route::post('/ui-pattern-form-group/track', [UiPatternFormGroupController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('ui-pattern-form-group.track');
+
+Route::get('/ui-pattern-header', [UiPatternHeaderController::class, 'show'])->name('ui-pattern-header.show');
+Route::post('/ui-pattern-header/track', [UiPatternHeaderController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-header.track');
+
+Route::get('/ui-pattern-footer', [UiPatternFooterController::class, 'show'])->name('ui-pattern-footer.show');
+Route::post('/ui-pattern-footer/track', [UiPatternFooterController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-footer.track');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

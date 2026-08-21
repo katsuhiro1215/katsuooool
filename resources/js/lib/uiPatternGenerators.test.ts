@@ -3,11 +3,13 @@ import { describe, expect, test } from 'vitest';
 import {
     buildButton,
     buildCard,
+    buildFooter,
     buildFormCheck,
     buildFormGroup,
     buildFormInput,
     buildFormSelect,
     buildFormTextarea,
+    buildHeader,
     buildLoading,
     buildModal,
     buildPagination,
@@ -706,5 +708,68 @@ describe('buildFormGroup', () => {
         expect(result.html).toContain('class="form-group-helper is-invalid"');
         expect(result.css).toContain('.form-group-input.is-invalid {');
         expect(result.css).toContain('.form-group-helper.is-invalid {');
+    });
+});
+
+describe('buildHeader', () => {
+    test('builds a header with a logo, toggle button, and one link per nav item', () => {
+        const result = buildHeader({
+            logoText: 'katsuooool',
+            navLinks: ['ホーム', 'ツール一覧', 'お問い合わせ'],
+            backgroundColor: '#ffffff',
+            shadowEnabled: true,
+        });
+
+        expect(result.html).toContain(
+            '<a href="#" class="site-header-logo">katsuooool</a>',
+        );
+        expect(result.html).toContain('class="site-header-toggle"');
+        expect(result.html).toContain(
+            '<a href="#" class="site-nav-link">ホーム</a>',
+        );
+        expect(result.html).toContain(
+            '<a href="#" class="site-nav-link">ツール一覧</a>',
+        );
+        expect(result.html).toContain(
+            '<a href="#" class="site-nav-link">お問い合わせ</a>',
+        );
+        expect(result.css).toContain(
+            'box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);',
+        );
+        expect(result.css).toContain('@media (max-width: 768px) {');
+        expect(result.js).toContain("classList.toggle('is-open')");
+    });
+
+    test('removes the box shadow when shadowEnabled is false', () => {
+        const result = buildHeader({
+            logoText: 'katsuooool',
+            navLinks: ['ホーム'],
+            backgroundColor: '#ffffff',
+            shadowEnabled: false,
+        });
+
+        expect(result.css).toContain('box-shadow: none;');
+    });
+});
+
+describe('buildFooter', () => {
+    test('builds a footer with the copyright text and one link per item', () => {
+        const result = buildFooter({
+            copyrightText: '© 2026 katsuooool',
+            links: ['利用規約', 'プライバシーポリシー'],
+            backgroundColor: '#f5f5f5',
+        });
+
+        expect(result.html).toContain(
+            '<p class="site-footer-copyright">© 2026 katsuooool</p>',
+        );
+        expect(result.html).toContain(
+            '<a href="#" class="site-footer-link">利用規約</a>',
+        );
+        expect(result.html).toContain(
+            '<a href="#" class="site-footer-link">プライバシーポリシー</a>',
+        );
+        expect(result.css).toContain('background-color: #f5f5f5;');
+        expect(result.css).toContain('@media (max-width: 768px) {');
     });
 });

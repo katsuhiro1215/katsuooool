@@ -223,7 +223,6 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 - Premium機能・Stripe決済連携(方向性は§21.2参照、範囲は未確定)
 - User(一般利用者)向けログイン・マイページ
 - より詳細な分析基盤(時系列グラフ、ツール別ファイル形式内訳など)
-- §21に記載のUI Patternカテゴリの残り2コンポーネント(Header・Footer、方向性のみ、詳細仕様は未着手)
 
 ## 21. 拡張ビジョン(参考・未確定)
 
@@ -239,7 +238,7 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 - **Generator**: OGP画像・favicon・ダミーデータ生成(すべて実装済み、ダミーデータ生成はPhase 12・§26参照)
 - **Developer**: JSON Formatter・URL Encoder・HTML Formatter・Base64(Phase 8相当、実装済み)
 
-カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`pattern`/`generator`/`developer`/`seo`/`ui-pattern` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。UI Patternカテゴリは Phase 13 でButton・Card・Pagination・Modal・Toast・Loading・Skeleton・Form要素一式(Input・Textarea・Checkbox/Radio・Select・FormGroup)に着手し、残り2コンポーネント(Header・Footer、複雑なため最後に着手予定)は未着手のまま残っている。
+カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`pattern`/`generator`/`developer`/`seo`/`ui-pattern` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。UI Patternカテゴリは Phase 13 でButton・Card・Pagination・Modal・Toast・Loading・Skeleton・Form要素一式(Input・Textarea・Checkbox/Radio・Select・FormGroup)・Header・Footerに着手し、計画していたコンポーネントは全て完了した。
 
 ### 21.2 Premium/Stripe(方向性のみ・未確定)
 
@@ -388,7 +387,7 @@ Patternカテゴリ6ツール(ドット・グリッド・ストライプ・チ�
 - データ内容: 氏名・住所・会社名は日本語のサンプルデータ(苗字・名前・都道府県・市区町村・企業名のプールからランダム抽出)で構成し、日本国内向けWeb制作でそのまま使える形にする。
 - 出力: 整形済みJSON(`JSON.stringify(..., null, 2)`)を表示し、コピーボタンでクリップボードにコピーできる(ファイルダウンロードは提供しない)。
 
-## 27. UI Patternカテゴリツール仕様(Phase 13 — ボタン・カード・ページネーション・モーダル・トースト通知・ローディング・スケルトンローディング・フォーム要素一式)
+## 27. UI Patternカテゴリツール仕様(Phase 13 — ボタン・カード・ページネーション・モーダル・トースト通知・ローディング・スケルトンローディング・フォーム要素一式・ヘッダー・フッター)
 
 新カテゴリ「UI Pattern」を追加する。他のColor/CSS/Patternカテゴリと同じくブラウザ内完結型だが、生成物がCSS宣言のみではなくHTML+CSSの2ブロックになる点が異なる。フレームワーク非依存の素のHTML+CSSを出力し、Tailwind等特定のCSSフレームワークには依存しない。
 
@@ -466,3 +465,19 @@ Formは「Login Form」「Register Form」のような完成形テンプレー�
 - 操作: ラベルテキスト・プレースホルダーテキスト・ヘルパーテキスト・エラー状態(hasError)の有無を調整する。
 - 出力: `<div class="form-group">` の中にラベル(`.form-group-label`)・入力欄(`.form-group-input`)・ヘルパーテキスト(`.form-group-helper`)を配置したHTML(エラー状態時は入力欄・ヘルパーテキストの両方に`is-invalid`クラスを付与)と、対応するCSS(通常時のスタイルに加え、`.is-invalid`時は入力欄のボーダー色・ヘルパーテキストの文字色が赤系に変化)がそれぞれ独立して生成される。
 - 出力: HTML・CSSそれぞれに個別のコピーボタンを設置する。プレビューはラベル・入力欄・ヘルパーテキストを実際に組み合わせた状態で表示し、エラー状態の切り替えによる配色変化も反映する。
+
+### 27.13 ヘッダー(`/ui-pattern-header`)
+
+ナビゲーションとレスポンシブ対応のモバイル用トグル(ハンバーガーメニュー)を含める方針とした。ロゴ+ナビリンク+モバイル時の開閉ボタンが揃って初めて実用的なパーツになるため。UI Patternカテゴリで唯一Modalと並びJSを含むツール(トグルの開閉にJSが必要なため)。
+
+- 操作: ロゴテキスト・ナビリンク(可変長、1行に1つ)・背景色・影の有無(box-shadow)を調整する。
+- 出力: `<header class="site-header">` の中にロゴ・トグルボタン(`.site-header-toggle`、3本線アイコン)・ナビ(`.site-nav`)を配置したHTML、`max-width: 768px`のブレークポイントでトグルボタンを表示しナビを非表示に切り替える`@media`クエリを含むCSS、トグルボタンのクリックで`.site-nav`に`is-open`クラスを付け外しし`aria-expanded`属性も更新する最小限のJSの3ブロックを、それぞれ個別のコピーボタンで提供する。
+- プレビュー: 実際の`@media`クエリはビューポート幅に依存しプレビュー領域の見た目上の幅では再現できないため、「モバイル表示をシミュレート」チェックボックスでモバイル相当の表示(トグルボタン+折りたたみナビ)に切り替えられるようにし、トグルボタンをクリックすると実際にナビが開閉する動作を確認できる。
+
+### 27.14 フッター(`/ui-pattern-footer`)
+
+トグル操作は不要なため、Headerとは異なりHTML/CSSの2ブロックのみで完結するシンプルな構成とした。
+
+- 操作: コピーライトテキスト・リンク一覧(可変長、1行に1つ)・背景色を調整する。
+- 出力: `<footer class="site-footer">` の中にリンク一覧(`.site-footer-nav`)とコピーライトテキスト(`.site-footer-copyright`)を横並びに配置したHTML、`max-width: 768px`のブレークポイントで縦積み+中央寄せに切り替える`@media`クエリを含むCSSがそれぞれ独立して生成される。
+- プレビュー: 「モバイル表示をシミュレート」チェックボックスで、縦積み+中央寄せのモバイルレイアウトを確認できる。
