@@ -590,9 +590,20 @@ UI PatternカテゴリのPhase 13計画分(Button・Card・Pagination・Modal・
 - [x] `composer ci:check` がグリーン
 - [x] Playwrightで実ブラウザ動作確認。実装直後、アスペクト比プリセット(1:1)適用時に矩形の高さのみが個別にプレビュー高さでクランプされ、正方形にならない不具合を発見・修正(`resetBox()`で幅・高さを比率を保ったまま同時にクランプするよう修正)。修正後、1:1での正方形表示・ドラッグ移動・角ハンドルでの比率維持リサイズ・フリー切り替え・実際のダウンロードURL(200・image/jpeg)まで一連の動作を確認。
 
+## Phase 15 — Adminダッシュボード改善(クエリ効率化)
+
+本番投入に向けたAdminダッシュボード改善の第一弾。ブレインストーミングで複数の改善候補(クエリ効率化・エラー追跡・時系列グラフ・サマリー/カテゴリ内訳)を洗い出し、まずリスクが低く他の改善の土台にもなる「クエリ効率化」から着手する方針とした。
+
+- [x] `database/migrations/2026_08_23_000001_add_composite_index_to_tool_events_table.php` 追加(`tool_events`に`(tool_slug, event_type, created_at)`の複合インデックスを追加)
+- [x] `DashboardController@index`を、48ツール×4クエリ(計192クエリ)のループから、`SUM(CASE WHEN ... THEN 1 ELSE 0 END)`による条件付き集計を使った単一の`GROUP BY tool_slug`クエリに置き換え
+- [x] `tests/Feature/Admin/DashboardControllerTest.php`にクエリ数を検証するテストを追加(`DB::listen`でクエリ数をカウントし、1回であることを確認)
+- [x] 既存の集計値テスト(ゼロ埋め・実行回数/ファイル数/直近7日・30日)がすべて変更なしで通ることを確認
+- [x] `composer ci:check` がグリーン(PHPStanが生Rowオブジェクトのプロパティアクセスを検出したため、`getAttribute()`経由のアクセスに修正)
+- [x] Playwrightで実ブラウザ動作確認(管理者ログイン→ダッシュボード表示→実データの集計値が正しく反映されることを確認)
+
 ## 今後の実装順序
 
-現時点で計画済みタスクは全て完了。次のフェーズ(Adminダッシュボード改善・User管理・Premium機能)は着手前にあらためてブレインストーミングする。
+Adminダッシュボード改善の残り候補(エラー追跡・時系列グラフ・サマリー/カテゴリ内訳)、その後のUser管理(CRM)・Premium機能は、それぞれ着手前にあらためてブレインストーミングする。
 
 ## 完了の定義(Definition of Done)
 

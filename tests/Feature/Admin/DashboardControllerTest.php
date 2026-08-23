@@ -4,6 +4,7 @@ use App\Models\Admin;
 use App\Models\ToolEvent;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -88,4 +89,23 @@ test('the dashboard aggregates tool_events correctly', function () {
         ->where('stats.0.last_7_days', 1)
         ->where('stats.0.last_30_days', 2)
     );
+});
+
+test('the dashboard aggregates all tools with a single query', function () {
+    actingAsAdmin();
+
+    ToolEvent::create([
+        'tool_slug' => 'image-compress',
+        'event_type' => 'process',
+        'file_count' => 2,
+    ]);
+
+    $queryCount = 0;
+    DB::listen(function () use (&$queryCount) {
+        $queryCount++;
+    });
+
+    $this->get(route('admin.dashboard'))->assertSuccessful();
+
+    expect($queryCount)->toBe(1);
 });
