@@ -314,5 +314,13 @@ Route::post('/ui-pattern-footer/track', [UiPatternFooterController::class, 'trac
 
 Route::get('/premium', [PremiumController::class, 'index'])->name('premium.index');
 
+Route::post('/premium/checkout', [PremiumController::class, 'checkout'])
+    ->middleware('auth')
+    ->name('premium.checkout');
+
+Route::get('/premium/thanks', [PremiumController::class, 'thanks'])
+    ->middleware('auth')
+    ->name('premium.thanks');
+
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
