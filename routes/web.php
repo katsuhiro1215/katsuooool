@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PremiumController;
 use App\Http\Controllers\Tools\Base64EncodeController;
 use App\Http\Controllers\Tools\ColorContrastController;
 use App\Http\Controllers\Tools\ColorConvertController;
@@ -310,6 +311,8 @@ Route::get('/ui-pattern-footer', [UiPatternFooterController::class, 'show'])->na
 Route::post('/ui-pattern-footer/track', [UiPatternFooterController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('ui-pattern-footer.track');
+
+Route::get('/premium', [PremiumController::class, 'index'])->name('premium.index');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
