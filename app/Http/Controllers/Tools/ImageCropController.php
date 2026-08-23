@@ -79,6 +79,14 @@ class ImageCropController extends Controller
         $dimensions = getimagesize($inputAbsolutePath);
 
         if ($dimensions === false) {
+            $eventLogger->log(
+                toolSlug: 'image-crop',
+                eventType: 'failed',
+                data: ['file_count' => 1],
+                ip: $request->ip(),
+                userAgent: $request->userAgent(),
+            );
+
             return response()->json([
                 'status' => 'failed',
                 'reason' => '画像の読み込みに失敗しました。',
@@ -86,6 +94,14 @@ class ImageCropController extends Controller
         }
 
         if ($dimensions[0] * $dimensions[1] > self::MAX_PIXELS) {
+            $eventLogger->log(
+                toolSlug: 'image-crop',
+                eventType: 'failed',
+                data: ['file_count' => 1],
+                ip: $request->ip(),
+                userAgent: $request->userAgent(),
+            );
+
             return response()->json([
                 'status' => 'failed',
                 'reason' => '画像の解像度が大きすぎます。',
@@ -93,6 +109,14 @@ class ImageCropController extends Controller
         }
 
         if ($x + $width > $dimensions[0] || $y + $height > $dimensions[1]) {
+            $eventLogger->log(
+                toolSlug: 'image-crop',
+                eventType: 'failed',
+                data: ['file_count' => 1],
+                ip: $request->ip(),
+                userAgent: $request->userAgent(),
+            );
+
             return response()->json([
                 'status' => 'failed',
                 'reason' => '切り抜き範囲が画像のサイズを超えています。',
@@ -121,6 +145,14 @@ class ImageCropController extends Controller
                 height: $height,
             );
         } catch (Throwable) {
+            $eventLogger->log(
+                toolSlug: 'image-crop',
+                eventType: 'failed',
+                data: ['file_count' => 1],
+                ip: $request->ip(),
+                userAgent: $request->userAgent(),
+            );
+
             return response()->json([
                 'status' => 'failed',
                 'reason' => '画像の切り抜きに失敗しました。',

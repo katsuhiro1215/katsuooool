@@ -32,6 +32,13 @@ class OgpCheckController extends Controller
         try {
             $html = $urlFetchService->fetch($request->string('url')->toString());
         } catch (UrlFetchException $e) {
+            $eventLogger->log(
+                toolSlug: 'ogp-check',
+                eventType: 'failed',
+                ip: $request->ip(),
+                userAgent: $request->userAgent(),
+            );
+
             return response()->json([
                 'status' => 'failed',
                 'reason' => $e->reason,

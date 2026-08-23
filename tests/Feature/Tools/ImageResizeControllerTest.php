@@ -106,6 +106,8 @@ test('an image exceeding the pixel-dimension ceiling is reported as failed', fun
     $response->assertJsonPath('results.0.status', 'failed');
     $response->assertJsonPath('results.0.reason', '画像の解像度が大きすぎます。');
 
+    expect(ToolEvent::where('tool_slug', 'image-resize')->where('event_type', 'failed')->exists())->toBeTrue();
+
     @unlink($bigPath);
 });
 

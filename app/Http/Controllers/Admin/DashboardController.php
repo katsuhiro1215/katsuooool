@@ -20,13 +20,14 @@ class DashboardController extends Controller
         $thirtyDaysAgo = Carbon::now()->subDays(30);
 
         $rowsBySlug = ToolEvent::query()
-            ->where('event_type', 'process')
+            ->whereIn('event_type', ['process', 'failed'])
             ->selectRaw(
                 'tool_slug, '.
-                'COUNT(*) as total_executions, '.
-                'SUM(file_count) as total_files, '.
-                'SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END) as last_7_days, '.
-                'SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END) as last_30_days',
+                "SUM(CASE WHEN event_type = 'process' THEN 1 ELSE 0 END) as total_executions, ".
+                "SUM(CASE WHEN event_type = 'process' THEN file_count ELSE 0 END) as total_files, ".
+                "SUM(CASE WHEN event_type = 'process' AND created_at >= ? THEN 1 ELSE 0 END) as last_7_days, ".
+                "SUM(CASE WHEN event_type = 'process' AND created_at >= ? THEN 1 ELSE 0 END) as last_30_days, ".
+                "SUM(CASE WHEN event_type = 'failed' THEN 1 ELSE 0 END) as error_count",
                 [$sevenDaysAgo, $thirtyDaysAgo],
             )
             ->groupBy('tool_slug')
@@ -44,6 +45,7 @@ class DashboardController extends Controller
                     'total_files' => $row ? (int) $row->getAttribute('total_files') : 0,
                     'last_7_days' => $row ? (int) $row->getAttribute('last_7_days') : 0,
                     'last_30_days' => $row ? (int) $row->getAttribute('last_30_days') : 0,
+                    'error_count' => $row ? (int) $row->getAttribute('error_count') : 0,
                 ];
             })
             ->values();

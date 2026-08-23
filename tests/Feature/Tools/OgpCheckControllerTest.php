@@ -47,6 +47,8 @@ test('a blocked host returns a 422 with the failure reason', function () {
     $response->assertStatus(422);
     $response->assertJsonPath('status', 'failed');
     $response->assertJsonPath('reason', 'blocked_host');
+
+    expect(ToolEvent::where('tool_slug', 'ogp-check')->where('event_type', 'failed')->exists())->toBeTrue();
 });
 
 test('an invalid URL fails validation before UrlFetchService is called', function () {

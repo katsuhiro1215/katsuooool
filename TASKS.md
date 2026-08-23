@@ -612,9 +612,23 @@ Adminダッシュボード改善の残り候補(エラー追跡・時系列グ�
 
 今後、エラー追跡・時系列グラフ等の新しいAdminページを追加するたびに、`AdminLayout.vue`の`NAV_ITEMS`に1項目追加する形で拡張する。
 
+## Phase 17 — Adminダッシュボード改善(エラー追跡)
+
+ダッシュボード改善の2つ目。事前調査により、サーバー側で実際に失敗しうるのは画像処理系8ツール(切り抜き・回転・圧縮・変換・リサイズ・色抽出・favicon生成・OGP画像生成)とURL取得系2ツール(OGPチェック・構造化データ確認)の計10ツールのみと判明(残り約37の色/CSS/Pattern/UI Pattern等はブラウザ内完結の計算のためサーバー側の失敗概念自体が存在せず対象外)。
+
+- [x] スキーマ変更なし(`event_type`は自由文字列カラムのため、新たに`'failed'`という値を書き込むだけで済む)
+- [x] 上記10コントローラーの失敗分岐(`catch(Throwable)`ブロック・解像度上限超過・切り抜き範囲外・URL取得失敗)に`ToolEventLogger`で`event_type: 'failed'`を記録する処理を追加。バッチ処理系(回転・圧縮・変換・リサイズ・色抽出・OGP画像生成)は成功時の`process`イベントと同じ粒度(リクエスト単位)で、失敗ファイル数を1件のイベントとしてまとめて記録する
+- [x] 対応形式外のファイル(`rejected`)はユーザー起因の入力ミスであり対象外とした(システム障害ではないため)
+- [x] `DashboardController`の集計クエリを拡張(`event_type IN ('process', 'failed')`に対象を広げ、`SUM(CASE WHEN event_type = '...' THEN ... END)`の条件付き集計で`total_executions`・`total_files`・`last_7_days`・`last_30_days`・`error_count`を1クエリのまま算出。クエリ数は変わらず1のまま)
+- [x] `resources/js/pages/admin/Dashboard.vue`に「エラー数」列を追加(0件超は赤字で強調表示)
+- [x] `tests/Feature/Admin/DashboardControllerTest.php`に、`process`と`failed`が混在する場合の集計を検証するテストを追加(既存のクエリ数検証テストも変更なしで通過)
+- [x] 対象10コントローラーそれぞれの既存Featureテスト(解像度上限超過・切り抜き範囲外・URL取得失敗のテストケース)に、`ToolEvent`へ`failed`イベントが記録されることを確認するアサーションを追加
+- [x] `composer ci:check` がグリーン(274件のバックエンドテスト全て通過)
+- [x] Playwrightで実ブラウザから実際に切り抜き範囲外エラーを発生させ、Adminダッシュボードの「エラー数」列に反映されることを確認
+
 ## 今後の実装順序
 
-Adminダッシュボード改善の残り候補(エラー追跡・時系列グラフ・サマリー/カテゴリ内訳)、その後のUser管理(CRM)・Premium機能は、それぞれ着手前にあらためてブレインストーミングする。
+Adminダッシュボード改善の残り候補(時系列グラフ・サマリー/カテゴリ内訳)、その後のUser管理(CRM)・Premium機能は、それぞれ着手前にあらためてブレインストーミングする。
 
 ## 完了の定義(Definition of Done)
 

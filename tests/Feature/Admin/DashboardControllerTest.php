@@ -50,6 +50,7 @@ test('the dashboard renders zeroed stats when there is no data', function () {
         ->where('stats.0.total_files', 0)
         ->where('stats.0.last_7_days', 0)
         ->where('stats.0.last_30_days', 0)
+        ->where('stats.0.error_count', 0)
     );
 });
 
@@ -88,6 +89,37 @@ test('the dashboard aggregates tool_events correctly', function () {
         ->where('stats.0.total_files', 6)
         ->where('stats.0.last_7_days', 1)
         ->where('stats.0.last_30_days', 2)
+    );
+});
+
+test('the dashboard counts failed events separately from successful executions', function () {
+    actingAsAdmin();
+
+    ToolEvent::create([
+        'tool_slug' => 'image-compress',
+        'event_type' => 'process',
+        'file_count' => 2,
+    ]);
+
+    ToolEvent::create([
+        'tool_slug' => 'image-compress',
+        'event_type' => 'failed',
+        'file_count' => 3,
+    ]);
+
+    ToolEvent::create([
+        'tool_slug' => 'image-compress',
+        'event_type' => 'failed',
+        'file_count' => 1,
+    ]);
+
+    $response = $this->get(route('admin.dashboard'));
+
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('admin/Dashboard')
+        ->where('stats.0.total_executions', 1)
+        ->where('stats.0.total_files', 2)
+        ->where('stats.0.error_count', 2)
     );
 });
 

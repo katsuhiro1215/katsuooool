@@ -77,5 +77,7 @@ test('an image exceeding the pixel-dimension ceiling is rejected', function () {
     $response->assertJsonPath('status', 'failed');
     $response->assertJsonPath('reason', '画像の解像度が大きすぎます。');
 
+    expect(ToolEvent::where('tool_slug', 'favicon-generate')->where('event_type', 'failed')->exists())->toBeTrue();
+
     @unlink($bigPath);
 });

@@ -9,6 +9,7 @@ interface ToolStat {
     total_files: number;
     last_7_days: number;
     last_30_days: number;
+    error_count: number;
 }
 
 defineProps<{ stats: ToolStat[] }>();
@@ -46,6 +47,7 @@ defineProps<{ stats: ToolStat[] }>();
                         </th>
                         <th class="px-4 py-3 font-medium">直近7日</th>
                         <th class="px-4 py-3 font-medium">直近30日</th>
+                        <th class="px-4 py-3 font-medium">エラー数</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,6 +70,16 @@ defineProps<{ stats: ToolStat[] }>();
                         </td>
                         <td class="px-4 py-3 text-gray-700">
                             {{ stat.last_30_days }}
+                        </td>
+                        <td
+                            class="px-4 py-3"
+                            :class="
+                                stat.error_count > 0
+                                    ? 'font-medium text-red-600'
+                                    : 'text-gray-700'
+                            "
+                        >
+                            {{ stat.error_count }}
                         </td>
                     </tr>
                 </tbody>

@@ -193,6 +193,18 @@ class ImageRotateController extends Controller
             userAgent: $request->userAgent(),
         );
 
+        $failedCount = count(array_filter($results, fn (array $result) => $result['status'] === 'failed'));
+
+        if ($failedCount > 0) {
+            $eventLogger->log(
+                toolSlug: 'image-rotate',
+                eventType: 'failed',
+                data: ['file_count' => $failedCount],
+                ip: $request->ip(),
+                userAgent: $request->userAgent(),
+            );
+        }
+
         return response()->json([
             'results' => $results,
             'batch_download_url' => $batchDownloadUrl,

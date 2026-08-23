@@ -50,6 +50,8 @@ test('a crop rectangle that exceeds the image bounds is reported as failed', fun
     $response->assertSuccessful();
     $response->assertJsonPath('status', 'failed');
     $response->assertJsonPath('reason', '切り抜き範囲が画像のサイズを超えています。');
+
+    expect(ToolEvent::where('tool_slug', 'image-crop')->where('event_type', 'failed')->exists())->toBeTrue();
 });
 
 test('posting a disallowed file type is rejected', function () {

@@ -41,4 +41,6 @@ test('a timeout from UrlFetchService returns a 422 with the failure reason', fun
 
     $response->assertStatus(422);
     $response->assertJsonPath('reason', 'timeout');
+
+    expect(ToolEvent::where('tool_slug', 'structured-data-check')->where('event_type', 'failed')->exists())->toBeTrue();
 });

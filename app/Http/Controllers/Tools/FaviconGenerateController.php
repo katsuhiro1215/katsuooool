@@ -70,6 +70,14 @@ class FaviconGenerateController extends Controller
             }
 
             if ($dimensions[0] * $dimensions[1] > self::MAX_PIXELS) {
+                $eventLogger->log(
+                    toolSlug: 'favicon-generate',
+                    eventType: 'failed',
+                    data: ['file_count' => 1],
+                    ip: $request->ip(),
+                    userAgent: $request->userAgent(),
+                );
+
                 return response()->json([
                     'status' => 'failed',
                     'reason' => '画像の解像度が大きすぎます。',
@@ -92,6 +100,14 @@ class FaviconGenerateController extends Controller
             $zipRelativePath = $downloadService->zip($batchId, $zipEntries, 'favicon.zip');
             $downloadUrl = $downloadService->signedUrl($zipRelativePath, 'favicon.zip');
         } catch (Throwable) {
+            $eventLogger->log(
+                toolSlug: 'favicon-generate',
+                eventType: 'failed',
+                data: ['file_count' => 1],
+                ip: $request->ip(),
+                userAgent: $request->userAgent(),
+            );
+
             return response()->json([
                 'status' => 'failed',
                 'reason' => 'faviconの生成に失敗しました。',
