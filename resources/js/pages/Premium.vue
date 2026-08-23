@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 defineProps<{ isPremium: boolean }>();
+
+const page = usePage();
+const isAuthenticated = computed(() => page.props.auth.user !== null);
 
 const PLANS = [
     {
@@ -64,7 +68,7 @@ const PLANS = [
                         {{ plan.note }}
                     </p>
                     <Link
-                        v-if="!isPremium"
+                        v-if="!isPremium && isAuthenticated"
                         :href="route('premium.checkout', { plan: plan.key })"
                         method="post"
                         as="button"
@@ -72,11 +76,25 @@ const PLANS = [
                     >
                         このプランで登録
                     </Link>
+                    <Link
+                        v-else-if="!isPremium"
+                        href="/login"
+                        class="mt-4 block w-full rounded-md bg-gray-900 px-4 py-2 text-center text-sm font-medium text-white hover:bg-gray-700"
+                    >
+                        ログインして登録する
+                    </Link>
                 </div>
             </div>
 
             <p class="mt-8 text-xs text-gray-500">
                 価格は税込です。無料トライアルはありません。ご登録と同時に課金が開始されます。返金は行っておりません。解約はいつでも可能で、解約後もお支払い済みの期間終了までPremium機能をご利用いただけます。
+            </p>
+            <p class="mt-2 text-xs text-gray-500">
+                <Link
+                    href="/legal/tokushoho"
+                    class="underline hover:text-gray-700"
+                    >特定商取引法に基づく表記</Link
+                >
             </p>
         </main>
     </div>

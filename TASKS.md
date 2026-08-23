@@ -699,6 +699,7 @@ Admin側からUserを閲覧・検索できるCRM機能。ブレインストー�
 - Stripeダッシュボードでの実際の商品・価格作成(開発/本番)と`.env`の`STRIPE_PRICE_MONTHLY`/`STRIPE_PRICE_YEARLY`への実値設定
 - `resources/js/pages/legal/Tokushoho.vue`内のプレースホルダー(事業者名・所在地・連絡先等)を実データに差し替え
 - Stripeテストモードでの実ブラウザ決済フロー確認(Price ID未設定のため本フェーズでは未実施)
+- 本番Webhookエンドポイントの登録(Stripeダッシュボード)と`.env`の`STRIPE_WEBHOOK_SECRET`への実値設定(未設定のままだとWebhookの署名検証がスキップされ、誰でも偽のWebhookリクエストでPremium状態を偽装できてしまう重大なリスクがあるため必須)
 
 ## 今後の実装順序
 

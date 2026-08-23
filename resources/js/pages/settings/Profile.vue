@@ -24,7 +24,8 @@ defineOptions({
 });
 
 const page = usePage();
-const user = computed(() => page.props.auth.user);
+// Profile settings is behind auth middleware, so a user is always present here.
+const user = computed(() => page.props.auth.user!);
 </script>
 
 <template>

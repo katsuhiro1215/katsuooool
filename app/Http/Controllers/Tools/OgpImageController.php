@@ -28,9 +28,14 @@ class OgpImageController extends Controller
 
     private const MAX_PIXELS = 25_000_000;
 
-    public function show(): Response
+    public function show(Request $request): Response
     {
-        return Inertia::render('OgpImage');
+        $user = $request->user();
+        $isPremium = $user instanceof User && $user->isPremium();
+
+        return Inertia::render('OgpImage', [
+            'maxFiles' => $isPremium ? self::MAX_FILE_COUNT : self::FREE_MAX_FILE_COUNT,
+        ]);
     }
 
     public function process(

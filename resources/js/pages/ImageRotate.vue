@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 
@@ -32,13 +32,16 @@ const DIRECTION_OPTIONS: { value: Direction; label: string }[] = [
     { value: 'right', label: '右に90度' },
 ];
 
-const MAX_FILES = 10;
+const props = defineProps<{ maxFiles: number }>();
+
+const MAX_FILES = computed<number>(() => props.maxFiles);
 
 const selectedFiles = ref<File[]>([]);
 const direction = ref<Direction>('left');
 const isDragging = ref(false);
 const isProcessing = ref(false);
 const errorMessage = ref('');
+const showPremiumUpsell = ref(false);
 const response = ref<RotateResponse | null>(null);
 
 const canRotate = computed(
@@ -51,13 +54,17 @@ function addFiles(files: FileList | null) {
     }
 
     errorMessage.value = '';
+    showPremiumUpsell.value = false;
     response.value = null;
 
     const incoming = Array.from(files);
-    const combined = [...selectedFiles.value, ...incoming].slice(0, MAX_FILES);
+    const combined = [...selectedFiles.value, ...incoming].slice(
+        0,
+        MAX_FILES.value,
+    );
 
-    if (selectedFiles.value.length + incoming.length > MAX_FILES) {
-        errorMessage.value = `一度にアップロードできるのは最大${MAX_FILES}枚までです。`;
+    if (selectedFiles.value.length + incoming.length > MAX_FILES.value) {
+        errorMessage.value = `一度にアップロードできるのは最大${MAX_FILES.value}枚までです。`;
     }
 
     selectedFiles.value = combined;
@@ -85,6 +92,7 @@ async function rotate() {
 
     isProcessing.value = true;
     errorMessage.value = '';
+    showPremiumUpsell.value = false;
     response.value = null;
 
     const formData = new FormData();
@@ -103,9 +111,30 @@ async function rotate() {
         );
 
         response.value = data;
-    } catch {
-        errorMessage.value =
-            '回転処理に失敗しました。時間をおいて再度お試しください。';
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 422) {
+            if (MAX_FILES.value < 10) {
+                errorMessage.value = `無料プランでは一度に${MAX_FILES.value}枚までです。Premium(¥600/月)なら10枚まで一括処理できます。`;
+                showPremiumUpsell.value = true;
+            } else {
+                errorMessage.value = 'ファイル数が多すぎます。';
+            }
+        } else if (
+            axios.isAxiosError(error) &&
+            error.response?.status === 429
+        ) {
+            if (MAX_FILES.value < 10) {
+                errorMessage.value =
+                    'リクエストが多すぎます。しばらく時間をおいてから再度お試しください。Premiumならレート制限が緩和されます。';
+                showPremiumUpsell.value = true;
+            } else {
+                errorMessage.value =
+                    'リクエストが多すぎます。しばらく時間をおいてから再度お試しください。';
+            }
+        } else {
+            errorMessage.value =
+                '回転処理に失敗しました。時間をおいて再度お試しください。';
+        }
     } finally {
         isProcessing.value = false;
     }
@@ -191,9 +220,16 @@ function isSuccess(result: RotateResult): result is SuccessResult {
                 </label>
             </div>
 
-            <p v-if="errorMessage" class="mt-4 text-sm text-red-600">
-                {{ errorMessage }}
-            </p>
+            <div v-if="errorMessage" class="mt-4 text-sm text-red-600">
+                <p>{{ errorMessage }}</p>
+                <Link
+                    v-if="showPremiumUpsell"
+                    href="/premium"
+                    class="mt-1 inline-block underline"
+                >
+                    Premiumについて詳しく見る
+                </Link>
+            </div>
 
             <ul v-if="selectedFiles.length > 0" class="mt-6 space-y-2">
                 <li

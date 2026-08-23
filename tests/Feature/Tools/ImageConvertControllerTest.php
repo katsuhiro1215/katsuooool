@@ -23,6 +23,29 @@ test('the image-convert page renders', function () {
     $response->assertInertia(fn ($page) => $page->component('ImageConvert'));
 });
 
+test('a free (unauthenticated) user receives maxFiles of 3', function () {
+    $response = $this->get(route('image-convert.show'));
+
+    $response->assertSuccessful();
+    $response->assertInertia(fn ($page) => $page->component('ImageConvert')->where('maxFiles', 3));
+});
+
+test('a premium user receives maxFiles of 10', function () {
+    $user = User::factory()->create();
+    $user->subscriptions()->create([
+        'type' => 'default',
+        'stripe_id' => 'sub_test_convert',
+        'stripe_status' => 'active',
+        'stripe_price' => 'price_test_monthly',
+        'quantity' => 1,
+    ]);
+
+    $response = $this->actingAs($user)->get(route('image-convert.show'));
+
+    $response->assertSuccessful();
+    $response->assertInertia(fn ($page) => $page->component('ImageConvert')->where('maxFiles', 10));
+});
+
 test('posting valid images returns converted download links in the requested format', function () {
     $files = [
         UploadedFile::fake()->image('photo-a.jpg', 400, 300),

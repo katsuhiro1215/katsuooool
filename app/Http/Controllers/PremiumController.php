@@ -45,6 +45,8 @@ class PremiumController extends Controller
         $plan = $request->string('plan')->toString();
         $priceId = (string) config(self::PLAN_PRICE_CONFIG_KEYS[$plan]);
 
+        abort_if($priceId === '', 503, 'Premiumプランの受付を準備中です。しばらくしてから再度お試しください。');
+
         return $user->newSubscription('default', $priceId)->checkout([
             'success_url' => route('premium.thanks'),
             'cancel_url' => route('premium.index'),

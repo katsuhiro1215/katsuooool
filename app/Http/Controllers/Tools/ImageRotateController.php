@@ -30,9 +30,14 @@ class ImageRotateController extends Controller
 
     private const DIRECTIONS = ['left', 'right', '180'];
 
-    public function show(): Response
+    public function show(Request $request): Response
     {
-        return Inertia::render('ImageRotate');
+        $user = $request->user();
+        $isPremium = $user instanceof User && $user->isPremium();
+
+        return Inertia::render('ImageRotate', [
+            'maxFiles' => $isPremium ? self::MAX_FILE_COUNT : self::FREE_MAX_FILE_COUNT,
+        ]);
     }
 
     public function process(
