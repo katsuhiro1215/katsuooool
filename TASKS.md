@@ -650,9 +650,18 @@ Adminダッシュボード改善の残り候補(エラー追跡・時系列グ�
 
 Adminダッシュボード改善(エラー追跡・時系列グラフ・サマリー/カテゴリ内訳)が全て完了。
 
+## 補足修正 — トップページのカテゴリタブに`ui-pattern`を追加
+
+Phase 19の動作確認中に発覚した不具合を修正。`resources/js/lib/toolFilter.ts`の`CATEGORY_TABS`にUI Patternカテゴリが定義されておらず、トップページでUI Patternの14ツール(Phase 13で追加)を絞り込めない状態だった。
+
+- [x] `CATEGORY_TABS`の末尾に`{ key: 'ui-pattern', label: 'UI Pattern' }`を追加
+- [x] `resources/js/lib/toolFilter.test.ts`の期待値を更新
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(「UI Pattern」タブをクリックし、14ツール全てが正しく絞り込み表示されることを確認)
+
 ## 今後の実装順序
 
-User管理(CRM)・Premium機能は、それぞれ着手前にあらためてブレインストーミングする。トップページの`CATEGORY_TABS`に`ui-pattern`が含まれていない件(Phase 19で発覚)も、対応するか確認が必要。
+User管理(CRM)・Premium機能は、それぞれ着手前にあらためてブレインストーミングする。
 
 ## 完了の定義(Definition of Done)
 

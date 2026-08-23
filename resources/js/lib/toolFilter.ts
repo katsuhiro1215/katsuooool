@@ -20,6 +20,7 @@ export const CATEGORY_TABS: CategoryTab[] = [
     { key: 'generator', label: 'Generator' },
     { key: 'developer', label: 'Developer' },
     { key: 'seo', label: 'SEO' },
+    { key: 'ui-pattern', label: 'UI Pattern' },
 ];
 
 export function filterTools(

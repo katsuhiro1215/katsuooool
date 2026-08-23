@@ -79,6 +79,7 @@ describe('CATEGORY_TABS', () => {
             'generator',
             'developer',
             'seo',
+            'ui-pattern',
         ]);
     });
 });
