@@ -680,9 +680,29 @@ Admin側からUserを閲覧・検索できるCRM機能。ブレインストー�
 - [x] `composer ci:check` がグリーン(282件のバックエンドテスト全て通過)
 - [x] Playwrightで実ブラウザ動作確認。User一覧表示・検索・詳細画面への遷移・サイドバーのハイライトを確認。さらに実際にツールイベントをUserに紐付けて記録し、詳細画面の「ツール利用履歴」に正しく反映されることをエンドツーエンドで確認
 
+## Phase 21 — Premium/Stripe決済連携
+
+ブレインストーミングで決定した方針(月額¥600・年額¥6,600、税込み固定価格、無料トライアルなし、返金なし、期間末解約、既存ツールは無料のまま維持しバッチ件数上限・レート制限・マイページでPremiumの価値を提供)を、Laravel Cashier + Stripe Checkout / Billing Portalで実装した。詳細仕様は`docs/superpowers/specs/2026-08-23-premium-stripe-design.md`、実装計画は`docs/superpowers/plans/2026-08-23-premium-stripe.md`を参照。
+
+- [x] Laravel Cashierを導入し、`User`モデルに`Billable`トレイトと`isPremium(): bool`(`subscribed('default')`のラッパー)を追加。独自の`is_premium`カラムは追加せず、判定は常にCashierの`subscriptions`テーブルを介して行う
+- [x] 公開の料金ページ`/premium`(`PremiumController::index`・`Premium.vue`)を追加。月額・年額プランと現在のPremium状態を表示
+- [x] Stripe Checkoutへの登録導線(`POST /premium/checkout`・`GET /premium/thanks`)を追加。価格IDは`.env`の`STRIPE_PRICE_MONTHLY`/`STRIPE_PRICE_YEARLY`から`config/services.php`経由で取得
+- [x] Stripe WebhookエンドポイントはCashierが`POST /stripe/webhook`(`cashier.webhook`)として自動登録済みであることを確認。追加実装は不要
+- [x] Stripe Billing Portalへの導線(`POST /premium/billing-portal`)を追加。Premiumユーザーのみ利用可能
+- [x] 画像系6ツール(圧縮・変換・リサイズ・回転・色抽出・OGP画像)のバッチ処理上限を無料3件/Premium10件に変更
+- [x] 画像系8ツールのレート制限を名前付きリミッター`image-tools`に統一し、Premiumユーザーは30回/分、それ以外は10回/分に緩和
+- [x] Premium限定の`/mypage`(`EnsurePremium`ミドルウェア + `MyPageController`)を追加。`ToolEvent`から自分のツール利用履歴のみをページネーション表示し、Billing Portalへの導線も設置
+- [x] 特定商取引法に基づく表記ページ`/legal/tokushoho`の雛形を追加(事業者情報はプレースホルダーのまま。本番デプロイ前に実データへの差し替えが必要)
+- [x] `composer ci:check`がグリーン(Task 1〜9すべてでTDDサイクルを適用)
+
+**未実施・引き続きユーザー側の作業として残るもの**:
+- Stripeダッシュボードでの実際の商品・価格作成(開発/本番)と`.env`の`STRIPE_PRICE_MONTHLY`/`STRIPE_PRICE_YEARLY`への実値設定
+- `resources/js/pages/legal/Tokushoho.vue`内のプレースホルダー(事業者名・所在地・連絡先等)を実データに差し替え
+- Stripeテストモードでの実ブラウザ決済フロー確認(Price ID未設定のため本フェーズでは未実施)
+
 ## 今後の実装順序
 
-Premium機能は、着手前にあらためてブレインストーミングする。
+現時点で計画済みタスクは全て完了。
 
 ## 完了の定義(Definition of Done)
 

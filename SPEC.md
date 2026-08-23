@@ -1,6 +1,6 @@
 # SPEC.md — katsuooool 仕様書
 
-最終更新: 2026-08-16
+最終更新: 2026-08-23
 対象範囲: Phase 0(基盤整備)〜Phase 2(Admin) ※Phase 3以降(他ツール・Premium・User認証)は本書のスコープ外(概要のみ記載)
 
 ## 1. プロダクト概要
@@ -41,7 +41,7 @@
 
 ### 4.1 既存テーブル
 
-- `users` — Fortify標準。Premium導入時に `is_premium` 等のカラムを追加予定(今回は未使用・変更しない)。
+- `users` — Fortify標準。Premium判定用の独自カラム(`is_premium`等)は追加しない。Laravel Cashier導入(Phase 21)により`Billable`トレイトを付与し、Premium状態はCashierが管理する`subscriptions`テーブルを`subscribed('default')`で都度判定する(§30参照)。
 
 ### 4.2 新規テーブル
 
@@ -222,8 +222,6 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 ## 20. スコープ外(将来のPhase)
 
 - 構造化データ確認のMicrodata・RDFa対応(§23.5参照、v1はJSON-LDのみ)
-- Premium機能・Stripe決済連携(方向性は§21.2参照、範囲は未確定)
-- User(一般利用者)向けログイン・マイページ
 - より詳細な分析基盤(時系列グラフ、ツール別ファイル形式内訳など)
 
 ## 21. 拡張ビジョン(参考・未確定)
@@ -242,11 +240,9 @@ Webカテゴリ7ツールのうち、ファイルアップロードを伴う画�
 
 カテゴリ体系の再編はPhase 8完了後に実施済みで、`config/tools.php` の `category` は `image`/`color`/`css`/`pattern`/`generator`/`developer`/`seo`/`ui-pattern` の値を持つ(WebカテゴリのPhase 8ツール群は「Developer」、Phase 7の画像処理系2ツールは「Generator」としてそれぞれ再分類済み)。UI Patternカテゴリは Phase 13 でButton・Card・Pagination・Modal・Toast・Loading・Skeleton・Form要素一式(Input・Textarea・Checkbox/Radio・Select・FormGroup)・Header・Footerに着手し、計画していたコンポーネントは全て完了した。
 
-### 21.2 Premium/Stripe(方向性のみ・未確定)
+### 21.2 Premium/Stripe(Phase 21で実装済み)
 
-- 月額500円のサブスクリプションで、Premium会員は全ツールを利用可能にする方向性。
-- どのツール・カテゴリを無料/有料の境界にするかは未決定。ユーザーとの合意により、Phase 8以降のツール増設を優先し、Premium設計は別途ブレインストーミングの場で決定する。
-- 開発用のStripe APIキー(`STRIPE_PUBLIC_KEY`・`STRIPE_SECRET_KEY`)は `.env` に設定済みだが、決済フロー自体は未着手。
+当初は「Premium会員は全ツールを利用可能にする」方向性で検討していたが、ブレインストーミングの結果、既存ツールはiLoveIMG等の競合を踏まえて無料のまま維持し、バッチ件数上限・レート制限・マイページでPremiumの価値を提供する方針に転換して実装した。詳細は§30参照。
 
 ### 21.3 デザイン調整(要素が揃ってから着手)
 
@@ -500,3 +496,18 @@ Admin側からUser(一般利用者)を閲覧・検索できる機能。ブレイ
 - `/admin/users` — 名前・メールアドレスの部分一致検索、ページネーション(20件/ページ)。
 - `/admin/users/{user}` — 登録日・メール認証状態・2FA有効化状態・パスキー登録件数のアカウント情報に加え、そのUserの`tool_events`(§4.2参照)をページネーションで表示する「ツール利用履歴」。
 - `tool_events`に`user_id`(nullable、`users`外部キー、削除時は`SET NULL`)を追加し、ログイン中に各ツールを利用した場合は`ToolEventLogger`が自動的に記録するようにした(未ログイン利用は従来通り`user_id`がnullのまま、IPハッシュのみで記録される)。
+
+## 30. Premium/Stripe決済連携仕様(Phase 21)
+
+Laravel Cashier + Stripe Checkout / Billing Portalによるサブスクリプション機能。詳細な設計判断の経緯は`docs/superpowers/specs/2026-08-23-premium-stripe-design.md`、実装タスクは`docs/superpowers/plans/2026-08-23-premium-stripe.md`を参照。
+
+- **料金**: 月額¥600(税込)・年額¥6,600(税込)。無料トライアルなし、返金なし、解約は期間末まで利用可能。
+- **Premium判定**: 独自カラムは持たず、`User::isPremium()`が`$this->subscribed('default')`を呼び出してCashierの`subscriptions`テーブルを都度参照する。
+- **登録導線**: `/premium`(料金ページ)→ `POST /premium/checkout`(Stripe Checkoutへリダイレクト)→ 決済完了後`/premium/thanks`。Webhook(`POST /stripe/webhook`)はCashierが自動登録。
+- **解約・支払い管理**: `POST /premium/billing-portal`からStripe Billing Portalへ遷移し、Stripeのホスト型UIで解約・支払い方法変更を行う(独自UIは実装しない)。
+- **Premiumの価値提供**(既存ツールは無料のまま維持):
+  - 画像系6ツール(圧縮・変換・リサイズ・回転・色抽出・OGP画像)のバッチアップロード上限を無料3件/Premium10件に拡大。
+  - 画像系8ツールのレート制限(`image-tools`リミッター)を無料10回/分・Premium30回/分に緩和。
+  - Premium限定の`/mypage`(`EnsurePremium`ミドルウェア)で、自分のツール利用履歴(`tool_events`)をページネーション表示。
+- **特定商取引法表記**: `/legal/tokushoho`に雛形を用意。事業者名・所在地・連絡先はプレースホルダーのままで、本番デプロイ前に実データへの差し替えが必要。
+- **未実施**: Stripeダッシュボードでの実商品・価格作成と`.env`の`STRIPE_PRICE_MONTHLY`/`STRIPE_PRICE_YEARLY`への実値設定はユーザー側の作業として残る。
