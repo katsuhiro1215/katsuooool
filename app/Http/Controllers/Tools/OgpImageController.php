@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tools;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Services\Tools\OgpImageService;
 use App\Services\Tools\ToolDownloadService;
 use App\Services\Tools\ToolEventLogger;
@@ -21,6 +22,8 @@ class OgpImageController extends Controller
 
     private const MAX_FILE_COUNT = 10;
 
+    private const FREE_MAX_FILE_COUNT = 3;
+
     private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
     private const MAX_PIXELS = 25_000_000;
@@ -37,8 +40,12 @@ class OgpImageController extends Controller
         ToolDownloadService $downloadService,
         ToolEventLogger $eventLogger,
     ): JsonResponse {
+        $user = $request->user();
+        $isPremium = $user instanceof User && $user->isPremium();
+        $maxFileCount = $isPremium ? self::MAX_FILE_COUNT : self::FREE_MAX_FILE_COUNT;
+
         $request->validate([
-            'files' => ['required', 'array', 'max:'.self::MAX_FILE_COUNT],
+            'files' => ['required', 'array', 'max:'.$maxFileCount],
             'files.*' => ['file'],
         ]);
 
@@ -52,7 +59,7 @@ class OgpImageController extends Controller
             uploadedFiles: $uploadedFiles,
             allowedMimeTypes: self::ALLOWED_MIME_TYPES,
             maxFileBytes: self::MAX_FILE_BYTES,
-            maxFileCount: self::MAX_FILE_COUNT,
+            maxFileCount: $maxFileCount,
         );
 
         $eventLogger->log(

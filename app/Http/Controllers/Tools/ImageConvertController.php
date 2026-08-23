@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tools;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Services\Tools\ImageConvertService;
 use App\Services\Tools\ToolDownloadService;
 use App\Services\Tools\ToolEventLogger;
@@ -20,6 +21,8 @@ class ImageConvertController extends Controller
     private const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
     private const MAX_FILE_COUNT = 10;
+
+    private const FREE_MAX_FILE_COUNT = 3;
 
     private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
 
@@ -44,8 +47,12 @@ class ImageConvertController extends Controller
         ToolDownloadService $downloadService,
         ToolEventLogger $eventLogger,
     ): JsonResponse {
+        $user = $request->user();
+        $isPremium = $user instanceof User && $user->isPremium();
+        $maxFileCount = $isPremium ? self::MAX_FILE_COUNT : self::FREE_MAX_FILE_COUNT;
+
         $request->validate([
-            'files' => ['required', 'array', 'max:'.self::MAX_FILE_COUNT],
+            'files' => ['required', 'array', 'max:'.$maxFileCount],
             'files.*' => ['file'],
             'format' => ['required', 'string', 'in:'.implode(',', array_keys(self::TARGET_FORMATS))],
         ]);
@@ -63,7 +70,7 @@ class ImageConvertController extends Controller
             uploadedFiles: $uploadedFiles,
             allowedMimeTypes: self::ALLOWED_MIME_TYPES,
             maxFileBytes: self::MAX_FILE_BYTES,
-            maxFileCount: self::MAX_FILE_COUNT,
+            maxFileCount: $maxFileCount,
         );
 
         $eventLogger->log(

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tools;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Services\Tools\ImageColorExtractService;
 use App\Services\Tools\ToolEventLogger;
 use App\Services\Tools\ToolUploadService;
@@ -20,6 +21,8 @@ class ImageColorExtractController extends Controller
 
     private const MAX_FILE_COUNT = 10;
 
+    private const FREE_MAX_FILE_COUNT = 3;
+
     private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
 
     private const MAX_PIXELS = 25_000_000;
@@ -35,8 +38,12 @@ class ImageColorExtractController extends Controller
         ImageColorExtractService $colorExtractService,
         ToolEventLogger $eventLogger,
     ): JsonResponse {
+        $user = $request->user();
+        $isPremium = $user instanceof User && $user->isPremium();
+        $maxFileCount = $isPremium ? self::MAX_FILE_COUNT : self::FREE_MAX_FILE_COUNT;
+
         $request->validate([
-            'files' => ['required', 'array', 'max:'.self::MAX_FILE_COUNT],
+            'files' => ['required', 'array', 'max:'.$maxFileCount],
             'files.*' => ['file'],
         ]);
 
@@ -50,7 +57,7 @@ class ImageColorExtractController extends Controller
             uploadedFiles: $uploadedFiles,
             allowedMimeTypes: self::ALLOWED_MIME_TYPES,
             maxFileBytes: self::MAX_FILE_BYTES,
-            maxFileCount: self::MAX_FILE_COUNT,
+            maxFileCount: $maxFileCount,
         );
 
         $eventLogger->log(

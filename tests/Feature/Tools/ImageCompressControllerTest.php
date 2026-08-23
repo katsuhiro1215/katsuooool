@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ToolEvent;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -202,4 +203,38 @@ test('posting more than 10 files is rejected with a validation error', function 
     $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])->post(route('image-compress.process'), ['files' => $files]);
 
     $response->assertStatus(422);
+});
+
+test('a free user cannot upload more than 3 files at once', function () {
+    $user = User::factory()->create();
+    $files = collect(range(1, 4))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
+        ->all();
+
+    $response = $this->actingAs($user)
+        ->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => $files]);
+
+    $response->assertStatus(422);
+});
+
+test('a premium user can upload up to 10 files at once', function () {
+    $user = User::factory()->create();
+    $user->subscriptions()->create([
+        'type' => 'default',
+        'stripe_id' => 'sub_test_compress',
+        'stripe_status' => 'active',
+        'stripe_price' => 'price_test_monthly',
+        'quantity' => 1,
+    ]);
+    $files = collect(range(1, 4))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
+        ->all();
+
+    $response = $this->actingAs($user)
+        ->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => $files]);
+
+    $response->assertSuccessful();
+    $response->assertJsonCount(4, 'results');
 });

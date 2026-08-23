@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ToolEvent;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -162,4 +163,36 @@ test('duplicate download names are de-duplicated so the zip does not lose files'
     expect($results[0]['status'])->toBe('success');
     expect($results[1]['status'])->toBe('success');
     expect($results[0]['download_url'])->not->toBe($results[1]['download_url']);
+});
+
+test('a free user cannot upload more than 3 files at once', function () {
+    $user = User::factory()->create();
+    $files = collect(range(1, 4))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
+        ->all();
+
+    $this->actingAs($user);
+    $response = postImageResize($files, width: 200);
+
+    $response->assertStatus(422);
+});
+
+test('a premium user can upload up to 10 files at once', function () {
+    $user = User::factory()->create();
+    $user->subscriptions()->create([
+        'type' => 'default',
+        'stripe_id' => 'sub_test_resize',
+        'stripe_status' => 'active',
+        'stripe_price' => 'price_test_monthly',
+        'quantity' => 1,
+    ]);
+    $files = collect(range(1, 4))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
+        ->all();
+
+    $this->actingAs($user);
+    $response = postImageResize($files, width: 200);
+
+    $response->assertSuccessful();
+    $response->assertJsonCount(4, 'results');
 });
