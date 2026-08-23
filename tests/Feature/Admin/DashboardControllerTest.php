@@ -46,6 +46,7 @@ test('the dashboard renders zeroed stats when there is no data', function () {
         ->component('admin/Dashboard')
         ->has('stats', 48)
         ->where('stats.0.slug', 'image-compress')
+        ->where('stats.0.category', 'image')
         ->where('stats.0.total_executions', 0)
         ->where('stats.0.total_files', 0)
         ->where('stats.0.last_7_days', 0)

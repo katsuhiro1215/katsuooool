@@ -41,6 +41,7 @@ class DashboardController extends Controller
                 return [
                     'slug' => $tool['slug'],
                     'name' => $tool['name'],
+                    'category' => $tool['category'],
                     'total_executions' => $row ? (int) $row->getAttribute('total_executions') : 0,
                     'total_files' => $row ? (int) $row->getAttribute('total_files') : 0,
                     'last_7_days' => $row ? (int) $row->getAttribute('last_7_days') : 0,
