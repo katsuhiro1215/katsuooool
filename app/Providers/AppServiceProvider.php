@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use App\Services\Tools\Dns\DnsResolver;
 use App\Services\Tools\Dns\SystemDnsResolver;
 use Illuminate\Auth\AuthenticationException;
@@ -36,6 +37,15 @@ class AppServiceProvider extends ServiceProvider
             $throttleKey = Str::transliterate(Str::lower((string) $request->input('email')).'|'.$request->ip());
 
             return Limit::perMinute(5)->by($throttleKey);
+        });
+
+        RateLimiter::for('image-tools', function (Request $request) {
+            $user = $request->user();
+            $isPremium = $user instanceof User && $user->isPremium();
+            $perMinute = $isPremium ? 30 : 10;
+            $key = $user !== null ? $user->id : $request->ip();
+
+            return Limit::perMinute($perMinute)->by($key);
         });
 
         // Laravel's default RedirectIfAuthenticated (the 'guest' middleware
