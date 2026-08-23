@@ -601,6 +601,17 @@ UI PatternカテゴリのPhase 13計画分(Button・Card・Pagination・Modal・
 - [x] `composer ci:check` がグリーン(PHPStanが生Rowオブジェクトのプロパティアクセスを検出したため、`getAttribute()`経由のアクセスに修正)
 - [x] Playwrightで実ブラウザ動作確認(管理者ログイン→ダッシュボード表示→実データの集計値が正しく反映されることを確認)
 
+## Phase 16 — Adminサイドバー(共通レイアウト)
+
+Adminダッシュボード改善の残り候補(エラー追跡・時系列グラフ・サマリー/カテゴリ内訳)・User管理(CRM)・Premium機能を今後すべて実装していく方針が決まったため、各機能へのナビゲーションの土台として共通レイアウトを先に用意した。
+
+- [x] `resources/js/layouts/AdminLayout.vue` 新規作成(左サイドバー+右側コンテンツの構成。素のTailwind CSS、shadcn-vueは使わない既存方針を踏襲)。ナビ項目は現時点で実在するページ(ダッシュボード)のみを配列で保持し、現在地は`route().current()`でハイライト。ログアウトボタンをサイドバー下部に配置
+- [x] `resources/js/pages/admin/Dashboard.vue` を`AdminLayout`でラップするようリファクタリング(ヘッダー・ログアウトの重複実装を削除、`#header`スロットにタイトルを移動)
+- [x] `composer ci:check` がグリーン
+- [x] Playwrightで実ブラウザ動作確認(サイドバーの表示・現在地ハイライト・ダッシュボード内容の表示・ログアウト→ログイン画面へのリダイレクトを確認)
+
+今後、エラー追跡・時系列グラフ等の新しいAdminページを追加するたびに、`AdminLayout.vue`の`NAV_ITEMS`に1項目追加する形で拡張する。
+
 ## 今後の実装順序
 
 Adminダッシュボード改善の残り候補(エラー追跡・時系列グラフ・サマリー/カテゴリ内訳)、その後のUser管理(CRM)・Premium機能は、それぞれ着手前にあらためてブレインストーミングする。
