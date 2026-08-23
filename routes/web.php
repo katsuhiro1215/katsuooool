@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MyPageController;
 use App\Http\Controllers\PremiumController;
 use App\Http\Controllers\Tools\Base64EncodeController;
 use App\Http\Controllers\Tools\ColorContrastController;
@@ -325,6 +326,10 @@ Route::get('/premium/thanks', [PremiumController::class, 'thanks'])
 Route::post('/premium/billing-portal', [PremiumController::class, 'billingPortal'])
     ->middleware('auth')
     ->name('premium.billing-portal');
+
+Route::get('/mypage', [MyPageController::class, 'index'])
+    ->middleware(['auth', 'premium'])
+    ->name('mypage.index');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
