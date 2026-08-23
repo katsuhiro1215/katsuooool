@@ -123,7 +123,7 @@ test('the dashboard counts failed events separately from successful executions',
     );
 });
 
-test('the dashboard aggregates all tools with a single query', function () {
+test('the dashboard aggregates all tools with two queries (summary + daily series)', function () {
     actingAsAdmin();
 
     ToolEvent::create([
@@ -139,5 +139,33 @@ test('the dashboard aggregates all tools with a single query', function () {
 
     $this->get(route('admin.dashboard'))->assertSuccessful();
 
-    expect($queryCount)->toBe(1);
+    expect($queryCount)->toBe(2);
+});
+
+test('the dashboard exposes a 30-day daily series per tool with zero-filled dates', function () {
+    actingAsAdmin();
+
+    ToolEvent::create([
+        'tool_slug' => 'image-compress',
+        'event_type' => 'process',
+        'file_count' => 2,
+    ])->forceFill(['created_at' => Carbon::now()->subDays(1)])->save();
+
+    ToolEvent::create([
+        'tool_slug' => 'image-compress',
+        'event_type' => 'failed',
+    ])->forceFill(['created_at' => Carbon::now()->subDays(1)])->save();
+
+    $response = $this->get(route('admin.dashboard'));
+
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('admin/Dashboard')
+        ->has('dailyStats.image-compress', 30)
+        ->where('dailyStats.image-compress.28.date', Carbon::now()->subDays(1)->toDateString())
+        ->where('dailyStats.image-compress.28.executions', 1)
+        ->where('dailyStats.image-compress.28.errors', 1)
+        ->where('dailyStats.image-compress.29.date', Carbon::now()->toDateString())
+        ->where('dailyStats.image-compress.29.executions', 0)
+        ->where('dailyStats.image-compress.29.errors', 0)
+    );
 });

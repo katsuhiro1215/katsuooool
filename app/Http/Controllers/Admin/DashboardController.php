@@ -50,8 +50,41 @@ class DashboardController extends Controller
             })
             ->values();
 
+        $dailyRowsByKey = ToolEvent::query()
+            ->whereIn('event_type', ['process', 'failed'])
+            ->where('created_at', '>=', $thirtyDaysAgo)
+            ->selectRaw(
+                'tool_slug, DATE(created_at) as date, '.
+                "SUM(CASE WHEN event_type = 'process' THEN 1 ELSE 0 END) as executions, ".
+                "SUM(CASE WHEN event_type = 'failed' THEN 1 ELSE 0 END) as errors",
+            )
+            ->groupByRaw('tool_slug, DATE(created_at)')
+            ->get()
+            ->keyBy(fn (ToolEvent $row) => $row->tool_slug.'|'.$row->getAttribute('date'));
+
+        $dateRange = collect(range(29, 0))
+            ->map(fn (int $daysAgo) => Carbon::now()->subDays($daysAgo)->toDateString());
+
+        $dailyStats = collect($tools)
+            ->mapWithKeys(function (array $tool) use ($dateRange, $dailyRowsByKey) {
+                $series = $dateRange
+                    ->map(function (string $date) use ($tool, $dailyRowsByKey) {
+                        $row = $dailyRowsByKey->get($tool['slug'].'|'.$date);
+
+                        return [
+                            'date' => $date,
+                            'executions' => $row ? (int) $row->getAttribute('executions') : 0,
+                            'errors' => $row ? (int) $row->getAttribute('errors') : 0,
+                        ];
+                    })
+                    ->values();
+
+                return [$tool['slug'] => $series];
+            });
+
         return Inertia::render('admin/Dashboard', [
             'stats' => $stats,
+            'dailyStats' => $dailyStats,
         ]);
     }
 }

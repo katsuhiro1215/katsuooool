@@ -626,9 +626,20 @@ Adminダッシュボード改善の残り候補(エラー追跡・時系列グ�
 - [x] `composer ci:check` がグリーン(274件のバックエンドテスト全て通過)
 - [x] Playwrightで実ブラウザから実際に切り抜き範囲外エラーを発生させ、Adminダッシュボードの「エラー数」列に反映されることを確認
 
+## Phase 18 — Adminダッシュボード改善(時系列グラフ)
+
+ダッシュボード改善の3つ目。ツールごとに選択して直近30日間の日次推移(実行数・エラー数)を確認できるグラフを追加した。チャートライブラリは追加せず、Vueコンポーネント内でinline SVGを組み立てる自前実装とした(バンドルサイズを増やさず保守も容易なため)。
+
+- [x] `DashboardController`に日次集計クエリを1つ追加(既存の集計クエリとは別に`GROUP BY tool_slug, DATE(created_at)`で直近30日分を取得。クエリ数は1→2に増加)。48ツール×30日分をゼロ埋めした連続日付の配列(`{date, executions, errors}[]`)として`tool_slug`ごとにまとめ、`dailyStats`propとして渡す
+- [x] `resources/js/components/admin/DailyBarChart.vue` 新規作成(`{date, executions, errors}[]`を受け取り、実行数(グレー)とエラー数(赤)を並べたinline SVG棒グラフを描画する表示専用コンポーネント。ホバーで日付ごとの件数を`<title>`要素で表示)
+- [x] `resources/js/pages/admin/Dashboard.vue`にツール選択ドロップダウン(既存の48ツールリストを流用)とグラフを追加。選択したツールの`dailyStats`を`DailyBarChart`に渡す
+- [x] `tests/Feature/Admin/DashboardControllerTest.php`にクエリ数の期待値を1→2に更新、日次シリーズがゼロ埋めされた30件の配列で返り、該当日の実行数・エラー数が正しく集計されることを検証するテストを追加
+- [x] `composer ci:check` がグリーン(275件のバックエンドテスト全て通過)
+- [x] Playwrightで実ブラウザ動作確認。日次イベントを複数投入し、ツール切り替えでグラフが正しく更新されること、エラーのある日が赤棒で表示されること、データが0件のツールに切り替えてもNaN等の描画崩れが起きないことを確認
+
 ## 今後の実装順序
 
-Adminダッシュボード改善の残り候補(時系列グラフ・サマリー/カテゴリ内訳)、その後のUser管理(CRM)・Premium機能は、それぞれ着手前にあらためてブレインストーミングする。
+Adminダッシュボード改善の残り候補(サマリー/カテゴリ内訳)、その後のUser管理(CRM)・Premium機能は、それぞれ着手前にあらためてブレインストーミングする。
 
 ## 完了の定義(Definition of Done)
 
