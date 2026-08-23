@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\MyPageController;
 use App\Http\Controllers\PremiumController;
 use App\Http\Controllers\Tools\Base64EncodeController;
@@ -330,6 +331,8 @@ Route::post('/premium/billing-portal', [PremiumController::class, 'billingPortal
 Route::get('/mypage', [MyPageController::class, 'index'])
     ->middleware(['auth', 'premium'])
     ->name('mypage.index');
+
+Route::get('/legal/tokushoho', [LegalController::class, 'tokushoho'])->name('legal.tokushoho');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
