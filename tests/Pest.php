@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Admin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 /*
@@ -44,7 +46,15 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function actingAsAdmin(): Admin
 {
-    // ..
+    $admin = Admin::create([
+        'name' => 'Test Admin',
+        'email' => 'admin@example.com',
+        'password' => Hash::make('password1234'),
+    ]);
+
+    test()->actingAs($admin, 'admin');
+
+    return $admin;
 }

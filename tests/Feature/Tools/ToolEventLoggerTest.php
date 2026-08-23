@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use App\Services\Tools\ToolEventLogger;
 
 test('log records an event without storing the raw ip address', function () {
@@ -37,4 +38,15 @@ test('log handles a null ip gracefully', function () {
     $event = $logger->log('image-compress', 'upload', ip: null);
 
     expect($event->ip_hash)->toBeNull();
+});
+
+test('log records the user id when provided and leaves it null otherwise', function () {
+    $logger = new ToolEventLogger;
+    $user = User::factory()->create();
+
+    $withUser = $logger->log('image-compress', 'upload', userId: $user->id);
+    $withoutUser = $logger->log('image-compress', 'upload');
+
+    expect($withUser->user_id)->toBe($user->id);
+    expect($withoutUser->user_id)->toBeNull();
 });

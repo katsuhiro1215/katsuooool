@@ -659,9 +659,30 @@ Phase 19の動作確認中に発覚した不具合を修正。`resources/js/lib/
 - [x] `composer ci:check` がグリーン
 - [x] Playwrightで実ブラウザ動作確認(「UI Pattern」タブをクリックし、14ツール全てが正しく絞り込み表示されることを確認)
 
+## Phase 20 — User管理(CRM)
+
+Admin側からUserを閲覧・検索できるCRM機能。ブレインストーミングで「一覧・検索・詳細表示のみ(停止/削除やメール認証手動完了・2FAリセットなどの変更系操作は含めない)」「ツール利用履歴を含める」の2点を決定。
+
+**データモデル変更**:
+- [x] `database/migrations/2026_08_23_000002_add_user_id_to_tool_events_table.php` 追加(`tool_events`に`user_id`をnullable外部キーとして追加、削除時は`SET NULL`)
+- [x] `App\Models\ToolEvent`に`user()`のBelongsTo関係を追加
+- [x] `ToolEventLogger::log()`に`userId`引数を追加
+- [x] 共通の`TrackedToolController::track()`(37ツール分を1箇所でカバー)+ 個別の画像/URL系10コントローラーの全呼び出し箇所(計33箇所)に`userId: $request->user()?->id`を追加。ログイン中なら記録、未ログインなら従来通りnull
+- [x] `tests/Pest.php`に共有ヘルパー`actingAsAdmin()`を追加(`DashboardControllerTest.php`にあった重複定義を統合)
+- [x] `ToolEventLoggerTest`・`ColorConvertControllerTest`(共通基底クラス代表)・`ImageCropControllerTest`(個別コントローラー代表)にログイン時/未ログイン時の`user_id`記録を検証するテストを追加
+
+**Admin UI**:
+- [x] `App\Http\Controllers\Admin\UserController`作成(`index()`: 名前/メール部分一致検索+ページネーション20件、`show()`: アカウント状態(登録日・メール認証・2FA有効化・パスキー件数)+ツール利用履歴のページネーション)
+- [x] ルート追加: `/admin/users`(一覧)・`/admin/users/{user}`(詳細)、`auth:admin`ガードで保護
+- [x] `resources/js/pages/admin/users/Index.vue`・`Show.vue` 新規作成(素のTailwind CSS)
+- [x] `AdminLayout.vue`の`NAV_ITEMS`に「User管理」を追加(`admin.users.*`パターンで一覧・詳細どちらでもハイライト)
+- [x] `tests/Feature/Admin/UserControllerTest.php` 新規作成(ガード・一覧の新着順・検索・詳細のアカウント状態とツール履歴)
+- [x] `composer ci:check` がグリーン(282件のバックエンドテスト全て通過)
+- [x] Playwrightで実ブラウザ動作確認。User一覧表示・検索・詳細画面への遷移・サイドバーのハイライトを確認。さらに実際にツールイベントをUserに紐付けて記録し、詳細画面の「ツール利用履歴」に正しく反映されることをエンドツーエンドで確認
+
 ## 今後の実装順序
 
-User管理(CRM)・Premium機能は、それぞれ着手前にあらためてブレインストーミングする。
+Premium機能は、着手前にあらためてブレインストーミングする。
 
 ## 完了の定義(Definition of Done)
 

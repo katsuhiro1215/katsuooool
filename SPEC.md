@@ -63,8 +63,9 @@ Admin専用の `admin` guard で認証する。ユーザー登録画面は作ら
 | カラム | 型 | 備考 |
 |---|---|---|
 | id | bigint PK | |
+| user_id | bigint FK nullable | `users`参照、削除時は`SET NULL`。ログイン中の利用のみ記録(§29参照)、未ログインは常にnull |
 | tool_slug | string | 例: `image-compress` |
-| event_type | string | `upload` / `process` / `download` / `error` |
+| event_type | string | `upload` / `process` / `failed` |
 | file_count | unsigned int nullable | 一括処理の件数 |
 | input_bytes | unsigned bigint nullable | 処理前合計サイズ |
 | output_bytes | unsigned bigint nullable | 処理後合計サイズ |
@@ -112,7 +113,9 @@ Admin専用の `admin` guard で認証する。ユーザー登録画面は作ら
 ## 8. Admin仕様(Phase 2)
 
 - `/admin/login` — Admin専用ログインフォーム(独自Tailwind UI)。ログイン試行のレート制限あり。
-- `/admin/dashboard` — ツール別の集計表示(ツール名・実行回数・ダウンロード回数、直近7日/30日の推移)。`tool_events` を集計して表示する最小構成(高度な分析基盤は将来拡張)。
+- `/admin/dashboard` — ツール別の集計表示(実行回数・エラー数・日次推移グラフ・カテゴリ内訳など。詳細はPhase 15〜19、TASKS.md参照)。`tool_events` を集計して表示する。
+- `/admin/users`・`/admin/users/{user}` — User(一般利用者)の一覧・検索・詳細表示(Phase 20、§29参照)。
+- 左サイドバー(`AdminLayout.vue`)で各画面を切り替える。
 - 初期Adminアカウントは登録画面を用意せず、Artisanコマンドで作成する(攻撃面を増やさない)。
 
 ## 9. セキュリティ方針
@@ -489,3 +492,11 @@ Formは「Login Form」「Register Form」のような完成形テンプレー�
 - 操作: アップロード後、プレビュー画像上に切り抜き矩形を表示する(初期状態は画像中央80%)。矩形はドラッグで移動、四隅のハンドルでリサイズできる(ライブラリ非依存、`pointerdown`/`pointermove`/`pointerup`によるVueコンポーネント内の自前実装)。アスペクト比プリセット(フリー/1:1/4:3/16:9/3:2)をボタンで切り替えると、リサイズ時もその比率を維持する。
 - 処理: 「切り抜く」ボタンで、プレビュー上の矩形座標を元画像の実ピクセル座標にスケール変換してサーバーに送信する。バックエンドは`ImageCropController`+`ImageCropService`(Intervention Imageの`crop(width, height, x, y)`)で処理し、他の画像ツールと同じ`ToolUploadService`/`ToolEventLogger`/`ToolDownloadService`のパターンに乗せる(単一ファイルのためZIPは不要、署名付きダウンロードURLを1件返す)。切り抜き範囲が画像サイズを超える場合はエラーとして返す。
 - 出力: 切り抜き後の画像をダウンロードできるリンクを表示する。
+
+## 29. User管理(CRM)仕様(Phase 20)
+
+Admin側からUser(一般利用者)を閲覧・検索できる機能。ブレインストーミングにより、今回は「一覧・検索・詳細表示」のみに絞り、アカウントの停止・削除やメール認証の手動完了・2FAリセットなどの変更系操作は含めないこととした(必要になれば別途ブレインストーミングする)。
+
+- `/admin/users` — 名前・メールアドレスの部分一致検索、ページネーション(20件/ページ)。
+- `/admin/users/{user}` — 登録日・メール認証状態・2FA有効化状態・パスキー登録件数のアカウント情報に加え、そのUserの`tool_events`(§4.2参照)をページネーションで表示する「ツール利用履歴」。
+- `tool_events`に`user_id`(nullable、`users`外部キー、削除時は`SET NULL`)を追加し、ログイン中に各ツールを利用した場合は`ToolEventLogger`が自動的に記録するようにした(未ログイン利用は従来通り`user_id`がnullのまま、IPハッシュのみで記録される)。

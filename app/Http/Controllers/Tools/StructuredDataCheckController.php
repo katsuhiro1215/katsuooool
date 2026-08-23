@@ -37,6 +37,7 @@ class StructuredDataCheckController extends Controller
                 eventType: 'failed',
                 ip: $request->ip(),
                 userAgent: $request->userAgent(),
+                userId: $request->user()?->id,
             );
 
             return response()->json([
@@ -53,6 +54,7 @@ class StructuredDataCheckController extends Controller
             eventType: 'process',
             ip: $request->ip(),
             userAgent: $request->userAgent(),
+            userId: $request->user()?->id,
         );
 
         return response()->json(['status' => 'success', 'blocks' => $blocks]);

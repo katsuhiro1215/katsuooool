@@ -60,6 +60,7 @@ class FaviconGenerateController extends Controller
             data: ['file_count' => 1],
             ip: $request->ip(),
             userAgent: $request->userAgent(),
+            userId: $request->user()?->id,
         );
 
         try {
@@ -76,6 +77,7 @@ class FaviconGenerateController extends Controller
                     data: ['file_count' => 1],
                     ip: $request->ip(),
                     userAgent: $request->userAgent(),
+                    userId: $request->user()?->id,
                 );
 
                 return response()->json([
@@ -106,6 +108,7 @@ class FaviconGenerateController extends Controller
                 data: ['file_count' => 1],
                 ip: $request->ip(),
                 userAgent: $request->userAgent(),
+                userId: $request->user()?->id,
             );
 
             return response()->json([
@@ -123,6 +126,7 @@ class FaviconGenerateController extends Controller
             ],
             ip: $request->ip(),
             userAgent: $request->userAgent(),
+            userId: $request->user()?->id,
         );
 
         return response()->json([

@@ -15,8 +15,10 @@ class ToolEventLogger
         array $data = [],
         ?string $ip = null,
         ?string $userAgent = null,
+        ?int $userId = null,
     ): ToolEvent {
         return ToolEvent::create([
+            'user_id' => $userId,
             'tool_slug' => $toolSlug,
             'event_type' => $eventType,
             'file_count' => $data['file_count'] ?? null,

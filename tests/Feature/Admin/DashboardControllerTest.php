@@ -1,25 +1,10 @@
 <?php
 
-use App\Models\Admin;
 use App\Models\ToolEvent;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Inertia\Testing\AssertableInertia as Assert;
-
-function actingAsAdmin(): Admin
-{
-    $admin = Admin::create([
-        'name' => 'Test Admin',
-        'email' => 'admin@example.com',
-        'password' => Hash::make('password1234'),
-    ]);
-
-    test()->actingAs($admin, 'admin');
-
-    return $admin;
-}
 
 test('unauthenticated visitors are redirected to the admin login page', function () {
     $response = $this->get(route('admin.dashboard'));

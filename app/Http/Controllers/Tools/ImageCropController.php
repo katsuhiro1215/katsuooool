@@ -61,6 +61,7 @@ class ImageCropController extends Controller
             data: ['file_count' => count($uploadResult->files)],
             ip: $request->ip(),
             userAgent: $request->userAgent(),
+            userId: $request->user()?->id,
         );
 
         if (count($uploadResult->files) === 0) {
@@ -85,6 +86,7 @@ class ImageCropController extends Controller
                 data: ['file_count' => 1],
                 ip: $request->ip(),
                 userAgent: $request->userAgent(),
+                userId: $request->user()?->id,
             );
 
             return response()->json([
@@ -100,6 +102,7 @@ class ImageCropController extends Controller
                 data: ['file_count' => 1],
                 ip: $request->ip(),
                 userAgent: $request->userAgent(),
+                userId: $request->user()?->id,
             );
 
             return response()->json([
@@ -115,6 +118,7 @@ class ImageCropController extends Controller
                 data: ['file_count' => 1],
                 ip: $request->ip(),
                 userAgent: $request->userAgent(),
+                userId: $request->user()?->id,
             );
 
             return response()->json([
@@ -151,6 +155,7 @@ class ImageCropController extends Controller
                 data: ['file_count' => 1],
                 ip: $request->ip(),
                 userAgent: $request->userAgent(),
+                userId: $request->user()?->id,
             );
 
             return response()->json([
@@ -171,6 +176,7 @@ class ImageCropController extends Controller
             ],
             ip: $request->ip(),
             userAgent: $request->userAgent(),
+            userId: $request->user()?->id,
         );
 
         return response()->json([

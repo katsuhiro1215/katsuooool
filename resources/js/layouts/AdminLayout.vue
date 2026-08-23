@@ -4,10 +4,16 @@ import { Link, router } from '@inertiajs/vue3';
 interface NavItem {
     label: string;
     routeName: string;
+    activePattern?: string;
 }
 
 const NAV_ITEMS: NavItem[] = [
     { label: 'ダッシュボード', routeName: 'admin.dashboard' },
+    {
+        label: 'User管理',
+        routeName: 'admin.users.index',
+        activePattern: 'admin.users.*',
+    },
 ];
 
 function logout() {
@@ -31,7 +37,7 @@ function logout() {
                     :href="route(item.routeName)"
                     class="rounded-md px-3 py-2 text-sm transition"
                     :class="
-                        route().current(item.routeName)
+                        route().current(item.activePattern ?? item.routeName)
                             ? 'bg-gray-900 text-white'
                             : 'text-gray-700 hover:bg-gray-100'
                     "

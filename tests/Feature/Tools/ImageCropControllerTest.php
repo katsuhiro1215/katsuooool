@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ToolEvent;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -39,7 +40,27 @@ test('posting a valid crop rectangle returns a download link with the cropped di
     $response->assertJsonPath('height', 60);
     $response->assertJsonPath('download_url', fn ($url) => is_string($url) && str_contains($url, '/tool-download/'));
 
-    expect(ToolEvent::where('tool_slug', 'image-crop')->where('event_type', 'process')->exists())->toBeTrue();
+    $event = ToolEvent::where('tool_slug', 'image-crop')->where('event_type', 'process')->first();
+    expect($event)->not->toBeNull();
+    expect($event->user_id)->toBeNull();
+});
+
+test('cropping while logged in records the user id on the process event', function () {
+    $user = User::factory()->create();
+    $file = UploadedFile::fake()->image('photo.jpg', 200, 100);
+
+    $response = $this->actingAs($user)->post(route('image-crop.process'), [
+        'file' => $file,
+        'x' => 10,
+        'y' => 10,
+        'width' => 80,
+        'height' => 60,
+    ]);
+
+    $response->assertSuccessful();
+
+    $event = ToolEvent::where('tool_slug', 'image-crop')->where('event_type', 'process')->first();
+    expect($event->user_id)->toBe($user->id);
 });
 
 test('a crop rectangle that exceeds the image bounds is reported as failed', function () {

@@ -34,6 +34,7 @@ abstract class TrackedToolController extends Controller
             eventType: 'process',
             ip: $request->ip(),
             userAgent: $request->userAgent(),
+            userId: $request->user()?->id,
         );
 
         return response()->json(['status' => 'ok']);

@@ -72,6 +72,7 @@ class ImageConvertController extends Controller
             data: ['file_count' => count($uploadResult->files)],
             ip: $request->ip(),
             userAgent: $request->userAgent(),
+            userId: $request->user()?->id,
         );
 
         $disk = Storage::disk('local');
@@ -181,6 +182,7 @@ class ImageConvertController extends Controller
             ],
             ip: $request->ip(),
             userAgent: $request->userAgent(),
+            userId: $request->user()?->id,
         );
 
         $failedCount = count(array_filter($results, fn (array $result) => $result['status'] === 'failed'));
@@ -192,6 +194,7 @@ class ImageConvertController extends Controller
                 data: ['file_count' => $failedCount],
                 ip: $request->ip(),
                 userAgent: $request->userAgent(),
+                userId: $request->user()?->id,
             );
         }
 
