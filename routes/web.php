@@ -322,5 +322,9 @@ Route::get('/premium/thanks', [PremiumController::class, 'thanks'])
     ->middleware('auth')
     ->name('premium.thanks');
 
+Route::post('/premium/billing-portal', [PremiumController::class, 'billingPortal'])
+    ->middleware('auth')
+    ->name('premium.billing-portal');
+
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

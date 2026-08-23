@@ -55,4 +55,17 @@ class PremiumController extends Controller
     {
         return Inertia::render('PremiumThanks');
     }
+
+    public function billingPortal(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        if (! $user instanceof User) {
+            abort(403);
+        }
+
+        abort_unless($user->isPremium(), 403);
+
+        return $user->redirectToBillingPortal(route('premium.index'));
+    }
 }
