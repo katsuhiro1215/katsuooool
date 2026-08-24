@@ -339,6 +339,7 @@ Route::get('/legal/terms', [LegalController::class, 'terms'])->name('legal.terms
 Route::get('/legal/cookie-policy', [LegalController::class, 'cookiePolicy'])->name('legal.cookie-policy');
 
 Route::get('/about', [PageController::class, 'about'])->name('page.about');
+Route::get('/service', [PageController::class, 'service'])->name('page.service');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
