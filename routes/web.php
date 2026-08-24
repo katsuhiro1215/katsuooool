@@ -333,6 +333,9 @@ Route::get('/mypage', [MyPageController::class, 'index'])
     ->name('mypage.index');
 
 Route::get('/legal/tokushoho', [LegalController::class, 'tokushoho'])->name('legal.tokushoho');
+Route::get('/legal/privacy-policy', [LegalController::class, 'privacyPolicy'])->name('legal.privacy-policy');
+Route::get('/legal/terms', [LegalController::class, 'terms'])->name('legal.terms');
+Route::get('/legal/cookie-policy', [LegalController::class, 'cookiePolicy'])->name('legal.cookie-policy');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

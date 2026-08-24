@@ -2,6 +2,8 @@
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
+import AppFooter from '@/components/AppFooter.vue';
+
 defineProps<{ isPremium: boolean }>();
 
 const page = usePage();
@@ -89,13 +91,8 @@ const PLANS = [
             <p class="mt-8 text-xs text-gray-500">
                 価格は税込です。無料トライアルはありません。ご登録と同時に課金が開始されます。返金は行っておりません。解約はいつでも可能で、解約後もお支払い済みの期間終了までPremium機能をご利用いただけます。
             </p>
-            <p class="mt-2 text-xs text-gray-500">
-                <Link
-                    href="/legal/tokushoho"
-                    class="underline hover:text-gray-700"
-                    >特定商取引法に基づく表記</Link
-                >
-            </p>
         </main>
+
+        <AppFooter />
     </div>
 </template>

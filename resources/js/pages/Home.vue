@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
+import AppFooter from '@/components/AppFooter.vue';
 import ToolCard from '@/components/tools/ToolCard.vue';
 import { CATEGORY_TABS, filterTools } from '@/lib/toolFilter';
 import type { Tool } from '@/lib/toolFilter';
@@ -21,7 +22,7 @@ const filteredTools = computed(() =>
 
     <div class="min-h-screen bg-gray-50">
         <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-5xl px-6 py-10">
+            <div class="mx-auto max-w-7xl px-6 py-10">
                 <div class="flex items-start justify-between">
                     <h1 class="text-2xl font-bold text-gray-900">katsuooool</h1>
                     <Link
@@ -63,7 +64,7 @@ const filteredTools = computed(() =>
             </div>
         </header>
 
-        <main class="mx-auto max-w-5xl px-6 py-10">
+        <main class="mx-auto max-w-7xl px-6 py-10">
             <div
                 v-if="filteredTools.length === 0"
                 class="text-sm text-gray-500"
@@ -73,7 +74,7 @@ const filteredTools = computed(() =>
 
             <div
                 v-else
-                class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             >
                 <ToolCard
                     v-for="tool in filteredTools"
@@ -82,5 +83,7 @@ const filteredTools = computed(() =>
                 />
             </div>
         </main>
+
+        <AppFooter />
     </div>
 </template>
