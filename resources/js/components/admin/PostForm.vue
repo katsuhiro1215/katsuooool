@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { InertiaForm } from '@inertiajs/vue3';
 
+import { POST_TYPE_OPTIONS } from '@/lib/postType';
+
 interface PostFormData {
     title: string;
     slug: string;
@@ -15,12 +17,6 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{ submit: [] }>();
-
-const TYPE_OPTIONS = [
-    { value: 'update', label: 'アップデート' },
-    { value: 'fix', label: '不具合修正' },
-    { value: 'announcement', label: 'お知らせ' },
-];
 </script>
 
 <template>
@@ -66,7 +62,7 @@ const TYPE_OPTIONS = [
                 class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
             >
                 <option
-                    v-for="option in TYPE_OPTIONS"
+                    v-for="option in POST_TYPE_OPTIONS"
                     :key="option.value"
                     :value="option.value"
                 >

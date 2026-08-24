@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 
 import AppFooter from '@/components/AppFooter.vue';
+import { POST_TYPE_LABELS } from '@/lib/postType';
 
 interface PostSummary {
     title: string;
@@ -23,12 +24,6 @@ interface Paginated<T> {
 }
 
 defineProps<{ posts: Paginated<PostSummary> }>();
-
-const TYPE_LABELS: Record<string, string> = {
-    update: 'アップデート',
-    fix: '不具合修正',
-    announcement: 'お知らせ',
-};
 
 const TYPE_BADGE_CLASSES: Record<string, string> = {
     update: 'bg-blue-50 text-blue-700',
@@ -70,12 +65,12 @@ function formatDate(value: string): string {
                             class="rounded-full px-2 py-0.5 font-medium"
                             :class="TYPE_BADGE_CLASSES[post.type]"
                         >
-                            {{ TYPE_LABELS[post.type] }}
+                            {{ POST_TYPE_LABELS[post.type] }}
                         </span>
                         <span>{{ formatDate(post.published_at) }}</span>
                     </div>
                     <Link
-                        :href="`/blog/${post.slug}`"
+                        :href="route('blog.show', post.slug)"
                         class="mt-2 block text-base font-semibold text-gray-900 hover:underline"
                     >
                         {{ post.title }}

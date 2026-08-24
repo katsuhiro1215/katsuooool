@@ -2,6 +2,7 @@
 import { Head } from '@inertiajs/vue3';
 
 import AppFooter from '@/components/AppFooter.vue';
+import { POST_TYPE_LABELS } from '@/lib/postType';
 
 interface PostDetail {
     title: string;
@@ -11,12 +12,6 @@ interface PostDetail {
 }
 
 defineProps<{ post: PostDetail }>();
-
-const TYPE_LABELS: Record<string, string> = {
-    update: 'アップデート',
-    fix: '不具合修正',
-    announcement: 'お知らせ',
-};
 
 function formatDate(value: string): string {
     return new Date(value).toLocaleDateString('ja-JP');
@@ -35,7 +30,7 @@ function formatDate(value: string): string {
                     >← お知らせ一覧に戻る</a
                 >
                 <div class="mt-2 flex items-center gap-2 text-xs text-gray-500">
-                    <span>{{ TYPE_LABELS[post.type] }}</span>
+                    <span>{{ POST_TYPE_LABELS[post.type] }}</span>
                     <span>{{ formatDate(post.published_at) }}</span>
                 </div>
                 <h1 class="mt-1 text-2xl font-bold text-gray-900">

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 
+import AppFooter from '@/components/AppFooter.vue';
+
 interface LegalItem {
     label: string;
     value: string;
@@ -62,5 +64,7 @@ const ITEMS: LegalItem[] = [
                 </div>
             </dl>
         </main>
+
+        <AppFooter />
     </div>
 </template>

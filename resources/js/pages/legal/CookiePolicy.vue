@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 
+import AppFooter from '@/components/AppFooter.vue';
+
 interface LegalSection {
     heading: string;
     paragraphs: string[];
@@ -68,5 +70,7 @@ const SECTIONS: LegalSection[] = [
                 </section>
             </div>
         </main>
+
+        <AppFooter />
     </div>
 </template>

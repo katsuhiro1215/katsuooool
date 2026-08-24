@@ -10,6 +10,7 @@ class MarkdownRenderer
     {
         $converter = new CommonMarkConverter([
             'html_input' => 'escape',
+            'allow_unsafe_links' => false,
         ]);
 
         return (string) $converter->convert($markdown);

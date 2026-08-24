@@ -10,7 +10,7 @@ use Inertia\Response;
 
 class BlogController extends Controller
 {
-    public function index(): Response
+    public function index(MarkdownRenderer $markdownRenderer): Response
     {
         $posts = Post::query()
             ->published()
@@ -21,7 +21,7 @@ class BlogController extends Controller
                 'slug' => $post->slug,
                 'type' => $post->type,
                 'published_at' => $post->published_at?->toIso8601String(),
-                'excerpt' => Str::limit(strip_tags($post->body_markdown), 100),
+                'excerpt' => Str::limit(strip_tags($markdownRenderer->toHtml($post->body_markdown)), 100),
             ]);
 
         return Inertia::render('Blog/Index', [

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import AdminLayout from '@/layouts/AdminLayout.vue';
+import { POST_TYPE_LABELS } from '@/lib/postType';
 
 interface PostRow {
     id: number;
@@ -22,12 +23,6 @@ interface Paginated<T> {
 }
 
 defineProps<{ posts: Paginated<PostRow> }>();
-
-const TYPE_LABELS: Record<string, string> = {
-    update: 'アップデート',
-    fix: '不具合修正',
-    announcement: 'お知らせ',
-};
 
 function statusLabel(publishedAt: string | null): string {
     if (publishedAt === null) {
@@ -87,7 +82,7 @@ function statusLabel(publishedAt: string | null): string {
                             </Link>
                         </td>
                         <td class="px-4 py-3 text-gray-700">
-                            {{ TYPE_LABELS[post.type] }}
+                            {{ POST_TYPE_LABELS[post.type] }}
                         </td>
                         <td class="px-4 py-3 text-gray-700">
                             {{ statusLabel(post.published_at) }}

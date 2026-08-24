@@ -18,3 +18,11 @@ test('escapes raw html tags in the input', function () {
 
     expect($html)->not->toContain('<script>alert(1)</script>');
 });
+
+test('strips unsafe link schemes like javascript:', function () {
+    $renderer = new MarkdownRenderer;
+
+    $html = $renderer->toHtml('[click me](javascript:alert(1))');
+
+    expect($html)->not->toContain('href="javascript:');
+});

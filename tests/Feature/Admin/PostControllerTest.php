@@ -36,6 +36,33 @@ test('the post list shows all posts including drafts, newest published first', f
     );
 });
 
+test('draft posts appear before published posts in the admin list', function () {
+    actingAsAdmin();
+
+    Post::create([
+        'title' => '公開済み',
+        'slug' => 'published-old',
+        'type' => 'update',
+        'body_markdown' => '本文',
+        'published_at' => now()->subDays(10),
+    ]);
+
+    $draft = Post::create([
+        'title' => '下書き',
+        'slug' => 'a-draft',
+        'type' => 'fix',
+        'body_markdown' => '本文',
+        'published_at' => null,
+    ]);
+
+    $response = $this->get(route('admin.posts.index'));
+
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/posts/Index')
+        ->where('posts.data.0.slug', $draft->slug)
+    );
+});
+
 test('an admin can create a new post', function () {
     actingAsAdmin();
 

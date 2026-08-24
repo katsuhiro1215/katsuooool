@@ -16,7 +16,9 @@ class PostController extends Controller
     public function index(): Response
     {
         $posts = Post::query()
+            ->orderByRaw('published_at IS NULL DESC')
             ->orderByDesc('published_at')
+            ->orderByDesc('id')
             ->paginate(20);
 
         return Inertia::render('admin/posts/Index', [
