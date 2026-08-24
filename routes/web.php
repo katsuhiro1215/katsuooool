@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\MyPageController;
@@ -340,6 +341,7 @@ Route::get('/legal/cookie-policy', [LegalController::class, 'cookiePolicy'])->na
 
 Route::get('/about', [PageController::class, 'about'])->name('page.about');
 Route::get('/service', [PageController::class, 'service'])->name('page.service');
+Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
