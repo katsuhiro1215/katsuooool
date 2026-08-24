@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\MyPageController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\PremiumController;
 use App\Http\Controllers\Tools\Base64EncodeController;
 use App\Http\Controllers\Tools\ColorContrastController;
@@ -336,6 +337,8 @@ Route::get('/legal/tokushoho', [LegalController::class, 'tokushoho'])->name('leg
 Route::get('/legal/privacy-policy', [LegalController::class, 'privacyPolicy'])->name('legal.privacy-policy');
 Route::get('/legal/terms', [LegalController::class, 'terms'])->name('legal.terms');
 Route::get('/legal/cookie-policy', [LegalController::class, 'cookiePolicy'])->name('legal.cookie-policy');
+
+Route::get('/about', [PageController::class, 'about'])->name('page.about');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
