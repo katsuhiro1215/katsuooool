@@ -14,6 +14,11 @@ const NAV_ITEMS: NavItem[] = [
         routeName: 'admin.users.index',
         activePattern: 'admin.users.*',
     },
+    {
+        label: '投稿管理',
+        routeName: 'admin.posts.index',
+        activePattern: 'admin.posts.*',
+    },
 ];
 
 function logout() {
