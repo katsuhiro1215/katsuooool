@@ -93,3 +93,90 @@ test('creating a post requires a unique slug', function () {
 
     $response->assertStatus(422);
 });
+
+test('the edit page shows the existing post data', function () {
+    actingAsAdmin();
+
+    $post = Post::create([
+        'title' => '編集対象',
+        'slug' => 'editable-post',
+        'type' => 'fix',
+        'body_markdown' => '既存の本文',
+        'published_at' => now()->subDay(),
+    ]);
+
+    $response = $this->get(route('admin.posts.edit', $post));
+
+    $response->assertSuccessful();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/posts/Edit')
+        ->where('post.title', '編集対象')
+        ->where('post.slug', 'editable-post')
+    );
+});
+
+test('an admin can update a post', function () {
+    actingAsAdmin();
+
+    $post = Post::create([
+        'title' => '更新前',
+        'slug' => 'update-target',
+        'type' => 'fix',
+        'body_markdown' => '本文',
+        'published_at' => null,
+    ]);
+
+    $response = $this->put(route('admin.posts.update', $post), [
+        'title' => '更新後',
+        'slug' => 'update-target',
+        'type' => 'update',
+        'body_markdown' => '更新後の本文',
+        'published_at' => null,
+    ]);
+
+    $response->assertRedirect(route('admin.posts.index'));
+    $this->assertDatabaseHas('posts', [
+        'id' => $post->id,
+        'title' => '更新後',
+        'type' => 'update',
+    ]);
+});
+
+test('updating a post can keep its own slug without triggering a uniqueness error', function () {
+    actingAsAdmin();
+
+    $post = Post::create([
+        'title' => 'タイトル',
+        'slug' => 'same-slug',
+        'type' => 'update',
+        'body_markdown' => '本文',
+        'published_at' => now(),
+    ]);
+
+    $response = $this->put(route('admin.posts.update', $post), [
+        'title' => 'タイトル(更新)',
+        'slug' => 'same-slug',
+        'type' => 'update',
+        'body_markdown' => '本文',
+        'published_at' => null,
+    ]);
+
+    $response->assertRedirect(route('admin.posts.index'));
+});
+
+test('an admin can delete a post', function () {
+    actingAsAdmin();
+
+    $post = Post::create([
+        'title' => '削除対象',
+        'slug' => 'to-be-deleted',
+        'type' => 'fix',
+        'body_markdown' => '本文',
+        'published_at' => null,
+    ]);
+
+    $response = $this->delete(route('admin.posts.destroy', $post));
+
+    $response->assertRedirect(route('admin.posts.index'));
+    $this->assertDatabaseMissing('posts', ['id' => $post->id]);
+});

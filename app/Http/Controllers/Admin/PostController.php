@@ -36,6 +36,34 @@ class PostController extends Controller
         return Redirect::route('admin.posts.index');
     }
 
+    public function edit(Post $post): Response
+    {
+        return Inertia::render('admin/posts/Edit', [
+            'post' => [
+                'id' => $post->id,
+                'title' => $post->title,
+                'slug' => $post->slug,
+                'type' => $post->type,
+                'body_markdown' => $post->body_markdown,
+                'published_at' => $post->published_at?->format('Y-m-d\TH:i'),
+            ],
+        ]);
+    }
+
+    public function update(Request $request, Post $post): RedirectResponse
+    {
+        $post->update($this->validated($request, $post));
+
+        return Redirect::route('admin.posts.index');
+    }
+
+    public function destroy(Post $post): RedirectResponse
+    {
+        $post->delete();
+
+        return Redirect::route('admin.posts.index');
+    }
+
     /**
      * @return array<string, mixed>
      */
