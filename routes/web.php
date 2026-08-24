@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LegalController;
@@ -342,6 +343,9 @@ Route::get('/legal/cookie-policy', [LegalController::class, 'cookiePolicy'])->na
 Route::get('/about', [PageController::class, 'about'])->name('page.about');
 Route::get('/service', [PageController::class, 'service'])->name('page.service');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');
+
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
