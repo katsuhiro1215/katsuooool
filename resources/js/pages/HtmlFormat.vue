@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 
+import AppButton from '@/components/tools/AppButton.vue';
 import { formatHtml } from '@/lib/htmlFormat';
 
 const input = ref('');
@@ -83,14 +84,14 @@ function track() {
                 placeholder="<div><p>hello</p></div>"
             />
 
-            <button
+            <AppButton
                 type="button"
-                class="mt-4 w-full rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                class="mt-4 w-full"
                 :disabled="!canFormat"
                 @click="format"
             >
                 整形する
-            </button>
+            </AppButton>
 
             <div v-if="output" class="mt-8">
                 <div class="mb-3 flex justify-end">

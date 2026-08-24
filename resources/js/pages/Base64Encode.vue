@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 
+import AppButton from '@/components/tools/AppButton.vue';
 import { decodeBase64, encodeBase64 } from '@/lib/textCodecs';
 
 const input = ref('');
@@ -103,22 +104,22 @@ function track() {
             />
 
             <div class="mt-4 flex gap-2">
-                <button
+                <AppButton
                     type="button"
-                    class="flex-1 rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                    class="flex-1"
                     :disabled="!canProcess"
                     @click="encode"
                 >
                     エンコード
-                </button>
-                <button
+                </AppButton>
+                <AppButton
                     type="button"
-                    class="flex-1 rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                    class="flex-1"
                     :disabled="!canProcess"
                     @click="decode"
                 >
                     デコード
-                </button>
+                </AppButton>
             </div>
 
             <p v-if="errorMessage" class="mt-4 text-sm text-red-600">

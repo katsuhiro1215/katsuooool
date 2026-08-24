@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { ref } from 'vue';
 
+import AppButton from '@/components/tools/AppButton.vue';
 import { randomHex } from '@/lib/color';
 
 const SWATCH_COUNT = 5;
@@ -80,13 +81,9 @@ async function copy(hex: string) {
         </header>
 
         <main class="mx-auto max-w-3xl px-6 py-10">
-            <button
-                type="button"
-                class="mb-6 w-full rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-700"
-                @click="generate"
-            >
+            <AppButton type="button" class="mb-6 w-full" @click="generate">
                 生成する
-            </button>
+            </AppButton>
 
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-5">
                 <div

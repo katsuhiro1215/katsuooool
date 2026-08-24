@@ -3,6 +3,8 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 
+import AppButton from '@/components/tools/AppButton.vue';
+
 interface OgpCheckSuccess {
     status: 'success';
     tags: Record<string, string>;
@@ -82,14 +84,14 @@ async function check() {
                     placeholder="https://example.com/"
                     class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
                 />
-                <button
+                <AppButton
                     type="button"
-                    class="shrink-0 rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                    class="shrink-0"
                     :disabled="!canCheck"
                     @click="check"
                 >
                     {{ isChecking ? 'チェック中...' : 'チェックする' }}
-                </button>
+                </AppButton>
             </div>
 
             <p v-if="errorMessage" class="mt-4 text-sm text-red-600">

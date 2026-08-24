@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref, watch } from 'vue';
 
+import AppButton from '@/components/tools/AppButton.vue';
 import { buildToast } from '@/lib/uiPatternGenerators';
 import type { ToastVariant } from '@/lib/uiPatternGenerators';
 
@@ -110,13 +111,9 @@ watch([variant, message, duration], () => {
             <div
                 class="relative mb-8 flex h-40 items-center justify-center rounded-md border border-gray-200 bg-white"
             >
-                <button
-                    type="button"
-                    class="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700"
-                    @click="showPreview"
-                >
+                <AppButton type="button" @click="showPreview">
                     表示する
-                </button>
+                </AppButton>
 
                 <div
                     v-if="isPreviewVisible"

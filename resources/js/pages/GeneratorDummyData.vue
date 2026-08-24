@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 
+import AppButton from '@/components/tools/AppButton.vue';
 import { generateDummyData } from '@/lib/dummyData';
 import type { DummyFieldType } from '@/lib/dummyData';
 
@@ -118,14 +119,13 @@ async function copy() {
                         class="mt-1 block w-32 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
                     />
                 </label>
-                <button
+                <AppButton
                     type="button"
-                    class="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-300"
                     :disabled="!canGenerate"
                     @click="generate"
                 >
                     生成する
-                </button>
+                </AppButton>
             </div>
 
             <div v-if="records.length > 0" class="mt-8">

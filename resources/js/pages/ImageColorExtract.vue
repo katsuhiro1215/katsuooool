@@ -3,6 +3,8 @@ import { Head, Link } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 
+import AppButton from '@/components/tools/AppButton.vue';
+
 interface ExtractedColor {
     hex: string;
     rgb: [number, number, number];
@@ -195,9 +197,7 @@ function isSuccess(result: ColorExtractResult): result is SuccessResult {
                 <p class="text-sm text-gray-600">
                     ここに画像をドラッグ&ドロップ、または
                 </p>
-                <label
-                    class="mt-3 inline-block cursor-pointer rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
-                >
+                <AppButton as="label" class="mt-3 inline-block">
                     ファイルを選択
                     <input
                         type="file"
@@ -206,7 +206,7 @@ function isSuccess(result: ColorExtractResult): result is SuccessResult {
                         multiple
                         @change="onFileInputChange"
                     />
-                </label>
+                </AppButton>
             </div>
 
             <div v-if="errorMessage" class="mt-4 text-sm text-red-600">
@@ -237,14 +237,14 @@ function isSuccess(result: ColorExtractResult): result is SuccessResult {
                 </li>
             </ul>
 
-            <button
+            <AppButton
                 type="button"
-                class="mt-6 w-full rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                class="mt-6 w-full"
                 :disabled="!canExtract"
                 @click="extract"
             >
                 {{ isProcessing ? '抽出しています...' : '抽出する' }}
-            </button>
+            </AppButton>
 
             <p v-if="copyFailed" class="mt-4 text-sm text-red-600">
                 コピーできませんでした。HEXコードを手動で選択してください。

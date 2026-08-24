@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref, watch } from 'vue';
 
+import AppButton from '@/components/tools/AppButton.vue';
 import { buildModal } from '@/lib/uiPatternGenerators';
 
 const title = ref('タイトル');
@@ -96,13 +97,9 @@ watch([title, text, backgroundColor, borderRadius, overlayOpacity], () => {
             <div
                 class="relative mb-8 flex h-40 items-center justify-center rounded-md border border-gray-200 bg-white"
             >
-                <button
-                    type="button"
-                    class="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700"
-                    @click="isPreviewOpen = true"
-                >
+                <AppButton type="button" @click="isPreviewOpen = true">
                     開く
-                </button>
+                </AppButton>
 
                 <div
                     v-if="isPreviewOpen"

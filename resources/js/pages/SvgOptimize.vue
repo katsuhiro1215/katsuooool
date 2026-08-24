@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 
+import AppButton from '@/components/tools/AppButton.vue';
 import { optimizeSvgWithStats } from '@/lib/svg';
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
@@ -142,14 +143,14 @@ function track() {
                 placeholder="<svg>...</svg>"
             />
 
-            <button
+            <AppButton
                 type="button"
-                class="mt-4 w-full rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                class="mt-4 w-full"
                 :disabled="!canOptimize"
                 @click="optimize"
             >
                 最適化する
-            </button>
+            </AppButton>
 
             <p v-if="errorMessage" class="mt-4 text-sm text-red-600">
                 {{ errorMessage }}

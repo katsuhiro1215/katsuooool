@@ -3,6 +3,8 @@ import { Head, Link } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 
+import AppButton from '@/components/tools/AppButton.vue';
+
 interface SuccessResult {
     original_name: string;
     status: 'success';
@@ -166,9 +168,7 @@ function isSuccess(result: OgpResult): result is SuccessResult {
                 <p class="text-sm text-gray-600">
                     ここに画像をドラッグ&ドロップ、または
                 </p>
-                <label
-                    class="mt-3 inline-block cursor-pointer rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
-                >
+                <AppButton as="label" class="mt-3 inline-block">
                     ファイルを選択
                     <input
                         type="file"
@@ -177,7 +177,7 @@ function isSuccess(result: OgpResult): result is SuccessResult {
                         multiple
                         @change="onFileInputChange"
                     />
-                </label>
+                </AppButton>
             </div>
 
             <div v-if="errorMessage" class="mt-4 text-sm text-red-600">
@@ -208,23 +208,24 @@ function isSuccess(result: OgpResult): result is SuccessResult {
                 </li>
             </ul>
 
-            <button
+            <AppButton
                 type="button"
-                class="mt-6 w-full rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                class="mt-6 w-full"
                 :disabled="!canGenerate"
                 @click="generate"
             >
                 {{ isProcessing ? '作成しています...' : '作成する' }}
-            </button>
+            </AppButton>
 
             <div v-if="response" class="mt-8">
                 <div v-if="response.batch_download_url" class="mb-4">
-                    <a
+                    <AppButton
+                        as="a"
                         :href="response.batch_download_url"
-                        class="inline-block rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
+                        class="inline-block"
                     >
                         まとめてダウンロード(ZIP)
-                    </a>
+                    </AppButton>
                 </div>
 
                 <ul class="space-y-2">
