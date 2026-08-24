@@ -701,9 +701,23 @@ Admin側からUserを閲覧・検索できるCRM機能。ブレインストー�
 - Stripeテストモードでの実ブラウザ決済フロー確認(Price ID未設定のため本フェーズでは未実施)
 - 本番Webhookエンドポイントの登録(Stripeダッシュボード)と`.env`の`STRIPE_WEBHOOK_SECRET`への実値設定(未設定のままだとWebhookの署名検証がスキップされ、誰でも偽のWebhookリクエストでPremium状態を偽装できてしまう重大なリスクがあるため必須)
 
+## Phase 22 — コンテンツ基盤(固定ページ・Blog・FAQ)
+
+ブレインストーミングで整理した通り、About・Service・FAQは静的ページ、Blog(News)のみDB駆動+Admin管理とする方針で実装した。詳細仕様は`docs/superpowers/specs/2026-08-24-content-platform-design.md`、実装計画は`docs/superpowers/plans/2026-08-24-content-platform.md`を参照。
+
+- [x] About(`/about`)・Service(`/service`)・FAQ(`/faq`)ページを追加。いずれも静的ページ(Admin編集機能なし)、法務ページと同じ実装パターンを踏襲
+- [x] Serviceページは`resources/js/lib/toolFilter.ts`の`CATEGORY_TABS`を再利用し、カテゴリ一覧のハードコード重複を回避
+- [x] `posts`テーブル・`Post`モデルを追加。種別(`type`)は`update`/`fix`/`announcement`の3値固定、`published_at`がnullまたは未来日時の投稿は下書き扱いとする`published()`スコープを実装
+- [x] `league/commonmark`を直接依存に追加し、`MarkdownRenderer`サービスでサーバー側Markdown→HTML変換(`html_input => escape`でXSS対策)を実装
+- [x] Blog公開側(`/blog`一覧・`/blog/{slug}`詳細)を追加。下書き・予約投稿は一覧・詳細どちらからも参照不可(直接URLでも404)
+- [x] Admin投稿管理(`/admin/posts`)にフルCRUD(一覧・新規作成・編集・削除)を追加。共有フォームコンポーネント`PostForm.vue`を新規作成・再利用
+- [x] `AdminLayout`のサイドバーに「投稿管理」、サイト全体の`AppFooter`にAbout・Service・FAQ・Blogへのリンクを追加
+- [x] `composer ci:check`がグリーン(Task 1〜9すべてでTDDサイクルを適用)
+- [x] Playwrightで実ブラウザ動作確認。Admin側で投稿を下書き作成→公開側に表示されないことを確認→公開日時を過去に設定して更新→公開側の一覧・詳細にMarkdownがHTML変換されて表示されることを確認→Admin側で削除できることを確認
+
 ## 今後の実装順序
 
-現時点で計画済みタスクは全て完了。
+Contact機能(SmartSproutsへのAPI連携)・ツール画面のUI改善(ボタンサイズ等)・カラーパレット/ボタン集のwishlist投票機能は、それぞれ別途ブレインストーミングしてから着手する。
 
 ## 完了の定義(Definition of Done)
 

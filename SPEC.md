@@ -1,6 +1,6 @@
 # SPEC.md — katsuooool 仕様書
 
-最終更新: 2026-08-23
+最終更新: 2026-08-24
 対象範囲: Phase 0(基盤整備)〜Phase 2(Admin) ※Phase 3以降(他ツール・Premium・User認証)は本書のスコープ外(概要のみ記載)
 
 ## 1. プロダクト概要
@@ -75,6 +75,18 @@ Admin専用の `admin` guard で認証する。ユーザー登録画面は作ら
 
 - 30日経過分は Scheduler により自動削除する。
 - 個人を特定できる情報(生IP・メールアドレス等)は保存しない。
+
+**`posts`**(Blog/News、§31参照)
+
+| カラム | 型 | 備考 |
+|---|---|---|
+| id | bigint PK | |
+| title | string | |
+| slug | string unique | URL用(例: `v2-0-release`) |
+| type | string | `update` / `fix` / `announcement` の3値固定 |
+| body_markdown | text | Markdown形式の本文 |
+| published_at | timestamp nullable | nullまたは未来日時は非公開(下書き) |
+| timestamps | | |
 
 ## 5. ファイルライフサイクル(共通基盤)
 
@@ -511,3 +523,13 @@ Laravel Cashier + Stripe Checkout / Billing Portalによるサブスクリプシ
   - Premium限定の`/mypage`(`EnsurePremium`ミドルウェア)で、自分のツール利用履歴(`tool_events`)をページネーション表示。
 - **特定商取引法表記**: `/legal/tokushoho`に雛形を用意。事業者名・所在地・連絡先はプレースホルダーのままで、本番デプロイ前に実データへの差し替えが必要。
 - **未実施**: Stripeダッシュボードでの実商品・価格作成と`.env`の`STRIPE_PRICE_MONTHLY`/`STRIPE_PRICE_YEARLY`への実値設定はユーザー側の作業として残る。また、本番Webhookエンドポイントの登録(Stripeダッシュボード)と`.env`の`STRIPE_WEBHOOK_SECRET`への実値設定も必須(未設定のままだとCashierの`WebhookController`が署名検証ミドルウェアを登録せず、誰でも偽のWebhookリクエストでPremium状態を偽装できてしまう)。
+
+## 31. コンテンツ基盤(固定ページ・Blog・FAQ)仕様(Phase 22)
+
+katsuoooolを「ツール集サイト」から法務ページ・会社紹介・更新情報を備えた「プロダクトサイト」へ拡張するための、残りのコンテンツ基盤。詳細は`docs/superpowers/specs/2026-08-24-content-platform-design.md`、実装計画は`docs/superpowers/plans/2026-08-24-content-platform.md`を参照。
+
+- **About(`/about`)・Service(`/service`)・FAQ(`/faq`)**: いずれも静的ページ(Admin編集機能を持たない、コード直接編集で更新)。特定商取引法ページ(`legal/Tokushoho.vue`)と同じ実装パターンを踏襲する。Serviceページはツールカテゴリ一覧を`resources/js/lib/toolFilter.ts`の`CATEGORY_TABS`から動的に取得し、ハードコードの重複を避ける。
+- **Blog(News、`/blog`・`/blog/{slug}`)**: `posts`テーブル(§4.2参照)を持つ唯一のDB駆動コンテンツ。種別(`type`)は`update`(アップデート)/`fix`(不具合修正)/`announcement`(お知らせ)の3値固定で、カテゴリ・タグ機能は持たない。`published_at`がnullまたは未来日時の投稿は下書き扱いとし、`Post::published()`スコープにより公開側の一覧・詳細のどちらからも参照できない(直接slugを指定しても404)。
+- **Markdown変換**: `league/commonmark`を用いた`MarkdownRenderer`サービスでサーバー側のみでHTML変換する(クライアント側でのMarkdownパースは行わない)。`html_input => escape`設定により生のHTMLタグはエスケープされ、XSS対策としている。
+- **Admin投稿管理(`/admin/posts`)**: 既存の`auth:admin`ガード配下にフルCRUD(一覧・新規作成・編集・削除)を実装。共有フォームコンポーネント`PostForm.vue`を新規作成・削除フォーム間で再利用する。
+- **導線**: サイト全体の`AppFooter`にAbout・Service・FAQ・Blogへのリンク(コンテンツ系)と、特商法・プライバシーポリシー・利用規約・クッキーポリシーへのリンク(法務系)を分けて設置する。AdminLayoutのサイドバーに「投稿管理」を追加する。
