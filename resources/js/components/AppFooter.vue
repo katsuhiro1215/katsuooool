@@ -4,6 +4,7 @@ const CONTENT_LINKS = [
     { label: 'Service', href: '/service' },
     { label: 'よくある質問', href: '/faq' },
     { label: 'お知らせ', href: '/blog' },
+    { label: 'お問い合わせ', href: '/contact' },
 ];
 
 const LEGAL_LINKS = [
