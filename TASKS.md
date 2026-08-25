@@ -715,9 +715,16 @@ Admin側からUserを閲覧・検索できるCRM機能。ブレインストー�
 - [x] `composer ci:check`がグリーン(Task 1〜9すべてでTDDサイクルを適用)
 - [x] Playwrightで実ブラウザ動作確認。Admin側で投稿を下書き作成→公開側に表示されないことを確認→公開日時を過去に設定して更新→公開側の一覧・詳細にMarkdownがHTML変換されて表示されることを確認→Admin側で削除できることを確認
 
+## Phase 23 — Contact機能(UI準備)・ツールボタン拡大・ロケール/タイムゾーン整備
+
+- [x] `/contact`ページを追加。既存WordPressサイトのお問い合わせフォームと同じ項目構成(きっかけ・ご検討内容・お名前・ふりがな・会社名・電話番号・メールアドレス・ご相談内容・プライバシーポリシー同意・非営業目的の同意)をこのプロジェクトのTailwindスタイルで再構築。送信時はLaravel Mail(Mailtrap経由で動作確認済み)で`info@katsucode.jp`宛に通知メールを送信し、成功メッセージを表示。SmartSproutsへのAPI連携は別途後日実装
+- [x] 共有コンポーネント`resources/js/components/tools/AppButton.vue`を新規作成し、主要アクションボタン(アップロード→処理する系)を持つ19ツールページに適用。`px-4 py-2〜3 text-sm`→`px-6 py-3 text-base`に拡大。CSS/Pattern/UI Patternジェネレーターのコピーボタン等の補助ボタンは対象外
+- [x] `laravel-lang/lang`(dev依存)で`lang/en`・`lang/ja`を生成し、`APP_LOCALE=ja`(`APP_FALLBACK_LOCALE=en`)に変更。バリデーションエラー・ログイン失敗メッセージ・パスキー関連エラーが英語のまま混在していた問題を解消。`lang/ja/validation.php`に項目名の日本語対応表(`attributes`)を追加し「categoryは必須項目です」のような不自然な文言も解消
+- [x] `config/app.php`のtimezoneを`UTC`→`Asia/Tokyo`に統一。Admin投稿編集画面の「公開日時」入力がUTCとして解釈され、管理者の意図(JST)と実際の公開判定が9時間ズレるバグを修正(最終レビューで発見・保留していた課題)
+
 ## 今後の実装順序
 
-Contact機能(SmartSproutsへのAPI連携)・ツール画面のUI改善(ボタンサイズ等)・カラーパレット/ボタン集のwishlist投票機能は、それぞれ別途ブレインストーミングしてから着手する。
+Contact機能のSmartSprouts API連携・カラーパレット/ボタン集のwishlist投票機能は、それぞれ別途ブレインストーミングしてから着手する。
 
 ## 完了の定義(Definition of Done)
 

@@ -1,6 +1,6 @@
 # SPEC.md — katsuooool 仕様書
 
-最終更新: 2026-08-24
+最終更新: 2026-08-25
 対象範囲: Phase 0(基盤整備)〜Phase 2(Admin) ※Phase 3以降(他ツール・Premium・User認証)は本書のスコープ外(概要のみ記載)
 
 ## 1. プロダクト概要
@@ -29,6 +29,7 @@
 - 認証: Laravel Fortify(既存の2FA・パスキー機能を継続利用。Breezeへの置き換えは行わない)
 - 画像処理: Intervention Image(GD/Imagickをランタイム検出、CLIバイナリ非依存)
 - **インフラ制約**: Xserver共有サーバーのため `exec()`・シェルコマンド実行・常駐キューワーカーは前提にしない。バッチ処理も含め同期処理(リクエスト内順次処理)で完結させる。
+- **ロケール・タイムゾーン**: `APP_LOCALE=ja`(`APP_FALLBACK_LOCALE=en`)、`config('app.timezone')`は`Asia/Tokyo`に統一。バリデーションエラー等Laravelが自動生成するメッセージは`lang/ja/*`(`laravel-lang/lang`パッケージで生成)経由で日本語化する。日時はアプリ全体でJST基準(DB保存・`now()`・Admin入力すべて)で一貫させ、UTC/JSTの変換をコントローラー個別に行わない。
 
 ## 3. UI/UX方針
 
@@ -533,3 +534,12 @@ katsuoooolを「ツール集サイト」から法務ページ・会社紹介・�
 - **Markdown変換**: `league/commonmark`を用いた`MarkdownRenderer`サービスでサーバー側のみでHTML変換する(クライアント側でのMarkdownパースは行わない)。`html_input => escape`設定により生のHTMLタグはエスケープされ、XSS対策としている。
 - **Admin投稿管理(`/admin/posts`)**: 既存の`auth:admin`ガード配下にフルCRUD(一覧・新規作成・編集・削除)を実装。共有フォームコンポーネント`PostForm.vue`を新規作成・削除フォーム間で再利用する。
 - **導線**: サイト全体の`AppFooter`にAbout・Service・FAQ・Blogへのリンク(コンテンツ系)と、特商法・プライバシーポリシー・利用規約・クッキーポリシーへのリンク(法務系)を分けて設置する。AdminLayoutのサイドバーに「投稿管理」を追加する。
+
+## 32. お問い合わせページ仕様(Phase 23)
+
+既存のWordPress運用サイトのお問い合わせフォームと同じ項目構成を、このプロジェクトのTailwindスタイルで再実装したもの。
+
+- **ルート**: `/contact`(`ContactController@show`)・`POST /contact`(`ContactController@store`、`throttle:5,1`)。認証不要。
+- **フィールド**: きっかけ(任意)・ご検討中の内容(必須、katsuooool向けに新規作成した選択肢)・お名前/ふりがな(必須)・会社名(任意)・電話番号/メールアドレス(必須)・ご相談内容(必須)・プライバシーポリシー同意/非営業目的の同意(いずれも必須チェックボックス)。
+- **送信時の挙動**: バリデーション後、`App\Mail\ContactFormSubmitted`(`ShouldQueue`は使わず同期送信、Xserverの常駐キューワーカー不可の制約に準拠)で`MAIL_FROM_ADDRESS`宛に通知メールを送信し、`/contact`にリダイレクトして成功メッセージを表示する。
+- **未実施**: 実際の送信先をSmartSprouts(中央問い合わせ管理システム)のAPIに連携する処理は本フェーズのスコープ外。現状はLaravel Mail(開発時はMailtrapで動作確認済み)による通知メールのみ。

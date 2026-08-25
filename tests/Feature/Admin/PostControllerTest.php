@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Post;
+use Illuminate\Support\Carbon;
 
 test('unauthenticated visitors are redirected to the admin login page', function () {
     $response = $this->get(route('admin.posts.index'));
@@ -206,4 +207,23 @@ test('an admin can delete a post', function () {
 
     $response->assertRedirect(route('admin.posts.index'));
     $this->assertDatabaseMissing('posts', ['id' => $post->id]);
+});
+
+test('submitting the current Tokyo wall-clock time as published_at publishes the post immediately', function () {
+    actingAsAdmin();
+
+    $tokyoWallClockNow = Carbon::now('Asia/Tokyo')->format('Y-m-d\TH:i');
+
+    $this->post(route('admin.posts.store'), [
+        'title' => '今すぐ公開',
+        'slug' => 'publish-now-jst',
+        'type' => 'announcement',
+        'body_markdown' => '本文',
+        'published_at' => $tokyoWallClockNow,
+    ])->assertRedirect(route('admin.posts.index'));
+
+    $this->get(route('blog.index'))->assertInertia(fn ($page) => $page
+        ->component('Blog/Index')
+        ->where('posts.data.0.slug', 'publish-now-jst')
+    );
 });
