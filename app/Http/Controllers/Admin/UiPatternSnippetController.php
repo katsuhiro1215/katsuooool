@@ -37,6 +37,33 @@ class UiPatternSnippetController extends Controller
         return Redirect::route('admin.ui-pattern-snippets.index');
     }
 
+    public function edit(UiPatternSnippet $snippet): Response
+    {
+        return Inertia::render('admin/ui-pattern-snippets/Edit', [
+            'snippet' => [
+                'id' => $snippet->id,
+                'category' => $snippet->category,
+                'title' => $snippet->title,
+                'html' => $snippet->html,
+                'css' => $snippet->css,
+            ],
+        ]);
+    }
+
+    public function update(Request $request, UiPatternSnippet $snippet): RedirectResponse
+    {
+        $snippet->update($this->validated($request));
+
+        return Redirect::route('admin.ui-pattern-snippets.index');
+    }
+
+    public function destroy(UiPatternSnippet $snippet): RedirectResponse
+    {
+        $snippet->delete();
+
+        return Redirect::route('admin.ui-pattern-snippets.index');
+    }
+
     /**
      * @return array<string, mixed>
      */

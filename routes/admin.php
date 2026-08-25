@@ -28,6 +28,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('ui-pattern-snippets', [UiPatternSnippetController::class, 'index'])->name('ui-pattern-snippets.index');
         Route::get('ui-pattern-snippets/create', [UiPatternSnippetController::class, 'create'])->name('ui-pattern-snippets.create');
         Route::post('ui-pattern-snippets', [UiPatternSnippetController::class, 'store'])->name('ui-pattern-snippets.store');
+        Route::get('ui-pattern-snippets/{snippet}/edit', [UiPatternSnippetController::class, 'edit'])->name('ui-pattern-snippets.edit');
+        Route::put('ui-pattern-snippets/{snippet}', [UiPatternSnippetController::class, 'update'])->name('ui-pattern-snippets.update');
+        Route::delete('ui-pattern-snippets/{snippet}', [UiPatternSnippetController::class, 'destroy'])->name('ui-pattern-snippets.destroy');
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
     });
 });

@@ -57,3 +57,62 @@ test('creating a snippet requires a valid category', function () {
 
     $response->assertStatus(422);
 });
+
+test('the edit page shows the existing snippet data', function () {
+    actingAsAdmin();
+
+    $snippet = UiPatternSnippet::create([
+        'category' => 'button',
+        'title' => '編集対象',
+        'html' => '<a>edit</a>',
+        'css' => 'a {}',
+    ]);
+
+    $response = $this->get(route('admin.ui-pattern-snippets.edit', $snippet));
+
+    $response->assertSuccessful();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/ui-pattern-snippets/Edit')
+        ->where('snippet.title', '編集対象')
+    );
+});
+
+test('an admin can update a snippet', function () {
+    actingAsAdmin();
+
+    $snippet = UiPatternSnippet::create([
+        'category' => 'button',
+        'title' => '更新前',
+        'html' => '<a>before</a>',
+        'css' => 'a {}',
+    ]);
+
+    $response = $this->put(route('admin.ui-pattern-snippets.update', $snippet), [
+        'category' => 'button',
+        'title' => '更新後',
+        'html' => '<a>after</a>',
+        'css' => 'a { color: red; }',
+    ]);
+
+    $response->assertRedirect(route('admin.ui-pattern-snippets.index'));
+    $this->assertDatabaseHas('ui_pattern_snippets', [
+        'id' => $snippet->id,
+        'title' => '更新後',
+    ]);
+});
+
+test('an admin can delete a snippet', function () {
+    actingAsAdmin();
+
+    $snippet = UiPatternSnippet::create([
+        'category' => 'button',
+        'title' => '削除対象',
+        'html' => '<a>delete</a>',
+        'css' => 'a {}',
+    ]);
+
+    $response = $this->delete(route('admin.ui-pattern-snippets.destroy', $snippet));
+
+    $response->assertRedirect(route('admin.ui-pattern-snippets.index'));
+    $this->assertDatabaseMissing('ui_pattern_snippets', ['id' => $snippet->id]);
+});
