@@ -24,7 +24,15 @@ abstract class TrackedToolController extends Controller
 
     public function show(): Response
     {
-        return Inertia::render($this->page());
+        return Inertia::render($this->page(), $this->extraProps());
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function extraProps(): array
+    {
+        return [];
     }
 
     public function track(Request $request, ToolEventLogger $eventLogger): JsonResponse
