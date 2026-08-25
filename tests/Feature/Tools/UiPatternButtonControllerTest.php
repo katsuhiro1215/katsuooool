@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ToolEvent;
 use App\Models\UiPatternSnippet;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -27,4 +28,14 @@ test('the show page only includes button-category patterns ordered by id', funct
         ->where('patterns.0.id', $first->id)
         ->where('patterns.0.title', '斜線シャドウボタン')
     );
+});
+
+test('posting to the track endpoint logs a process event', function () {
+    $response = $this
+        ->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('ui-pattern-button.track'));
+
+    $response->assertSuccessful();
+
+    expect(ToolEvent::where('tool_slug', 'ui-pattern-button')->where('event_type', 'process')->exists())->toBeTrue();
 });
