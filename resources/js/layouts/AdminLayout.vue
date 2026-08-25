@@ -19,6 +19,11 @@ const NAV_ITEMS: NavItem[] = [
         routeName: 'admin.posts.index',
         activePattern: 'admin.posts.*',
     },
+    {
+        label: 'UIパターン集管理',
+        routeName: 'admin.ui-pattern-snippets.index',
+        activePattern: 'admin.ui-pattern-snippets.*',
+    },
 ];
 
 function logout() {

@@ -89,6 +89,17 @@ Admin専用の `admin` guard で認証する。ユーザー登録画面は作ら
 | published_at | timestamp nullable | nullまたは未来日時は非公開(下書き) |
 | timestamps | | |
 
+**`ui_pattern_snippets`**(UIパターン集ギャラリー、§32参照)
+
+| カラム | 型 | 備考 |
+|---|---|---|
+| id | bigint PK | |
+| category | string, index | 現状は`button`のみ(将来カード等に拡張予定) |
+| title | string | |
+| html | text | プレビュー用HTMLスニペット |
+| css | text | プレビュー用CSSスニペット |
+| timestamps | | |
+
 ## 5. ファイルライフサイクル(共通基盤)
 
 1. アップロード: `storage/app/private/tool-tmp/{uuid}/` に保存(Webから直接アクセス不可な非公開ディレクトリ)。
@@ -543,3 +554,13 @@ katsuoooolを「ツール集サイト」から法務ページ・会社紹介・�
 - **フィールド**: きっかけ(任意)・ご検討中の内容(必須、katsuooool向けに新規作成した選択肢)・お名前/ふりがな(必須)・会社名(任意)・電話番号/メールアドレス(必須)・ご相談内容(必須)・プライバシーポリシー同意/非営業目的の同意(いずれも必須チェックボックス)。
 - **送信時の挙動**: バリデーション後、`App\Mail\ContactFormSubmitted`(`ShouldQueue`は使わず同期送信、Xserverの常駐キューワーカー不可の制約に準拠)で`MAIL_FROM_ADDRESS`宛に通知メールを送信し、`/contact`にリダイレクトして成功メッセージを表示する。
 - **未実施**: 実際の送信先をSmartSprouts(中央問い合わせ管理システム)のAPIに連携する処理は本フェーズのスコープ外。現状はLaravel Mail(開発時はMailtrapで動作確認済み)による通知メールのみ。
+
+## 33. UIパターン集(ボタン集)ギャラリー仕様(Phase 24)
+
+既存のボタンジェネレーターツール(`/ui-pattern-button`)の下部に、Admin側で登録した実例パターンをカードGridで一覧表示するギャラリー機能。要求仕様・設計判断の詳細は`docs/superpowers/specs/2026-08-25-ui-pattern-gallery-design.md`、実装計画は`docs/superpowers/plans/2026-08-25-ui-pattern-gallery.md`を参照。
+
+- **データモデル**: `ui_pattern_snippets`テーブル(§4.2参照)。現状は`category = 'button'`のみを対象とし、将来カード等の他パターンへ拡張可能な形にしておく。
+- **公開側(`/ui-pattern-button`)**: 既存のジェネレーターUIの下に「いろんなボタン」セクションを追加し、登録済みパターンをカードGridで表示する。各カードは、HTML/CSSタブ切り替え・コードのクリップボードコピー・プレビュー(後述)を備える。
+- **プレビューの隔離方式(コア設計)**: 登録されたHTML/CSSは、共有ヘルパー`buildPatternDocument(html, css)`(`resources/js/lib/uiPatternSnippet.ts`)で完結したHTMLドキュメント文字列に組み立て、`sandbox=""`属性付きiframeの`srcdoc`に渡して描画する。これにより、パターンのCSS(例: `a { display: block; }`のような汎用セレクタ)がホストページの他要素に一切影響しない。同じ`buildPatternDocument()`はAdmin側の作成・編集画面のライブプレビューでも再利用する。
+- **Admin側(`/admin/ui-pattern-snippets`)**: `auth:admin`ガード配下にフルCRUD(一覧・新規作成・編集・削除)を実装。作成・編集画面は共有フォームコンポーネント`SnippetForm.vue`を再利用し、入力中のHTML/CSSを即座に`buildPatternDocument()`でプレビューiframeに反映する。
+- **導線**: `AdminLayout.vue`のサイドバーに「UIパターン集管理」を追加する。

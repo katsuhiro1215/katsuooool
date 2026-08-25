@@ -722,6 +722,18 @@ Admin側からUserを閲覧・検索できるCRM機能。ブレインストー�
 - [x] `laravel-lang/lang`(dev依存)で`lang/en`・`lang/ja`を生成し、`APP_LOCALE=ja`(`APP_FALLBACK_LOCALE=en`)に変更。バリデーションエラー・ログイン失敗メッセージ・パスキー関連エラーが英語のまま混在していた問題を解消。`lang/ja/validation.php`に項目名の日本語対応表(`attributes`)を追加し「categoryは必須項目です」のような不自然な文言も解消
 - [x] `config/app.php`のtimezoneを`UTC`→`Asia/Tokyo`に統一。Admin投稿編集画面の「公開日時」入力がUTCとして解釈され、管理者の意図(JST)と実際の公開判定が9時間ズレるバグを修正(最終レビューで発見・保留していた課題)
 
+## Phase 24 — UIパターン集(ボタン集)ギャラリー
+
+既存の「ボタン」ジェネレーターツール(`/ui-pattern-button`)の下部に、Admin側で登録した実例パターン(HTML/CSS)をカード形式で一覧表示するギャラリーを追加した。プレビューはXSS対策として`sandbox=""`属性付きiframe(`srcdoc`)で表示し、ホストページのCSSと完全に隔離する設計とした。詳細仕様は`docs/superpowers/specs/2026-08-25-ui-pattern-gallery-design.md`を参照。
+
+- [x] `ui_pattern_snippets`テーブル・`App\Models\UiPatternSnippet`を追加(`category`・`title`・`html`・`css`の4カラム、`category`にインデックス)
+- [x] 共有ヘルパー`resources/js/lib/uiPatternSnippet.ts`の`buildPatternDocument(html, css)`で、登録されたHTML/CSSをプレビュー用の完結したHTMLドキュメント文字列に組み立て、iframeの`srcdoc`に渡す方式を採用
+- [x] 公開側`/ui-pattern-button`(`Tools\UiPatternButtonController`)に、登録済みパターンをカードGrid表示する「いろんなボタン」セクションを追加。各カードはHTML/CSSタブ切り替え・コードのクリップボードコピー・`sandbox=""`のiframeプレビューを備える(`resources/js/components/tools/PatternCard.vue`)
+- [x] Admin側`/admin/ui-pattern-snippets`(`Admin\UiPatternSnippetController`)にフルCRUD(一覧・新規作成・編集・削除)を追加。作成・編集画面は共有フォームコンポーネント`SnippetForm.vue`を再利用し、入力中のライブプレビューiframeを表示
+- [x] `AdminLayout.vue`の`NAV_ITEMS`に「UIパターン集管理」を追加(`admin.ui-pattern-snippets.*`パターンで一覧・作成・編集どちらでもハイライト)
+- [x] バックエンド(`UiPatternSnippetTest`・`UiPatternButtonControllerTest`・`Admin/UiPatternSnippetControllerTest`)・フロントエンド(`uiPatternSnippet.test.ts`・`PatternCard.test.ts`等)双方でTDDサイクルを適用し、`composer ci:check`がグリーン
+- [x] Playwrightで実ブラウザ動作確認。Admin側でパターンを新規作成(ライブプレビュー確認)→公開側`/ui-pattern-button`にカードGridとして表示・iframeプレビュー描画を確認→カード内HTML/CSSタブ切り替えとコピーボタンの動作を確認→開発者ツールでパターンのCSS(`a { display: block; }`)がページ本体の他の`<a>`タグ(「トップに戻る」リンク)に一切影響していないこと(iframeによる完全なCSS隔離)を確認→Admin側で編集・削除できることを確認
+
 ## 今後の実装順序
 
 Contact機能のSmartSprouts API連携・カラーパレット/ボタン集のwishlist投票機能は、それぞれ別途ブレインストーミングしてから着手する。
