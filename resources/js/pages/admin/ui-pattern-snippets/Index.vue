@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import AdminLayout from '@/layouts/AdminLayout.vue';
+import { CATEGORY_LABELS } from '@/lib/uiPatternCategory';
 
 interface SnippetRow {
     id: number;
@@ -77,7 +78,7 @@ defineProps<{ snippets: Paginated<SnippetRow> }>();
                             </Link>
                         </td>
                         <td class="px-4 py-3 text-gray-700">
-                            {{ snippet.category }}
+                            {{ CATEGORY_LABELS[snippet.category] }}
                         </td>
                     </tr>
                 </tbody>

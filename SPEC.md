@@ -89,7 +89,7 @@ Admin専用の `admin` guard で認証する。ユーザー登録画面は作ら
 | published_at | timestamp nullable | nullまたは未来日時は非公開(下書き) |
 | timestamps | | |
 
-**`ui_pattern_snippets`**(UIパターン集ギャラリー、§32参照)
+**`ui_pattern_snippets`**(UIパターン集ギャラリー、§33参照)
 
 | カラム | 型 | 備考 |
 |---|---|---|

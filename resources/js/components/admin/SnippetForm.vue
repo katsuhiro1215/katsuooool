@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { InertiaForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { onBeforeUnmount, ref, watch } from 'vue';
 
+import { CATEGORY_OPTIONS } from '@/lib/uiPatternCategory';
 import { buildPatternDocument } from '@/lib/uiPatternSnippet';
 
 interface SnippetFormData {
@@ -11,8 +12,6 @@ interface SnippetFormData {
     css: string;
 }
 
-const CATEGORY_OPTIONS = [{ value: 'button', label: 'ボタン' }];
-
 const props = defineProps<{
     form: InertiaForm<SnippetFormData>;
     submitLabel: string;
@@ -20,9 +19,35 @@ const props = defineProps<{
 
 const emit = defineEmits<{ submit: [] }>();
 
-const previewSrcdoc = computed(() =>
+// srcdoc is debounced (rather than a plain computed) because the iframe
+// fully reloads its document every time srcdoc changes; recomputing on
+// every keystroke would cause visible flicker while typing.
+const PREVIEW_DEBOUNCE_MS = 300;
+
+const previewSrcdoc = ref(
     buildPatternDocument(props.form.html, props.form.css),
 );
+
+let debounceTimer: ReturnType<typeof setTimeout> | undefined;
+
+watch(
+    () => [props.form.html, props.form.css] as const,
+    ([html, css]) => {
+        if (debounceTimer !== undefined) {
+            clearTimeout(debounceTimer);
+        }
+
+        debounceTimer = setTimeout(() => {
+            previewSrcdoc.value = buildPatternDocument(html, css);
+        }, PREVIEW_DEBOUNCE_MS);
+    },
+);
+
+onBeforeUnmount(() => {
+    if (debounceTimer !== undefined) {
+        clearTimeout(debounceTimer);
+    }
+});
 </script>
 
 <template>

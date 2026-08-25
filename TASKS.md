@@ -731,7 +731,7 @@ Admin側からUserを閲覧・検索できるCRM機能。ブレインストー�
 - [x] 公開側`/ui-pattern-button`(`Tools\UiPatternButtonController`)に、登録済みパターンをカードGrid表示する「いろんなボタン」セクションを追加。各カードはHTML/CSSタブ切り替え・コードのクリップボードコピー・`sandbox=""`のiframeプレビューを備える(`resources/js/components/tools/PatternCard.vue`)
 - [x] Admin側`/admin/ui-pattern-snippets`(`Admin\UiPatternSnippetController`)にフルCRUD(一覧・新規作成・編集・削除)を追加。作成・編集画面は共有フォームコンポーネント`SnippetForm.vue`を再利用し、入力中のライブプレビューiframeを表示
 - [x] `AdminLayout.vue`の`NAV_ITEMS`に「UIパターン集管理」を追加(`admin.ui-pattern-snippets.*`パターンで一覧・作成・編集どちらでもハイライト)
-- [x] バックエンド(`UiPatternSnippetTest`・`UiPatternButtonControllerTest`・`Admin/UiPatternSnippetControllerTest`)・フロントエンド(`uiPatternSnippet.test.ts`・`PatternCard.test.ts`等)双方でTDDサイクルを適用し、`composer ci:check`がグリーン
+- [x] バックエンド(`UiPatternSnippetTest`・`UiPatternButtonControllerTest`・`Admin/UiPatternSnippetControllerTest`)・フロントエンド(`uiPatternSnippet.test.ts`・`PatternCard.test.ts`)双方でTDDサイクルを適用し、`composer ci:check`がグリーン
 - [x] Playwrightで実ブラウザ動作確認。Admin側でパターンを新規作成(ライブプレビュー確認)→公開側`/ui-pattern-button`にカードGridとして表示・iframeプレビュー描画を確認→カード内HTML/CSSタブ切り替えとコピーボタンの動作を確認→開発者ツールでパターンのCSS(`a { display: block; }`)がページ本体の他の`<a>`タグ(「トップに戻る」リンク)に一切影響していないこと(iframeによる完全なCSS隔離)を確認→Admin側で編集・削除できることを確認
 
 ## 今後の実装順序
