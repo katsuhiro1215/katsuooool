@@ -116,3 +116,67 @@ test('an admin can delete a snippet', function () {
     $response->assertRedirect(route('admin.ui-pattern-snippets.index'));
     $this->assertDatabaseMissing('ui_pattern_snippets', ['id' => $snippet->id]);
 });
+
+test('an admin can create a snippet marked as premium', function () {
+    actingAsAdmin();
+
+    $response = $this->post(route('admin.ui-pattern-snippets.store'), [
+        'category' => 'button',
+        'title' => 'Premiumボタン',
+        'html' => '<a href="#">Premium</a>',
+        'css' => 'a { color: gold; }',
+        'is_premium' => true,
+    ]);
+
+    $response->assertRedirect(route('admin.ui-pattern-snippets.index'));
+    $this->assertDatabaseHas('ui_pattern_snippets', [
+        'title' => 'Premiumボタン',
+        'is_premium' => true,
+    ]);
+});
+
+test('the edit page includes whether the snippet is premium', function () {
+    actingAsAdmin();
+
+    $snippet = UiPatternSnippet::create([
+        'category' => 'button',
+        'title' => 'Premium確認用',
+        'html' => '<a>edit</a>',
+        'css' => 'a {}',
+        'is_premium' => true,
+    ]);
+
+    $response = $this->get(route('admin.ui-pattern-snippets.edit', $snippet));
+
+    $response->assertSuccessful();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/ui-pattern-snippets/Edit')
+        ->where('snippet.is_premium', true)
+    );
+});
+
+test('an admin can toggle a snippet from premium back to free', function () {
+    actingAsAdmin();
+
+    $snippet = UiPatternSnippet::create([
+        'category' => 'button',
+        'title' => '切り替え確認',
+        'html' => '<a>before</a>',
+        'css' => 'a {}',
+        'is_premium' => true,
+    ]);
+
+    $response = $this->put(route('admin.ui-pattern-snippets.update', $snippet), [
+        'category' => 'button',
+        'title' => '切り替え確認',
+        'html' => '<a>after</a>',
+        'css' => 'a {}',
+        'is_premium' => false,
+    ]);
+
+    $response->assertRedirect(route('admin.ui-pattern-snippets.index'));
+    $this->assertDatabaseHas('ui_pattern_snippets', [
+        'id' => $snippet->id,
+        'is_premium' => false,
+    ]);
+});

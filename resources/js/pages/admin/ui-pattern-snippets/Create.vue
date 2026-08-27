@@ -8,6 +8,7 @@ const form = useForm({
     title: '',
     html: '',
     css: '',
+    is_premium: false,
 });
 
 function submit() {

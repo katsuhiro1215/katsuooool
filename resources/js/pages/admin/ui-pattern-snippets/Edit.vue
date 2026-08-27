@@ -9,6 +9,7 @@ interface SnippetDetail {
     title: string;
     html: string;
     css: string;
+    is_premium: boolean;
 }
 
 const props = defineProps<{ snippet: SnippetDetail }>();
@@ -18,6 +19,7 @@ const form = useForm({
     title: props.snippet.title,
     html: props.snippet.html,
     css: props.snippet.css,
+    is_premium: props.snippet.is_premium,
 });
 
 function submit() {

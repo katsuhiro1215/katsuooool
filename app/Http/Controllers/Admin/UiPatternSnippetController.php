@@ -46,6 +46,7 @@ class UiPatternSnippetController extends Controller
                 'title' => $snippet->title,
                 'html' => $snippet->html,
                 'css' => $snippet->css,
+                'is_premium' => $snippet->is_premium,
             ],
         ]);
     }
@@ -74,6 +75,7 @@ class UiPatternSnippetController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'html' => ['required', 'string'],
             'css' => ['required', 'string'],
+            'is_premium' => ['boolean'],
         ]);
     }
 }

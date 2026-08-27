@@ -7,6 +7,7 @@ interface SnippetRow {
     id: number;
     category: string;
     title: string;
+    is_premium: boolean;
 }
 
 interface PaginationLink {
@@ -76,6 +77,12 @@ defineProps<{ snippets: Paginated<SnippetRow> }>();
                             >
                                 {{ snippet.title }}
                             </Link>
+                            <span
+                                v-if="snippet.is_premium"
+                                class="ml-2 rounded-full bg-gray-900 px-2 py-0.5 text-[10px] font-bold text-white"
+                            >
+                                Premium
+                            </span>
                         </td>
                         <td class="px-4 py-3 text-gray-700">
                             {{ CATEGORY_LABELS[snippet.category] }}

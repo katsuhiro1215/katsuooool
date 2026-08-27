@@ -10,6 +10,7 @@ interface SnippetFormData {
     title: string;
     html: string;
     css: string;
+    is_premium: boolean;
 }
 
 const props = defineProps<{
@@ -136,6 +137,13 @@ onBeforeUnmount(() => {
                     title="プレビュー"
                 />
             </div>
+        </div>
+
+        <div>
+            <label class="flex items-center gap-2 text-sm text-gray-700">
+                <input v-model="form.is_premium" type="checkbox" />
+                Premium限定パターンにする
+            </label>
         </div>
 
         <button
