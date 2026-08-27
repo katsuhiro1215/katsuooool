@@ -3,7 +3,16 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 
 import AppFooter from '@/components/AppFooter.vue';
 
-defineProps<{ success: boolean }>();
+interface ContactCategory {
+    id: string;
+    name: string;
+}
+
+defineProps<{
+    success: boolean;
+    error: boolean;
+    categories: ContactCategory[];
+}>();
 
 const REFERRAL_OPTIONS = [
     { value: 'Google', label: '検索エンジン(Google, Yahoo!など)' },
@@ -11,14 +20,6 @@ const REFERRAL_OPTIONS = [
     { value: 'Instagram', label: 'Instagram' },
     { value: 'Referral', label: '知人の紹介' },
     { value: 'Other', label: 'その他' },
-];
-
-const CATEGORY_OPTIONS = [
-    { value: 'bug', label: '不具合の報告' },
-    { value: 'premium', label: 'Premiumについて' },
-    { value: 'feature', label: '機能のご要望' },
-    { value: 'partnership', label: '取材・提携のご相談' },
-    { value: 'other', label: 'その他' },
 ];
 
 const form = useForm({
@@ -65,6 +66,13 @@ function submit() {
                 お問い合わせいただき、ありがとうございます。1〜2営業日以内にご返信いたします。
             </p>
 
+            <p
+                v-if="error"
+                class="mb-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+            >
+                送信に失敗しました。お手数ですが、時間をおいて再度お試しください。
+            </p>
+
             <form class="space-y-4" @submit.prevent="submit">
                 <div>
                     <label
@@ -105,11 +113,11 @@ function submit() {
                     >
                         <option value="">選択してください</option>
                         <option
-                            v-for="option in CATEGORY_OPTIONS"
-                            :key="option.value"
-                            :value="option.value"
+                            v-for="category in categories"
+                            :key="category.id"
+                            :value="category.id"
                         >
-                            {{ option.label }}
+                            {{ category.name }}
                         </option>
                     </select>
                     <p

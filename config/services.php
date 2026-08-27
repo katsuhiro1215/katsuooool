@@ -40,4 +40,9 @@ return [
         'price_yearly' => env('STRIPE_PRICE_YEARLY'),
     ],
 
+    'spra' => [
+        'contact_api_base' => env('SPRA_CONTACT_API_BASE'),
+        'contact_api_key' => env('SPRA_CONTACT_API_KEY'),
+    ],
+
 ];
