@@ -5,13 +5,7 @@ import { computed, ref, watch } from 'vue';
 
 import PatternCard from '@/components/tools/PatternCard.vue';
 import { buildFooter } from '@/lib/uiPatternGenerators';
-
-interface PatternSnippet {
-    id: number;
-    title: string;
-    html: string;
-    css: string;
-}
+import type { PatternSnippet } from '@/lib/uiPatternSnippet';
 
 const props = defineProps<{ patterns: PatternSnippet[] }>();
 
@@ -193,8 +187,10 @@ watch([copyrightText, linksText, backgroundColor], () => {
                         v-for="pattern in props.patterns"
                         :key="pattern.id"
                         :title="pattern.title"
+                        :locked="pattern.locked"
                         :html="pattern.html"
                         :css="pattern.css"
+                        :locked-srcdoc="pattern.srcdoc"
                     />
                 </div>
             </section>

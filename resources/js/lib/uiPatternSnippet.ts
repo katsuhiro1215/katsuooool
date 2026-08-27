@@ -1,3 +1,12 @@
+export interface PatternSnippet {
+    id: number;
+    title: string;
+    locked: boolean;
+    html?: string;
+    css?: string;
+    srcdoc?: string;
+}
+
 export function buildPatternDocument(html: string, css: string): string {
     return `<!doctype html>
 <html lang="ja">
