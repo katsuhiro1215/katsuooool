@@ -52,7 +52,7 @@ watch([opacity, blur, borderOpacity, shadowOpacity], () => {
 
     <div class="min-h-screen bg-gray-50">
         <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-3xl px-6 py-10">
+            <div class="mx-auto max-w-7xl px-6 py-10">
                 <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
                     >← トップに戻る</a
                 >
@@ -65,7 +65,7 @@ watch([opacity, blur, borderOpacity, shadowOpacity], () => {
             </div>
         </header>
 
-        <main class="mx-auto max-w-3xl px-6 py-10">
+        <main class="mx-auto max-w-7xl px-6 py-10">
             <div
                 class="bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22%3E%3Crect width=%2240%22 height=%2240%22 fill=%22%23e5e7eb%22/%3E%3Crect x=%2240%22 y=%2240%22 width=%2240%22 height=%2240%22 fill=%22%23e5e7eb%22/%3E%3C/svg%3E')] mb-8 flex h-40 items-center justify-center rounded-md bg-[length:20px_20px]"
             >

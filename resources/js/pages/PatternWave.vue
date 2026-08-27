@@ -58,7 +58,7 @@ watch([backgroundColor, patternColor, waveHeight, wavelength], () => {
 
     <div class="min-h-screen bg-gray-50">
         <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-3xl px-6 py-10">
+            <div class="mx-auto max-w-7xl px-6 py-10">
                 <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
                     >← トップに戻る</a
                 >
@@ -71,7 +71,7 @@ watch([backgroundColor, patternColor, waveHeight, wavelength], () => {
             </div>
         </header>
 
-        <main class="mx-auto max-w-3xl px-6 py-10">
+        <main class="mx-auto max-w-7xl px-6 py-10">
             <div
                 class="mb-8 h-48 rounded-md border border-gray-200"
                 :style="previewStyle"
