@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Tools\Concerns;
 
 use App\Http\Controllers\Controller;
+use App\Models\UiPatternSnippet;
+use App\Models\User;
+use App\Services\PatternDocumentRenderer;
 use App\Services\Tools\ToolEventLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,17 +25,56 @@ abstract class TrackedToolController extends Controller
 
     abstract protected function page(): string;
 
-    public function show(): Response
+    public function show(Request $request): Response
     {
-        return Inertia::render($this->page(), $this->extraProps());
+        return Inertia::render($this->page(), $this->extraProps($request));
     }
 
     /**
      * @return array<string, mixed>
      */
-    protected function extraProps(): array
+    protected function extraProps(Request $request): array
     {
         return [];
+    }
+
+    /**
+     * Builds the `patterns` prop for a UI pattern gallery category, hiding
+     * the raw html/css of premium-only patterns from non-premium viewers.
+     *
+     * @return array<string, mixed>
+     */
+    protected function patternGalleryProps(Request $request, string $category): array
+    {
+        $user = $request->user();
+        $isPremiumViewer = $user instanceof User && $user->isPremium();
+        $renderer = app(PatternDocumentRenderer::class);
+
+        $patterns = UiPatternSnippet::query()
+            ->forCategory($category)
+            ->get(['id', 'title', 'html', 'css', 'is_premium'])
+            ->map(function (UiPatternSnippet $pattern) use ($isPremiumViewer, $renderer): array {
+                $locked = $pattern->is_premium && ! $isPremiumViewer;
+
+                if ($locked) {
+                    return [
+                        'id' => $pattern->id,
+                        'title' => $pattern->title,
+                        'locked' => true,
+                        'srcdoc' => $renderer->build($pattern->html, $pattern->css),
+                    ];
+                }
+
+                return [
+                    'id' => $pattern->id,
+                    'title' => $pattern->title,
+                    'locked' => false,
+                    'html' => $pattern->html,
+                    'css' => $pattern->css,
+                ];
+            });
+
+        return ['patterns' => $patterns];
     }
 
     public function track(Request $request, ToolEventLogger $eventLogger): JsonResponse
