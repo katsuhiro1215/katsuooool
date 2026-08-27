@@ -744,9 +744,20 @@ Phase 24で「ボタン」カテゴリのみ実装したUIパターン集ギャ�
 - [x] ツール系ページの表示幅を`max-w-3xl`から`max-w-7xl`に統一(画像・カラー・Web・SEO・CSS・パターン・UIパターン・ジェネレーター系、計47ファイル)。Blog/FAQ/利用規約等の文章中心ページは`max-w-3xl`のまま維持
 - [x] `database/seeders/UiPatternSnippetSeeder.php`を拡充し、13カテゴリすべてに検証用サンプルパターンを追加
 
+## Phase 26 — Contact機能のSpra API連携
+
+既存WordPressサイトと同じSpra(中央問い合わせ管理システム、`https://smartsprouts.jp/api/contacts`)への連携に置き換えた。詳細はSPEC.md §32を参照。
+
+- [x] `App\Services\SpraContactApiClient`を追加(`GET /categories`を1時間キャッシュ・`POST`で送信、いずれもfail-closed)
+- [x] `ContactController`: カテゴリ選択肢をSpra APIから動的取得、送信時は自宛て通知メール(`App\Mail\ContactFormSubmitted`、削除済み)ではなくSpra APIへ転送。カテゴリIDは取得済み一覧に対して`Rule::in`で検証
+- [x] 送信失敗時は`contact_error`フラッシュでエラーメッセージを表示。カテゴリ取得失敗時はフォームの選択・送信を無効化しメッセージ表示
+- [x] プライバシーポリシーにSpraへのデータ送信(氏名・メール・生IP等)を明記
+- [x] `composer ci:check`グリーン(Pest 376件/1720アサーション)。独立レビュー2回実施、指摘はすべて対応済み
+- [ ] `.env`の`SPRA_CONTACT_API_KEY`は本番デプロイ時にユーザー側で設定(現状は空でfail-closed動作)
+
 ## 今後の実装順序
 
-Contact機能のSmartSprouts API連携・カラーパレット/ボタン集のwishlist投票機能は、それぞれ別途ブレインストーミングしてから着手する。
+カラーパレット/ボタン集のwishlist投票機能は、別途ブレインストーミングしてから着手する。
 
 ## 完了の定義(Definition of Done)
 
