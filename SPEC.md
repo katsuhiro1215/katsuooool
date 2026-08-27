@@ -555,12 +555,12 @@ katsuoooolを「ツール集サイト」から法務ページ・会社紹介・�
 - **送信時の挙動**: バリデーション後、`App\Mail\ContactFormSubmitted`(`ShouldQueue`は使わず同期送信、Xserverの常駐キューワーカー不可の制約に準拠)で`MAIL_FROM_ADDRESS`宛に通知メールを送信し、`/contact`にリダイレクトして成功メッセージを表示する。
 - **未実施**: 実際の送信先をSmartSprouts(中央問い合わせ管理システム)のAPIに連携する処理は本フェーズのスコープ外。現状はLaravel Mail(開発時はMailtrapで動作確認済み)による通知メールのみ。
 
-## 33. UIパターン集(ボタン集)ギャラリー仕様(Phase 24)
+## 33. UIパターン集ギャラリー仕様(Phase 24・Phase 25)
 
-既存のボタンジェネレーターツール(`/ui-pattern-button`)の下部に、Admin側で登録した実例パターンをカードGridで一覧表示するギャラリー機能。要求仕様・設計判断の詳細は`docs/superpowers/specs/2026-08-25-ui-pattern-gallery-design.md`、実装計画は`docs/superpowers/plans/2026-08-25-ui-pattern-gallery.md`を参照。
+UIパターン系ジェネレーターツール(`/ui-pattern-*`)の下部に、Admin側で登録した実例パターンをカードGridで一覧表示するギャラリー機能。Phase 24でボタンカテゴリのみ実装し、Phase 25で全13カテゴリに横展開した。要求仕様・設計判断の詳細は`docs/superpowers/specs/2026-08-25-ui-pattern-gallery-design.md`、実装計画は`docs/superpowers/plans/2026-08-25-ui-pattern-gallery.md`を参照。
 
-- **データモデル**: `ui_pattern_snippets`テーブル(§4.2参照)。現状は`category = 'button'`のみを対象とし、将来カード等の他パターンへ拡張可能な形にしておく。
-- **公開側(`/ui-pattern-button`)**: 既存のジェネレーターUIの下に「いろんなボタン」セクションを追加し、登録済みパターンをカードGridで表示する。各カードは、HTML/CSSタブ切り替え・コードのクリップボードコピー・プレビュー(後述)を備える。
+- **データモデル**: `ui_pattern_snippets`テーブル(§4.2参照)。`UiPatternSnippet::CATEGORIES`は`button`・`card`・`pagination`・`modal`・`toast`・`loading`・`skeleton`・`form-input`・`form-textarea`・`form-check`・`form-select`・`form-group`・`header`・`footer`の14種類(対応する`/ui-pattern-*`ツールのスラッグと一致)。新しいUIパターン種別を追加する場合は、この配列・`resources/js/lib/uiPatternCategory.ts`の`CATEGORY_LABELS`・対応する公開ツールコントローラーの`extraProps()`をそれぞれ追加する。
+- **公開側(各`/ui-pattern-*`ページ)**: 既存のジェネレーターUIの下に「いろんな{カテゴリ名}」セクションを追加し、登録済みパターンをカードGridで表示する。各カードは、HTML/CSSタブ切り替え・コードのクリップボードコピー・プレビュー(後述)を備える。ページ幅は他のツールページと同じ`max-w-7xl`に統一(Phase 25で`max-w-3xl`から変更)。
 - **プレビューの隔離方式(コア設計)**: 登録されたHTML/CSSは、共有ヘルパー`buildPatternDocument(html, css)`(`resources/js/lib/uiPatternSnippet.ts`)で完結したHTMLドキュメント文字列に組み立て、`sandbox=""`属性付きiframeの`srcdoc`に渡して描画する。これにより、パターンのCSS(例: `a { display: block; }`のような汎用セレクタ)がホストページの他要素に一切影響しない。同じ`buildPatternDocument()`はAdmin側の作成・編集画面のライブプレビューでも再利用する。
-- **Admin側(`/admin/ui-pattern-snippets`)**: `auth:admin`ガード配下にフルCRUD(一覧・新規作成・編集・削除)を実装。作成・編集画面は共有フォームコンポーネント`SnippetForm.vue`を再利用し、入力中のHTML/CSSを即座に`buildPatternDocument()`でプレビューiframeに反映する。
+- **Admin側(`/admin/ui-pattern-snippets`)**: `auth:admin`ガード配下にフルCRUD(一覧・新規作成・編集・削除)を実装。作成・編集画面は共有フォームコンポーネント`SnippetForm.vue`を再利用し、入力中のHTML/CSSを即座に`buildPatternDocument()`でプレビューiframeに反映する。種別選択肢は全14カテゴリから選択可能。
 - **導線**: `AdminLayout.vue`のサイドバーに「UIパターン集管理」を追加する。

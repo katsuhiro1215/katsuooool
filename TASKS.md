@@ -734,6 +734,16 @@ Admin側からUserを閲覧・検索できるCRM機能。ブレインストー�
 - [x] バックエンド(`UiPatternSnippetTest`・`UiPatternButtonControllerTest`・`Admin/UiPatternSnippetControllerTest`)・フロントエンド(`uiPatternSnippet.test.ts`・`PatternCard.test.ts`)双方でTDDサイクルを適用し、`composer ci:check`がグリーン
 - [x] Playwrightで実ブラウザ動作確認。Admin側でパターンを新規作成(ライブプレビュー確認)→公開側`/ui-pattern-button`にカードGridとして表示・iframeプレビュー描画を確認→カード内HTML/CSSタブ切り替えとコピーボタンの動作を確認→開発者ツールでパターンのCSS(`a { display: block; }`)がページ本体の他の`<a>`タグ(「トップに戻る」リンク)に一切影響していないこと(iframeによる完全なCSS隔離)を確認→Admin側で編集・削除できることを確認
 
+## Phase 25 — UIパターン集ギャラリーの全カテゴリ展開
+
+Phase 24で「ボタン」カテゴリのみ実装したUIパターン集ギャラリーを、既存の全UIパターン系ジェネレーターツール(カード・ページネーション・モーダル・トースト・ローディング・スケルトン・フォーム系4種・ヘッダー・フッター、計13カテゴリ)に横展開した。
+
+- [x] `UiPatternSnippet::CATEGORIES`と`resources/js/lib/uiPatternCategory.ts`の`CATEGORY_LABELS`に13カテゴリを追加(`card`・`pagination`・`modal`・`toast`・`loading`・`skeleton`・`form-input`・`form-textarea`・`form-check`・`form-select`・`form-group`・`header`・`footer`)。Admin側`/admin/ui-pattern-snippets`の種別選択肢・一覧表示ラベルは共有マップの更新のみで自動的に対応
+- [x] 13個の`Tools\UiPattern{Category}Controller`それぞれに`extraProps()`を追加し、対応する`/ui-pattern-{slug}`ページに「いろんな{カテゴリ名}」ギャラリーセクションを追加(Phase 24の`PatternCard.vue`・`buildPatternDocument()`をそのまま再利用、sandbox隔離方式は変更なし)
+- [x] 各カテゴリごとにFeatureテストを追加し、他カテゴリのパターンが混入しないことを検証(`composer ci:check`グリーン、Pest 365件/1694アサーション)
+- [x] ツール系ページの表示幅を`max-w-3xl`から`max-w-7xl`に統一(画像・カラー・Web・SEO・CSS・パターン・UIパターン・ジェネレーター系、計47ファイル)。Blog/FAQ/利用規約等の文章中心ページは`max-w-3xl`のまま維持
+- [x] `database/seeders/UiPatternSnippetSeeder.php`を拡充し、13カテゴリすべてに検証用サンプルパターンを追加
+
 ## 今後の実装順序
 
 Contact機能のSmartSprouts API連携・カラーパレット/ボタン集のwishlist投票機能は、それぞれ別途ブレインストーミングしてから着手する。
