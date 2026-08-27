@@ -6,6 +6,7 @@ use App\Services\SpraContactApiClient;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -22,9 +23,11 @@ class ContactController extends Controller
 
     public function store(Request $request, SpraContactApiClient $client): RedirectResponse
     {
+        $categories = $client->getCategories();
+
         $validated = $request->validate([
             'referral' => ['nullable', 'string', 'max:255'],
-            'category' => ['required', 'string', 'max:255'],
+            'category' => ['required', 'string', 'max:255', Rule::in(array_column($categories, 'id'))],
             'name' => ['required', 'string', 'max:255'],
             'name_kana' => ['required', 'string', 'max:255'],
             'company' => ['nullable', 'string', 'max:255'],
@@ -35,7 +38,7 @@ class ContactController extends Controller
             'not_sales_agree' => ['accepted'],
         ]);
 
-        $categoryName = $this->findCategoryName($client->getCategories(), $validated['category']);
+        $categoryName = $this->findCategoryName($categories, $validated['category']);
 
         $messageBody = $validated['message'];
         if (! empty($validated['name_kana'])) {

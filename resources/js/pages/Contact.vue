@@ -109,7 +109,8 @@ function submit() {
                     <select
                         id="category"
                         v-model="form.category"
-                        class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                        :disabled="categories.length === 0"
+                        class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm disabled:cursor-not-allowed disabled:bg-gray-100"
                     >
                         <option value="">選択してください</option>
                         <option
@@ -121,7 +122,13 @@ function submit() {
                         </option>
                     </select>
                     <p
-                        v-if="form.errors.category"
+                        v-if="categories.length === 0"
+                        class="mt-1 text-xs text-red-600"
+                    >
+                        現在この項目を読み込めません。時間をおいて再度アクセスしてください。
+                    </p>
+                    <p
+                        v-else-if="form.errors.category"
                         class="mt-1 text-xs text-red-600"
                     >
                         {{ form.errors.category }}
@@ -306,7 +313,7 @@ function submit() {
                 <button
                     type="submit"
                     class="w-full rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-300"
-                    :disabled="form.processing"
+                    :disabled="form.processing || categories.length === 0"
                 >
                     {{ form.processing ? '送信しています...' : '送信する' }}
                 </button>

@@ -40,11 +40,29 @@ class SpraContactApiClient
             return [];
         }
 
-        $categories = $response->json('categories') ?? [];
+        $categories = $this->sanitizeCategories($response->json('categories') ?? []);
 
-        Cache::put(self::CATEGORIES_CACHE_KEY, $categories, now()->addHour());
+        if ($categories !== []) {
+            Cache::put(self::CATEGORIES_CACHE_KEY, $categories, now()->addHour());
+        }
 
         return $categories;
+    }
+
+    /**
+     * @return array<int, array{id: string, name: string}>
+     */
+    private function sanitizeCategories(mixed $categories): array
+    {
+        if (! is_array($categories)) {
+            return [];
+        }
+
+        return array_values(array_filter(
+            $categories,
+            fn (mixed $category): bool => is_array($category)
+                && isset($category['id'], $category['name'])
+        ));
     }
 
     /**

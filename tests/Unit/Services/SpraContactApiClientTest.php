@@ -62,6 +62,38 @@ test('getCategories returns an empty array and does not cache on API failure', f
     expect(Cache::get('spra_contact_categories'))->toBeNull();
 });
 
+test('getCategories filters out malformed category rows', function () {
+    Http::fake([
+        'smartsprouts.jp/api/contacts/categories' => Http::response([
+            'categories' => [
+                ['id' => '1', 'name' => '不具合の報告'],
+                ['id' => '2'],
+                ['name' => 'idが無い行'],
+                'not-an-array',
+                ['id' => '3', 'name' => 'その他'],
+            ],
+        ], 200),
+    ]);
+
+    $client = new SpraContactApiClient;
+
+    expect($client->getCategories())->toBe([
+        ['id' => '1', 'name' => '不具合の報告'],
+        ['id' => '3', 'name' => 'その他'],
+    ]);
+});
+
+test('getCategories does not cache an empty category list', function () {
+    Http::fake([
+        'smartsprouts.jp/api/contacts/categories' => Http::response(['categories' => []], 200),
+    ]);
+
+    $client = new SpraContactApiClient;
+
+    expect($client->getCategories())->toBe([]);
+    expect(Cache::get('spra_contact_categories'))->toBeNull();
+});
+
 test('getCategories returns an empty array when the API base or key is not configured', function () {
     config(['services.spra.contact_api_key' => null]);
     Http::fake();

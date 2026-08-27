@@ -73,7 +73,9 @@ test('submitting valid contact data forwards it to the Spra API and redirects wi
 
 test('submitting contact data redirects with an error flash when the Spra API fails', function () {
     Http::fake([
-        'smartsprouts.jp/api/contacts/categories' => Http::response(['categories' => []], 200),
+        'smartsprouts.jp/api/contacts/categories' => Http::response(['categories' => [
+            ['id' => 'other', 'name' => 'その他'],
+        ]], 200),
         'smartsprouts.jp/api/contacts' => Http::response('error', 500),
     ]);
 
@@ -93,6 +95,31 @@ test('submitting contact data redirects with an error flash when the Spra API fa
     $response->assertSessionMissing('contact_success');
 });
 
+test('submitting a category id that is not in the fetched category list fails validation', function () {
+    Http::fake([
+        'smartsprouts.jp/api/contacts/categories' => Http::response(['categories' => [
+            ['id' => '2', 'name' => 'その他'],
+        ]], 200),
+        'smartsprouts.jp/api/contacts' => Http::response(['id' => 'abc'], 201),
+    ]);
+
+    $response = $this
+        ->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('contact.store'), [
+            'category' => 'not-a-real-category-id',
+            'name' => '山田太郎',
+            'name_kana' => 'やまだたろう',
+            'tel' => '090-1234-5678',
+            'email' => 'yamada@example.com',
+            'message' => 'お問い合わせ内容です。',
+            'privacy_agree' => true,
+            'not_sales_agree' => true,
+        ]);
+
+    $response->assertStatus(422);
+    Http::assertNotSent(fn ($request) => $request->method() === 'POST' && $request->url() === 'https://smartsprouts.jp/api/contacts');
+});
+
 test('submitting without required fields fails validation', function () {
     Http::fake();
 
@@ -101,11 +128,15 @@ test('submitting without required fields fails validation', function () {
         ->post(route('contact.store'), []);
 
     $response->assertStatus(422);
-    Http::assertNothingSent();
+    Http::assertNotSent(fn ($request) => $request->method() === 'POST' && $request->url() === 'https://smartsprouts.jp/api/contacts');
 });
 
 test('submitting without agreeing to the privacy policy fails validation', function () {
-    Http::fake();
+    Http::fake([
+        'smartsprouts.jp/api/contacts/categories' => Http::response(['categories' => [
+            ['id' => 'other', 'name' => 'その他'],
+        ]], 200),
+    ]);
 
     $response = $this
         ->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
@@ -121,5 +152,5 @@ test('submitting without agreeing to the privacy policy fails validation', funct
         ]);
 
     $response->assertStatus(422);
-    Http::assertNothingSent();
+    Http::assertNotSent(fn ($request) => $request->method() === 'POST' && $request->url() === 'https://smartsprouts.jp/api/contacts');
 });

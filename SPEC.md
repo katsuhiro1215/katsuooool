@@ -546,14 +546,15 @@ katsuoooolを「ツール集サイト」から法務ページ・会社紹介・�
 - **Admin投稿管理(`/admin/posts`)**: 既存の`auth:admin`ガード配下にフルCRUD(一覧・新規作成・編集・削除)を実装。共有フォームコンポーネント`PostForm.vue`を新規作成・削除フォーム間で再利用する。
 - **導線**: サイト全体の`AppFooter`にAbout・Service・FAQ・Blogへのリンク(コンテンツ系)と、特商法・プライバシーポリシー・利用規約・クッキーポリシーへのリンク(法務系)を分けて設置する。AdminLayoutのサイドバーに「投稿管理」を追加する。
 
-## 32. お問い合わせページ仕様(Phase 23)
+## 32. お問い合わせページ仕様(Phase 23・Phase 26)
 
-既存のWordPress運用サイトのお問い合わせフォームと同じ項目構成を、このプロジェクトのTailwindスタイルで再実装したもの。
+既存のWordPress運用サイトのお問い合わせフォームと同じ項目構成を、このプロジェクトのTailwindスタイルで再実装したもの。Phase 23でUI・バリデーションのみを先行実装し、Phase 26で実際のSpra(中央問い合わせ管理システム、`https://smartsprouts.jp/api/contacts`)API連携に置き換えた。
 
 - **ルート**: `/contact`(`ContactController@show`)・`POST /contact`(`ContactController@store`、`throttle:5,1`)。認証不要。
-- **フィールド**: きっかけ(任意)・ご検討中の内容(必須、katsuooool向けに新規作成した選択肢)・お名前/ふりがな(必須)・会社名(任意)・電話番号/メールアドレス(必須)・ご相談内容(必須)・プライバシーポリシー同意/非営業目的の同意(いずれも必須チェックボックス)。
-- **送信時の挙動**: バリデーション後、`App\Mail\ContactFormSubmitted`(`ShouldQueue`は使わず同期送信、Xserverの常駐キューワーカー不可の制約に準拠)で`MAIL_FROM_ADDRESS`宛に通知メールを送信し、`/contact`にリダイレクトして成功メッセージを表示する。
-- **未実施**: 実際の送信先をSmartSprouts(中央問い合わせ管理システム)のAPIに連携する処理は本フェーズのスコープ外。現状はLaravel Mail(開発時はMailtrapで動作確認済み)による通知メールのみ。
+- **フィールド**: きっかけ(任意)・ご検討中の内容(必須、Spra API(`GET /categories`)から動的取得した選択肢)・お名前/ふりがな(必須)・会社名(任意)・電話番号/メールアドレス(必須)・ご相談内容(必須)・プライバシーポリシー同意/非営業目的の同意(いずれも必須チェックボックス)。
+- **送信時の挙動**: バリデーション後、`App\Services\SpraContactApiClient::submit()`でSpra APIへ`POST`(氏名・メール・電話番号・会社名・カテゴリID・件名(カテゴリ名)・本文・ページURL・訪問者IP・User-Agentを送信)。成功時は`/contact`にリダイレクトして成功メッセージを、失敗時は同様にリダイレクトしてエラーメッセージを表示する。カテゴリ一覧はキャッシュ(成功時のみ1時間)して`GET /categories`の呼び出し回数を抑える。`SPRA_CONTACT_API_BASE`/`SPRA_CONTACT_API_KEY`が未設定の場合は両操作ともfail-closed(カテゴリは空配列、送信は失敗扱い)で例外を出さない。
+- **IPアドレスの扱い(例外事項)**: `tool_events`のIPは日次ソルト付きハッシュ化して生IPを保存しない方針だが、お問い合わせフォームはSpra側のCRM機能(スパム対策・問い合わせ管理)のために生IP・User-Agentをそのまま送信する(既存WordPressサイトと同じ挙動)。この送信について[プライバシーポリシー](../resources/js/pages/legal/PrivacyPolicy.vue)の第三者提供の項目に明記している。本番(Xserver)はCDN/リバースプロキシを介していないため、`$request->ip()`は追加のTrustProxies設定なしで実際の訪問者IPを返す。
+- **旧実装からの変更点**: 旧`App\Mail\ContactFormSubmitted`による自宛て通知メール送信・katsuooool独自のハードコードされたカテゴリ選択肢は廃止した。
 
 ## 33. UIパターン集ギャラリー仕様(Phase 24・Phase 25)
 
