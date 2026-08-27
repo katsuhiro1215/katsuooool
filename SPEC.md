@@ -533,6 +533,7 @@ Laravel Cashier + Stripe Checkout / Billing Portalによるサブスクリプシ
   - 画像系6ツール(圧縮・変換・リサイズ・回転・色抽出・OGP画像)のバッチアップロード上限を無料3件/Premium10件に拡大。
   - 画像系8ツールのレート制限(`image-tools`リミッター)を無料10回/分・Premium30回/分に緩和。
   - Premium限定の`/mypage`(`EnsurePremium`ミドルウェア)で、自分のツール利用履歴(`tool_events`)をページネーション表示。
+  - UIパターン集の一部パターンのコード閲覧(§33参照)。
 - **特定商取引法表記**: `/legal/tokushoho`に雛形を用意。事業者名・所在地・連絡先はプレースホルダーのままで、本番デプロイ前に実データへの差し替えが必要。
 - **未実施**: Stripeダッシュボードでの実商品・価格作成と`.env`の`STRIPE_PRICE_MONTHLY`/`STRIPE_PRICE_YEARLY`への実値設定はユーザー側の作業として残る。また、本番Webhookエンドポイントの登録(Stripeダッシュボード)と`.env`の`STRIPE_WEBHOOK_SECRET`への実値設定も必須(未設定のままだとCashierの`WebhookController`が署名検証ミドルウェアを登録せず、誰でも偽のWebhookリクエストでPremium状態を偽装できてしまう)。
 
@@ -556,7 +557,7 @@ katsuoooolを「ツール集サイト」から法務ページ・会社紹介・�
 - **IPアドレスの扱い(例外事項)**: `tool_events`のIPは日次ソルト付きハッシュ化して生IPを保存しない方針だが、お問い合わせフォームはSpra側のCRM機能(スパム対策・問い合わせ管理)のために生IP・User-Agentをそのまま送信する(既存WordPressサイトと同じ挙動)。この送信について[プライバシーポリシー](../resources/js/pages/legal/PrivacyPolicy.vue)の第三者提供の項目に明記している。本番(Xserver)はCDN/リバースプロキシを介していないため、`$request->ip()`は追加のTrustProxies設定なしで実際の訪問者IPを返す。
 - **旧実装からの変更点**: 旧`App\Mail\ContactFormSubmitted`による自宛て通知メール送信・katsuooool独自のハードコードされたカテゴリ選択肢は廃止した。
 
-## 33. UIパターン集ギャラリー仕様(Phase 24・Phase 25)
+## 33. UIパターン集ギャラリー仕様(Phase 24・Phase 25・Phase 27)
 
 UIパターン系ジェネレーターツール(`/ui-pattern-*`)の下部に、Admin側で登録した実例パターンをカードGridで一覧表示するギャラリー機能。Phase 24でボタンカテゴリのみ実装し、Phase 25で全13カテゴリに横展開した。要求仕様・設計判断の詳細は`docs/superpowers/specs/2026-08-25-ui-pattern-gallery-design.md`、実装計画は`docs/superpowers/plans/2026-08-25-ui-pattern-gallery.md`を参照。
 
@@ -565,3 +566,4 @@ UIパターン系ジェネレーターツール(`/ui-pattern-*`)の下部に、A
 - **プレビューの隔離方式(コア設計)**: 登録されたHTML/CSSは、共有ヘルパー`buildPatternDocument(html, css)`(`resources/js/lib/uiPatternSnippet.ts`)で完結したHTMLドキュメント文字列に組み立て、`sandbox=""`属性付きiframeの`srcdoc`に渡して描画する。これにより、パターンのCSS(例: `a { display: block; }`のような汎用セレクタ)がホストページの他要素に一切影響しない。同じ`buildPatternDocument()`はAdmin側の作成・編集画面のライブプレビューでも再利用する。
 - **Admin側(`/admin/ui-pattern-snippets`)**: `auth:admin`ガード配下にフルCRUD(一覧・新規作成・編集・削除)を実装。作成・編集画面は共有フォームコンポーネント`SnippetForm.vue`を再利用し、入力中のHTML/CSSを即座に`buildPatternDocument()`でプレビューiframeに反映する。種別選択肢は全14カテゴリから選択可能。
 - **導線**: `AdminLayout.vue`のサイドバーに「UIパターン集管理」を追加する。
+- **Premium限定パターン(Phase 27)**: 各パターンに`is_premium`カラムを追加し、Admin側のチェックボックスでPremium会員限定に設定できる。共有ロジック`TrackedToolController::patternGalleryProps()`が、閲覧者が`isPremium()`でない場合に該当パターンの`html`/`css`をpropsから完全に除外し、代わりに`locked: true`とサーバー側で生成した`srcdoc`のみを返す(フロント側での非表示制御ではなく、サーバー側で非公開データを送らない設計)。公開側`PatternCard.vue`はロック時、プレビュー(iframe)はそのまま表示しつつコード欄を「このパターンのコードはPremium会員限定です。」というアップセルメッセージと`/premium`への導線リンクに置き換え、コピーボタンを表示しない。設計判断の詳細は`docs/superpowers/specs/2026-08-27-ui-pattern-premium-lock-design.md`を参照。

@@ -755,6 +755,17 @@ Phase 24で「ボタン」カテゴリのみ実装したUIパターン集ギャ�
 - [x] `composer ci:check`グリーン(Pest 376件/1720アサーション)。独立レビュー2回実施、指摘はすべて対応済み
 - [ ] `.env`の`SPRA_CONTACT_API_KEY`は本番デプロイ時にユーザー側で設定(現状は空でfail-closed動作)
 
+## Phase 27 — UIパターン集ギャラリーのPremium限定パターン機能
+
+UIパターン集ギャラリー(Phase 24・25)の各パターンをAdmin側でPremium会員限定として設定できるようにし、非Premium閲覧者には見た目のプレビューのみを見せ、生のHTML/CSSコードとコピー機能を隠すロック表示を追加した。詳細仕様は`docs/superpowers/specs/2026-08-27-ui-pattern-premium-lock-design.md`を参照。
+
+- [x] `ui_pattern_snippets`テーブルに`is_premium`カラム(boolean、デフォルトfalse)を追加するマイグレーションを実装
+- [x] 共有ロジック`TrackedToolController::patternGalleryProps()`を追加し、全13カテゴリの`Tools\UiPattern{Category}Controller`から利用する形に統一。閲覧者が`isPremium()`でない場合、Premium限定パターンは`id`・`title`・`locked: true`・サーバー側で生成した`srcdoc`のみをInertiaのpropsに含め、生の`html`・`css`キー自体をレスポンスから完全に除外する(サーバー側で非公開データを送らない設計。フロント側での非表示制御ではない)
+- [x] Admin側`/admin/ui-pattern-snippets`の作成・編集フォーム(`SnippetForm.vue`)に「Premium限定パターンにする」チェックボックスを追加。一覧画面にはPremium設定済みパターンに「Premium」バッジを表示
+- [x] `PatternCard.vue`にロック状態のUIを追加。プレビュー(`srcdoc`のiframe)はそのまま表示しつつ、コード欄は「このパターンのコードはPremium会員限定です。」というアップセルメッセージと`/premium`への導線リンクに置き換え、コピーボタンは表示しない
+- [x] バックエンド(モデル・コントローラーの各種Featureテスト)・フロントエンド(`PatternCard.test.ts`等)双方でTDDサイクルを適用し、`composer ci:check`がグリーン
+- [x] Playwrightで実ブラウザ動作確認。Admin側でパターンをPremium設定→一覧に「Premium」バッジ表示を確認→未ログイン状態で該当`/ui-pattern-button`ページを閲覧し、プレビューは表示されコード欄はアップセル表示・コピーボタンなしであることを確認→ページの`data-page`JSON(Inertiaのページデータ)を直接検査し、ロック対象パターンのオブジェクトのキーが`["id","title","locked","srcdoc"]`のみで`html`/`css`キーが一切存在しないことを確認(核心的なセキュリティ特性の実機検証)→`/premium`リンクの遷移を確認→`subscriptions`テーブルに有効なサブスクリプションを持つテストユーザーでログインし、同じパターンで`html`/`css`が通常通りpropsに含まれ、コード欄・コピーボタンが表示されることを確認→Admin側でPremium設定を解除すると、未ログイン状態でも再び通常表示(ロック解除)に戻ることを確認
+
 ## 今後の実装順序
 
 カラーパレット/ボタン集のwishlist投票機能は、別途ブレインストーミングしてから着手する。
