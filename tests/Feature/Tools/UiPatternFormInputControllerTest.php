@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\ToolEvent;
+use App\Models\UiPatternSnippet;
+use Inertia\Testing\AssertableInertia as Assert;
 
 test('the ui-pattern-form-input page renders', function () {
     $response = $this->get(route('ui-pattern-form-input.show'));
@@ -17,4 +19,30 @@ test('posting to the track endpoint logs a process event', function () {
     $response->assertSuccessful();
 
     expect(ToolEvent::where('tool_slug', 'ui-pattern-form-input')->where('event_type', 'process')->exists())->toBeTrue();
+});
+
+test('the show page only includes form-input-category patterns ordered by id', function () {
+    UiPatternSnippet::create([
+        'category' => 'button',
+        'title' => 'ボタンパターン',
+        'html' => '<button>button</button>',
+        'css' => '.button {}',
+    ]);
+
+    $first = UiPatternSnippet::create([
+        'category' => 'form-input',
+        'title' => 'フローティングラベル入力',
+        'html' => '<input type="text" placeholder="Name">',
+        'css' => 'input { border: 1px solid #ccc; }',
+    ]);
+
+    $response = $this->get(route('ui-pattern-form-input.show'));
+
+    $response->assertSuccessful();
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('UiPatternFormInput')
+        ->has('patterns', 1)
+        ->where('patterns.0.id', $first->id)
+        ->where('patterns.0.title', 'フローティングラベル入力')
+    );
 });
