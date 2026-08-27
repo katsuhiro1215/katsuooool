@@ -22,7 +22,22 @@ class UiPatternSnippet extends Model
     /**
      * @var array<int, string>
      */
-    public const CATEGORIES = ['button'];
+    public const CATEGORIES = [
+        'button',
+        'card',
+        'pagination',
+        'modal',
+        'toast',
+        'loading',
+        'skeleton',
+        'form-input',
+        'form-textarea',
+        'form-check',
+        'form-select',
+        'form-group',
+        'header',
+        'footer',
+    ];
 
     /**
      * @param  Builder<UiPatternSnippet>  $query
