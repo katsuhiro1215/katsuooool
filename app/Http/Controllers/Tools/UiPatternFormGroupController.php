@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Tools;
 
 use App\Http\Controllers\Tools\Concerns\TrackedToolController;
-use App\Models\UiPatternSnippet;
 use Illuminate\Http\Request;
 
 class UiPatternFormGroupController extends TrackedToolController
@@ -23,10 +22,6 @@ class UiPatternFormGroupController extends TrackedToolController
      */
     protected function extraProps(Request $request): array
     {
-        return [
-            'patterns' => UiPatternSnippet::query()
-                ->forCategory('form-group')
-                ->get(['id', 'title', 'html', 'css']),
-        ];
+        return $this->patternGalleryProps($request, 'form-group');
     }
 }
