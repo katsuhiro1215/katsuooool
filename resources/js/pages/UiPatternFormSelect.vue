@@ -3,7 +3,17 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref, watch } from 'vue';
 
+import PatternCard from '@/components/tools/PatternCard.vue';
 import { buildFormSelect } from '@/lib/uiPatternGenerators';
+
+interface PatternSnippet {
+    id: number;
+    title: string;
+    html: string;
+    css: string;
+}
+
+const props = defineProps<{ patterns: PatternSnippet[] }>();
 
 const optionsText = ref('東京都\n大阪府\n愛知県');
 const borderRadius = ref(6);
@@ -80,7 +90,7 @@ watch([optionsText, borderRadius, borderColor, disabled], () => {
 
     <div class="min-h-screen bg-gray-50">
         <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-3xl px-6 py-10">
+            <div class="mx-auto max-w-7xl px-6 py-10">
                 <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
                     >← トップに戻る</a
                 >
@@ -93,7 +103,7 @@ watch([optionsText, borderRadius, borderColor, disabled], () => {
             </div>
         </header>
 
-        <main class="mx-auto max-w-3xl px-6 py-10">
+        <main class="mx-auto max-w-7xl px-6 py-10">
             <div
                 class="mb-8 flex h-40 items-center rounded-md border border-gray-200 bg-white px-6"
             >
@@ -172,6 +182,26 @@ watch([optionsText, borderRadius, borderColor, disabled], () => {
                     class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
                     >{{ output.css }}</pre>
             </div>
+
+            <section v-if="props.patterns.length > 0" class="mt-16">
+                <h2 class="text-lg font-bold text-gray-900">
+                    いろんなフォーム(セレクト)
+                </h2>
+                <p class="mt-1 text-sm text-gray-600">
+                    気に入ったものをそのままコピーして使えます。
+                </p>
+                <div
+                    class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                >
+                    <PatternCard
+                        v-for="pattern in props.patterns"
+                        :key="pattern.id"
+                        :title="pattern.title"
+                        :html="pattern.html"
+                        :css="pattern.css"
+                    />
+                </div>
+            </section>
         </main>
     </div>
 </template>
