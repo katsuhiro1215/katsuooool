@@ -4,8 +4,18 @@ import axios from 'axios';
 import { computed, ref, watch } from 'vue';
 
 import AppButton from '@/components/tools/AppButton.vue';
+import PatternCard from '@/components/tools/PatternCard.vue';
 import { buildToast } from '@/lib/uiPatternGenerators';
 import type { ToastVariant } from '@/lib/uiPatternGenerators';
+
+interface PatternSnippet {
+    id: number;
+    title: string;
+    html: string;
+    css: string;
+}
+
+const props = defineProps<{ patterns: PatternSnippet[] }>();
 
 const VARIANT_OPTIONS: { key: ToastVariant; label: string; color: string }[] = [
     { key: 'success', label: 'Success', color: '#16a34a' },
@@ -94,7 +104,7 @@ watch([variant, message, duration], () => {
 
     <div class="min-h-screen bg-gray-50">
         <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-3xl px-6 py-10">
+            <div class="mx-auto max-w-7xl px-6 py-10">
                 <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
                     >← トップに戻る</a
                 >
@@ -107,7 +117,7 @@ watch([variant, message, duration], () => {
             </div>
         </header>
 
-        <main class="mx-auto max-w-3xl px-6 py-10">
+        <main class="mx-auto max-w-7xl px-6 py-10">
             <div
                 class="relative mb-8 flex h-40 items-center justify-center rounded-md border border-gray-200 bg-white"
             >
@@ -216,6 +226,26 @@ watch([variant, message, duration], () => {
                     class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
                     >{{ output.js }}</pre>
             </div>
+
+            <section v-if="props.patterns.length > 0" class="mt-16">
+                <h2 class="text-lg font-bold text-gray-900">
+                    いろんなトースト
+                </h2>
+                <p class="mt-1 text-sm text-gray-600">
+                    気に入ったものをそのままコピーして使えます。
+                </p>
+                <div
+                    class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                >
+                    <PatternCard
+                        v-for="pattern in props.patterns"
+                        :key="pattern.id"
+                        :title="pattern.title"
+                        :html="pattern.html"
+                        :css="pattern.css"
+                    />
+                </div>
+            </section>
         </main>
     </div>
 </template>
