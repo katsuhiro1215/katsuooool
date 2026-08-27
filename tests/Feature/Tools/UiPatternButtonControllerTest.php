@@ -109,5 +109,6 @@ test('a free pattern is never locked regardless of the viewer', function () {
         ->where('patterns.0.locked', false)
         ->where('patterns.0.html', $freePattern->html)
         ->where('patterns.0.css', $freePattern->css)
+        ->missing('patterns.0.srcdoc')
     );
 });

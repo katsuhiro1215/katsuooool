@@ -7,6 +7,7 @@ export interface PatternSnippet {
     srcdoc?: string;
 }
 
+// Keep this wrapper template structurally identical to PatternDocumentRenderer::build() in app/Services/PatternDocumentRenderer.php.
 export function buildPatternDocument(html: string, css: string): string {
     return `<!doctype html>
 <html lang="ja">

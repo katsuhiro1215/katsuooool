@@ -4,6 +4,7 @@ namespace App\Services;
 
 class PatternDocumentRenderer
 {
+    // Keep this wrapper template structurally identical to buildPatternDocument() in resources/js/lib/uiPatternSnippet.ts.
     public function build(string $html, string $css): string
     {
         return <<<HTML

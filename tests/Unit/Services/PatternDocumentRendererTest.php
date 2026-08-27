@@ -2,13 +2,38 @@
 
 use App\Services\PatternDocumentRenderer;
 
-test('build embeds the given html inside the body and the css inside a style tag', function () {
+test('build produces the exact wrapper document byte-for-byte', function () {
+    // NOTE: This expected string must be kept in exact structural sync with
+    // resources/js/lib/uiPatternSnippet.test.ts's expected string. If you
+    // change the wrapper template in either PatternDocumentRenderer::build()
+    // or buildPatternDocument(), update both tests' expected strings.
     $renderer = new PatternDocumentRenderer;
 
     $result = $renderer->build('<a href="#">Button</a>', 'a { color: red; }');
 
-    expect($result)->toContain('<a href="#">Button</a>');
-    expect($result)->toContain('a { color: red; }');
-    expect($result)->toContain('<style>');
-    expect($result)->toContain('<!doctype html>');
+    $expected = <<<'HTML'
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<style>
+  html, body {
+    margin: 0;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    box-sizing: border-box;
+  }
+  a { color: red; }
+</style>
+</head>
+<body>
+<a href="#">Button</a>
+</body>
+</html>
+HTML;
+
+    expect($result)->toBe($expected);
 });
