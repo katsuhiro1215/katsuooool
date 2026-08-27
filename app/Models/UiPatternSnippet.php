@@ -13,12 +13,20 @@ use Illuminate\Support\Carbon;
  * @property string $title
  * @property string $html
  * @property string $css
+ * @property bool $is_premium
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
-#[Fillable(['category', 'title', 'html', 'css'])]
+#[Fillable(['category', 'title', 'html', 'css', 'is_premium'])]
 class UiPatternSnippet extends Model
 {
+    /**
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'is_premium' => false,
+    ];
+
     /**
      * @var array<int, string>
      */
@@ -46,5 +54,15 @@ class UiPatternSnippet extends Model
     public function scopeForCategory(Builder $query, string $category): Builder
     {
         return $query->where('category', $category)->orderBy('id');
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_premium' => 'boolean',
+        ];
     }
 }
