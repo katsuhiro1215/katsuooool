@@ -9,4 +9,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('tool-events:prune')->daily();
+Schedule::command('copy-events:prune')->daily();
 Schedule::command('tool-tmp:prune')->hourly();

@@ -135,7 +135,10 @@ async function copy(hex: string) {
                     </div>
                 </div>
 
-                <ColorExampleGallery :examples="props.examples" type="palette" />
+                <ColorExampleGallery
+                    :examples="props.examples"
+                    type="palette"
+                />
             </PageMain>
         </div>
     </PublicLayout>

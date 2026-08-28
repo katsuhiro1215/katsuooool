@@ -32,7 +32,7 @@ class ColorSchemeController extends TrackedToolController
     protected function extraProps(Request $request): array
     {
         return [
-            'examples' => ColorExample::ofType('scheme')->get(['id', 'title', 'colors', 'angle', 'copy_count']),
+            'examples' => ColorExample::ofType('scheme')->limit(24)->get(['id', 'title', 'colors', 'angle', 'copy_count']),
         ];
     }
 }

@@ -29,7 +29,13 @@ test('renders a palette example with its swatches', () => {
     const wrapper = mount(ColorExampleGallery, {
         props: {
             examples: [
-                { id: 1, title: '夏のパレット', colors: ['#3366ff', '#ff9933'], angle: null, copy_count: 3 },
+                {
+                    id: 1,
+                    title: '夏のパレット',
+                    colors: ['#3366ff', '#ff9933'],
+                    angle: null,
+                    copy_count: 3,
+                },
             ],
             type: 'palette',
         },
@@ -43,7 +49,13 @@ test('copying a palette example writes a comma-separated hex string and tracks t
     const wrapper = mount(ColorExampleGallery, {
         props: {
             examples: [
-                { id: 7, title: '夏のパレット', colors: ['#3366ff', '#ff9933'], angle: null, copy_count: 0 },
+                {
+                    id: 7,
+                    title: '夏のパレット',
+                    colors: ['#3366ff', '#ff9933'],
+                    angle: null,
+                    copy_count: 0,
+                },
             ],
             type: 'palette',
         },
@@ -54,7 +66,9 @@ test('copying a palette example writes a comma-separated hex string and tracks t
         .find((button) => button.text().includes('コピー'));
     await copyButton?.trigger('click');
 
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('#3366ff, #ff9933');
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+        '#3366ff, #ff9933',
+    );
     expect(axios.post).toHaveBeenCalledWith('/color-palette/examples/7/copy');
 });
 
@@ -62,7 +76,13 @@ test('copying a gradient example writes a CSS background declaration', async () 
     const wrapper = mount(ColorExampleGallery, {
         props: {
             examples: [
-                { id: 9, title: '夕焼け', colors: ['#3366ff', '#ff9933'], angle: 90, copy_count: 0 },
+                {
+                    id: 9,
+                    title: '夕焼け',
+                    colors: ['#3366ff', '#ff9933'],
+                    angle: 90,
+                    copy_count: 0,
+                },
             ],
             type: 'gradient',
         },

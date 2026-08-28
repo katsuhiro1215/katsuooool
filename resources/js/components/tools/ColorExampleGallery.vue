@@ -31,8 +31,9 @@ function copyPayload(example: ColorExampleData): string {
     return example.colors.join(', ');
 }
 
-const gradientPreview = computed(() => (example: ColorExampleData) =>
-    `linear-gradient(${example.angle}deg, ${example.colors[0]}, ${example.colors[1]})`,
+const gradientPreview = computed(
+    () => (example: ColorExampleData) =>
+        `linear-gradient(${example.angle}deg, ${example.colors[0]}, ${example.colors[1]})`,
 );
 
 async function copy(example: ColorExampleData) {
@@ -45,11 +46,9 @@ async function copy(example: ColorExampleData) {
             }
         }, 1500);
 
-        axios
-            .post(route(routeNameByType[props.type], example.id))
-            .catch(() => {
-                // Analytics-only endpoint; ignore failures.
-            });
+        axios.post(route(routeNameByType[props.type], example.id)).catch(() => {
+            // Analytics-only endpoint; ignore failures.
+        });
     } catch {
         // Clipboard unavailable; the value is still visible as swatches.
     }

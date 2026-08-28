@@ -132,7 +132,10 @@ watch([startColor, endColor, angle], track);
                     </button>
                 </div>
 
-                <ColorExampleGallery :examples="props.examples" type="gradient" />
+                <ColorExampleGallery
+                    :examples="props.examples"
+                    type="gradient"
+                />
             </PageMain>
         </div>
     </PublicLayout>

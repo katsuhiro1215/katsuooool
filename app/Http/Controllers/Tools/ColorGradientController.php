@@ -32,7 +32,7 @@ class ColorGradientController extends TrackedToolController
     protected function extraProps(Request $request): array
     {
         return [
-            'examples' => ColorExample::ofType('gradient')->get(['id', 'title', 'colors', 'angle', 'copy_count']),
+            'examples' => ColorExample::ofType('gradient')->limit(24)->get(['id', 'title', 'colors', 'angle', 'copy_count']),
         ];
     }
 }
