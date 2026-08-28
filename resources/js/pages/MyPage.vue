@@ -23,7 +23,11 @@ interface Paginated<T> {
     links: PaginationLink[];
 }
 
-defineProps<{ toolEvents: Paginated<ToolEventRow> }>();
+defineProps<{
+    toolEvents: Paginated<ToolEventRow>;
+    isPremium: boolean;
+    freeHistoryLimit: number;
+}>();
 
 function formatDate(value: string | null) {
     return value ? new Date(value).toLocaleString('ja-JP') : '-';
@@ -50,13 +54,31 @@ function openBillingPortal() {
                         ツール利用履歴
                     </h2>
                     <button
+                        v-if="isPremium"
                         type="button"
                         class="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         @click="openBillingPortal"
                     >
                         請求ポータルを開く
                     </button>
+                    <Link
+                        v-else
+                        href="/premium"
+                        class="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
+                    >
+                        Premiumで全履歴を見る
+                    </Link>
                 </div>
+
+                <div
+                    v-if="!isPremium"
+                    class="mb-4 rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800"
+                >
+                    無料会員は直近{{
+                        freeHistoryLimit
+                    }}件までの履歴を表示しています。Premiumに登録すると全履歴を確認できます。
+                </div>
+
                 <div
                     v-if="toolEvents.data.length === 0"
                     class="text-sm text-gray-500"

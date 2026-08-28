@@ -532,7 +532,7 @@ Laravel Cashier + Stripe Checkout / Billing Portalによるサブスクリプシ
 - **Premiumの価値提供**(既存ツールは無料のまま維持):
   - 画像系6ツール(圧縮・変換・リサイズ・回転・色抽出・OGP画像)のバッチアップロード上限を無料3件/Premium10件に拡大。
   - 画像系8ツールのレート制限(`image-tools`リミッター)を無料10回/分・Premium30回/分に緩和。
-  - Premium限定の`/mypage`(`EnsurePremium`ミドルウェア)で、自分のツール利用履歴(`tool_events`)をページネーション表示。
+  - `/mypage`(`auth`ミドルウェアのみ、ログイン済みなら誰でも閲覧可)で、自分のツール利用履歴(`tool_events`)を表示。無料会員は直近5件のみ(ページネーションなし)、Premium会員は全件をページネーション表示する。無料会員には「Premiumで全履歴を見る」導線を表示する(Phase 29)。
   - UIパターン集の一部パターンのコード閲覧(§33参照)。
 - **特定商取引法表記**: `/legal/tokushoho`に雛形を用意。事業者名・所在地・連絡先はプレースホルダーのままで、本番デプロイ前に実データへの差し替えが必要。
 - **未実施**: Stripeダッシュボードでの実商品・価格作成と`.env`の`STRIPE_PRICE_MONTHLY`/`STRIPE_PRICE_YEARLY`への実値設定はユーザー側の作業として残る。また、本番Webhookエンドポイントの登録(Stripeダッシュボード)と`.env`の`STRIPE_WEBHOOK_SECRET`への実値設定も必須(未設定のままだとCashierの`WebhookController`が署名検証ミドルウェアを登録せず、誰でも偽のWebhookリクエストでPremium状態を偽装できてしまう)。

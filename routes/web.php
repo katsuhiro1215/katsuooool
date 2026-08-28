@@ -333,7 +333,7 @@ Route::post('/premium/billing-portal', [PremiumController::class, 'billingPortal
     ->name('premium.billing-portal');
 
 Route::get('/mypage', [MyPageController::class, 'index'])
-    ->middleware(['auth', 'premium'])
+    ->middleware('auth')
     ->name('mypage.index');
 
 Route::get('/legal/tokushoho', [LegalController::class, 'tokushoho'])->name('legal.tokushoho');
