@@ -4,6 +4,7 @@ import { computed, ref } from 'vue';
 
 import PremiumBanner from '@/components/PremiumBanner.vue';
 import ToolCard from '@/components/tools/ToolCard.vue';
+import WebsiteStarterBanner from '@/components/WebsiteStarterBanner.vue';
 import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 import { CATEGORY_TABS, filterTools } from '@/lib/toolFilter';
 import type { Tool } from '@/lib/toolFilter';
@@ -70,6 +71,7 @@ const filteredTools = computed(() =>
             </div>
 
             <PremiumBanner />
+            <WebsiteStarterBanner />
         </div>
     </PublicLayout>
 </template>
