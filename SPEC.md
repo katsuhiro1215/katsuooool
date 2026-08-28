@@ -567,3 +567,13 @@ UIパターン系ジェネレーターツール(`/ui-pattern-*`)の下部に、A
 - **Admin側(`/admin/ui-pattern-snippets`)**: `auth:admin`ガード配下にフルCRUD(一覧・新規作成・編集・削除)を実装。作成・編集画面は共有フォームコンポーネント`SnippetForm.vue`を再利用し、入力中のHTML/CSSを即座に`buildPatternDocument()`でプレビューiframeに反映する。種別選択肢は全14カテゴリから選択可能。
 - **導線**: `AdminLayout.vue`のサイドバーに「UIパターン集管理」を追加する。
 - **Premium限定パターン(Phase 27)**: 各パターンに`is_premium`カラムを追加し、Admin側のチェックボックスでPremium会員限定に設定できる。共有ロジック`TrackedToolController::patternGalleryProps()`が、閲覧者が`isPremium()`でない場合に該当パターンの`html`/`css`キー自体をpropsから完全に除外し、代わりに`locked: true`とサーバー側で生成した`srcdoc`のみを返す(フロント側での非表示制御ではなく、サーバー側で非公開データを送らない設計)。この`srcdoc`はiframeでのライブプレビュー描画のため、元の`html`/`css`をそのまま固定のラッパーテンプレートに埋め込んだ完全なHTML文書であり、DevToolsで中身を読めば元コードを人手で復元することは技術的に可能である(iframe `srcdoc`によるライブプレビューという方式上、構造的に避けられない制約)。したがって本機能は「コードを技術的に閲覧不可能にする」ものではなく、「別キーとしての生データ送信をなくし、コピーボタン・コード欄表示を外す」ことでコピー&ペーストの手間を増やすUIレベルの抑止として設計している。公開側`PatternCard.vue`はロック時、プレビュー(iframe)はそのまま表示しつつコード欄を「このパターンのコードはPremium会員限定です。」というアップセルメッセージと`/premium`への導線リンクに置き換え、コピーボタンを表示しない。設計判断の詳細は`docs/superpowers/specs/2026-08-27-ui-pattern-premium-lock-design.md`を参照。
+
+## 34. 公開ページ共通ヘッダー/フッター仕様(Phase 28)
+
+トップページ(`/`)を対象に、認証状態に応じて表示を切り替える共通ヘッダーと、サイト全体のナビゲーションをまとめた共通フッターを実装した。要求仕様・設計判断の詳細は`docs/superpowers/specs/2026-08-27-public-header-footer-design.md`を参照。
+
+- **構成コンポーネント**: `resources/js/components/Public/PublicHeader.vue`(ヘッダー)・`resources/js/components/Public/PublicFooter.vue`(フッター)・`resources/js/layouts/Public/PublicLayout.vue`(両者を組み合わせる公開ページ用レイアウト)。現時点では`Home.vue`のみが`PublicLayout`を使用する。
+- **ヘッダー(`PublicHeader.vue`)**: 左側にロゴ(`ApplicationLogo.vue`、`/upload/logo.svg`を参照)+サイト名「katsuooool」+キャッチコピーを表示。右側は「Premium」リンク(`/premium`)に加え、未ログイン時は「ログイン」「新規登録」、ログイン時はユーザー名の開閉式ドロップダウン(「マイページ」`/mypage`・「ログアウト」)を表示する。さらに「その他」ドロップダウンから、かつコード・katsulog・SmartSprouts(いずれも外部サイトへのリンクで`target="_blank"`+`rel="noopener noreferrer"`を付与)と「お問い合わせ」(`/contact`、内部リンク)への導線を提供する。
+- **フッター(`PublicFooter.vue`)**: 「ツール集」「関連サービス」「規約・ポリシー」「会社情報」の4カラムのナビゲーションと、コピーライト表記(`© {年} katsuooool`)を表示する。
+- **`GuestLayout.vue`の復旧**: 本Planの着手前に`GuestLayout.vue`が誤って削除されており、ログイン・登録・パスワードリセット等の認証系6ページの表示が崩れていた。本Planでこれを復旧している。
+- **既知の残作業(サブプロジェクトB)**: About/Service/FAQ/Contact/Blog/各種legalページなど、`Home.vue`以外の公開ページ約11件は、本Plan時点では従来どおり個別ページごとのヘッダーと`AppFooter.vue`を使用しており、`PublicLayout`への置き換えは未実施。別プロジェクトとして今後着手する(TASKS.md Phase 28参照)。
