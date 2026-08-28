@@ -2,21 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Premium\StartPremiumCheckout;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Cashier\Checkout;
 
 class PremiumController extends Controller
 {
-    private const PLAN_PRICE_CONFIG_KEYS = [
-        'monthly' => 'services.stripe.price_monthly',
-        'yearly' => 'services.stripe.price_yearly',
-    ];
-
     public function index(Request $request): Response
     {
         $user = $request->user();
@@ -26,10 +21,10 @@ class PremiumController extends Controller
         ]);
     }
 
-    public function checkout(Request $request): RedirectResponse|Checkout
+    public function checkout(Request $request, StartPremiumCheckout $startPremiumCheckout): RedirectResponse|Checkout
     {
         $request->validate([
-            'plan' => ['required', 'string', 'in:'.implode(',', array_keys(self::PLAN_PRICE_CONFIG_KEYS))],
+            'plan' => ['required', 'string', 'in:'.implode(',', array_keys(StartPremiumCheckout::PLAN_PRICE_CONFIG_KEYS))],
         ]);
 
         $user = $request->user();
@@ -38,19 +33,7 @@ class PremiumController extends Controller
             abort(403);
         }
 
-        if ($user->isPremium()) {
-            return Redirect::route('premium.index');
-        }
-
-        $plan = $request->string('plan')->toString();
-        $priceId = (string) config(self::PLAN_PRICE_CONFIG_KEYS[$plan]);
-
-        abort_if($priceId === '', 503, 'Premiumプランの受付を準備中です。しばらくしてから再度お試しください。');
-
-        return $user->newSubscription('default', $priceId)->checkout([
-            'success_url' => route('premium.thanks'),
-            'cancel_url' => route('premium.index'),
-        ]);
+        return $startPremiumCheckout->handle($user, $request->string('plan')->toString());
     }
 
     public function thanks(): Response

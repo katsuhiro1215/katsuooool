@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Actions\Premium\StartPremiumCheckout;
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Models\User;
@@ -19,15 +20,30 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
-        Validator::make($input, [
+        $wantPremium = (bool) ($input['want_premium'] ?? false);
+
+        $rules = [
             ...$this->profileRules(),
             'password' => $this->passwordRules(),
-        ])->validate();
+        ];
 
-        return User::create([
+        if ($wantPremium) {
+            $rules['plan'] = ['required', 'string', 'in:'.implode(',', array_keys(StartPremiumCheckout::PLAN_PRICE_CONFIG_KEYS))];
+            $rules['terms_agree'] = ['accepted'];
+        }
+
+        Validator::make($input, $rules)->validate();
+
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
         ]);
+
+        if ($wantPremium) {
+            session(['premium_registration_plan' => $input['plan']]);
+        }
+
+        return $user;
     }
 }

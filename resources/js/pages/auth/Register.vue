@@ -6,11 +6,19 @@ import PrimaryButton from '@/components/PrimaryButton.vue';
 import TextInput from '@/components/TextInput.vue';
 import GuestLayout from '@/layouts/GuestLayout.vue';
 
+const PLANS = [
+    { key: 'monthly', label: '月額プラン', price: '¥600 / 月' },
+    { key: 'yearly', label: '年額プラン', price: '¥6,600 / 年' },
+];
+
 const form = useForm({
     name: '',
     email: '',
     password: '',
     password_confirmation: '',
+    want_premium: false,
+    plan: 'monthly',
+    terms_agree: false,
 });
 
 const submit = () => {
@@ -24,11 +32,15 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Register" />
+        <Head title="新規登録 - katsuooool" />
+
+        <h1 class="mb-6 text-center text-lg font-bold text-gray-900">
+            新規登録
+        </h1>
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="name" value="Name" />
+                <InputLabel for="name" value="お名前" />
 
                 <TextInput
                     id="name"
@@ -44,7 +56,7 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="email" value="メールアドレス" />
 
                 <TextInput
                     id="email"
@@ -59,7 +71,7 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+                <InputLabel for="password" value="パスワード" />
 
                 <TextInput
                     id="password"
@@ -76,7 +88,7 @@ const submit = () => {
             <div class="mt-4">
                 <InputLabel
                     for="password_confirmation"
-                    value="Confirm Password"
+                    value="パスワード(確認)"
                 />
 
                 <TextInput
@@ -94,22 +106,89 @@ const submit = () => {
                 />
             </div>
 
-            <div class="mt-4 flex items-center justify-end">
+            <div
+                class="mt-6 rounded-md border border-amber-200 bg-amber-50 p-4"
+            >
+                <label class="flex items-start gap-2 text-sm text-gray-800">
+                    <input
+                        v-model="form.want_premium"
+                        type="checkbox"
+                        class="mt-0.5 rounded border-gray-300 text-amber-600 shadow-sm focus:ring-amber-500"
+                    />
+                    <span class="font-medium"
+                        >Premiumも同時に申し込む(月額¥600〜)</span
+                    >
+                </label>
+
+                <div v-if="form.want_premium" class="mt-4 space-y-4">
+                    <div class="flex flex-col gap-2 sm:flex-row">
+                        <label
+                            v-for="plan in PLANS"
+                            :key="plan.key"
+                            class="flex flex-1 cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+                            :class="{
+                                'border-amber-500 ring-1 ring-amber-500':
+                                    form.plan === plan.key,
+                            }"
+                        >
+                            <input
+                                v-model="form.plan"
+                                type="radio"
+                                :value="plan.key"
+                                class="text-amber-600 focus:ring-amber-500"
+                            />
+                            <span>{{ plan.label }}</span>
+                            <span class="ml-auto text-gray-500">{{
+                                plan.price
+                            }}</span>
+                        </label>
+                    </div>
+                    <InputError :message="form.errors.plan" />
+
+                    <div>
+                        <label
+                            class="flex items-start gap-2 text-sm text-gray-700"
+                        >
+                            <input
+                                v-model="form.terms_agree"
+                                type="checkbox"
+                                class="mt-0.5 rounded border-gray-300 text-amber-600 shadow-sm focus:ring-amber-500"
+                            />
+                            <span>
+                                <Link
+                                    href="/legal/terms"
+                                    class="underline hover:text-gray-900"
+                                    target="_blank"
+                                    >利用規約</Link
+                                >に同意する
+                            </span>
+                        </label>
+                        <InputError :message="form.errors.terms_agree" />
+                    </div>
+                </div>
+            </div>
+
+            <PrimaryButton
+                class="mt-6 w-full justify-center"
+                :class="{ 'opacity-25': form.processing }"
+                :disabled="form.processing"
+            >
+                {{
+                    form.want_premium
+                        ? 'アカウントを作成してPremiumへ進む'
+                        : 'アカウントを作成する'
+                }}
+            </PrimaryButton>
+
+            <p class="mt-4 text-center text-sm text-gray-600">
+                すでにアカウントをお持ちですか？
                 <Link
                     :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                    class="text-gray-900 underline hover:text-gray-700"
                 >
-                    Already registered?
+                    ログイン
                 </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Register
-                </PrimaryButton>
-            </div>
+            </p>
         </form>
     </GuestLayout>
 </template>

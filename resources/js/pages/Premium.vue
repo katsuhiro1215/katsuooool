@@ -78,10 +78,10 @@ const PLANS = [
                         </Link>
                         <Link
                             v-else-if="!isPremium"
-                            href="/login"
+                            href="/register"
                             class="mt-4 block w-full rounded-md bg-gray-900 px-4 py-2 text-center text-sm font-medium text-white hover:bg-gray-700"
                         >
-                            ログインして登録する
+                            アカウントを作成する
                         </Link>
                     </div>
                 </div>

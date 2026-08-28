@@ -25,9 +25,12 @@ defineProps<{
             <div class="flex items-center gap-4">
                 <Link
                     href="/premium"
-                    class="text-sm font-medium text-gray-500 hover:text-gray-700"
+                    class="group relative overflow-hidden rounded-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 px-4 py-1.5 text-sm font-semibold text-amber-950 shadow-sm transition hover:shadow-md hover:shadow-amber-300/50"
                 >
-                    Premium
+                    <span class="relative z-10">Premium</span>
+                    <span
+                        class="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/60 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+                    ></span>
                 </Link>
 
                 <template v-if="user">
