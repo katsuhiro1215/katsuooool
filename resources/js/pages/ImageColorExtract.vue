@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import axios from 'axios';
-import { computed, ref } from 'vue';
 
+import { computed, ref } from 'vue';
+import PageHeader from '@/components/Public/PageHeader.vue';
+import PageMain from '@/components/Public/PageMain.vue';
 import AppButton from '@/components/tools/AppButton.vue';
+import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 
 interface ExtractedColor {
     hex: string;
@@ -165,136 +168,131 @@ function isSuccess(result: ColorExtractResult): result is SuccessResult {
 <template>
     <Head title="画像から色を抽出 - katsuooool" />
 
-    <div class="min-h-screen bg-gray-50">
-        <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-7xl px-6 py-10">
-                <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
-                    >← トップに戻る</a
-                >
-                <h1 class="mt-2 text-2xl font-bold text-gray-900">
-                    画像から色を抽出
-                </h1>
-                <p class="mt-2 text-sm text-gray-600">
-                    JPEG・PNG・WebP・AVIF画像から主要な色を最大6色抽出し、HEXコードで表示します。1ファイル10MBまで、最大{{
-                        MAX_FILES
-                    }}枚まで一度に処理できます。
-                </p>
-            </div>
-        </header>
+    <PublicLayout>
+        <div class="min-h-screen w-full">
+            <PageHeader
+                title="画像から色を抽出"
+                :description="`JPEG・PNG・WebP・AVIF画像から主要な色を最大6色抽出し、HEXコードで表示します。1ファイル10MBまで、最大${MAX_FILES}枚まで一度に処理できます。`"
+            />
 
-        <main class="mx-auto max-w-7xl px-6 py-10">
-            <div
-                class="rounded-lg border-2 border-dashed p-10 text-center transition"
-                :class="
-                    isDragging
-                        ? 'border-gray-400 bg-gray-100'
-                        : 'border-gray-300 bg-white'
-                "
-                @dragover.prevent="isDragging = true"
-                @dragleave.prevent="isDragging = false"
-                @drop.prevent="onDrop"
-            >
-                <p class="text-sm text-gray-600">
-                    ここに画像をドラッグ&ドロップ、または
-                </p>
-                <AppButton as="label" class="mt-3 inline-block">
-                    ファイルを選択
-                    <input
-                        type="file"
-                        class="hidden"
-                        accept="image/jpeg,image/png,image/webp,image/avif"
-                        multiple
-                        @change="onFileInputChange"
-                    />
-                </AppButton>
-            </div>
-
-            <div v-if="errorMessage" class="mt-4 text-sm text-red-600">
-                <p>{{ errorMessage }}</p>
-                <Link
-                    v-if="showPremiumUpsell"
-                    href="/premium"
-                    class="mt-1 inline-block underline"
-                >
-                    Premiumについて詳しく見る
-                </Link>
-            </div>
-
-            <ul v-if="selectedFiles.length > 0" class="mt-6 space-y-2">
-                <li
-                    v-for="(file, index) in selectedFiles"
-                    :key="`${file.name}-${index}`"
-                    class="flex items-center justify-between rounded-md border border-gray-200 bg-white px-4 py-2 text-sm"
-                >
-                    <span class="truncate text-gray-800">{{ file.name }}</span>
-                    <button
-                        type="button"
-                        class="ml-4 text-gray-400 hover:text-red-600"
-                        @click="removeFile(index)"
-                    >
-                        削除
-                    </button>
-                </li>
-            </ul>
-
-            <AppButton
-                type="button"
-                class="mt-6 w-full"
-                :disabled="!canExtract"
-                @click="extract"
-            >
-                {{ isProcessing ? '抽出しています...' : '抽出する' }}
-            </AppButton>
-
-            <p v-if="copyFailed" class="mt-4 text-sm text-red-600">
-                コピーできませんでした。HEXコードを手動で選択してください。
-            </p>
-
-            <div v-if="response" class="mt-8 space-y-4">
+            <PageMain>
                 <div
-                    v-for="(result, index) in response.results"
-                    :key="`${result.original_name}-${index}`"
-                    class="rounded-md border border-gray-200 bg-white px-4 py-3 text-sm"
+                    class="rounded-lg border-2 border-dashed p-10 text-center transition"
+                    :class="
+                        isDragging
+                            ? 'border-gray-400 bg-gray-100'
+                            : 'border-gray-300 bg-white'
+                    "
+                    @dragover.prevent="isDragging = true"
+                    @dragleave.prevent="isDragging = false"
+                    @drop.prevent="onDrop"
                 >
-                    <template v-if="isSuccess(result)">
-                        <p class="truncate text-gray-800">
-                            {{ result.original_name }}
-                        </p>
-                        <ul class="mt-3 flex flex-wrap gap-3">
-                            <li
-                                v-for="color in result.colors"
-                                :key="color.hex"
-                                class="flex flex-col items-center gap-1"
-                            >
-                                <button
-                                    type="button"
-                                    class="h-12 w-12 rounded-md border border-gray-200"
-                                    :style="{ backgroundColor: color.hex }"
-                                    :title="`${color.hex} をコピー`"
-                                    @click="copyHex(color.hex)"
-                                />
-                                <span class="font-mono text-xs text-gray-600">
-                                    {{
-                                        copiedHex === color.hex
-                                            ? 'コピーしました'
-                                            : color.hex
-                                    }}
-                                </span>
-                            </li>
-                        </ul>
-                    </template>
-                    <template v-else>
-                        <div class="flex items-center justify-between">
-                            <span class="truncate text-gray-500">{{
-                                result.original_name
-                            }}</span>
-                            <span class="text-xs text-red-600">{{
-                                result.reason
-                            }}</span>
-                        </div>
-                    </template>
+                    <p class="text-sm text-gray-600">
+                        ここに画像をドラッグ&ドロップ、または
+                    </p>
+                    <AppButton as="label" class="mt-3 inline-block">
+                        ファイルを選択
+                        <input
+                            type="file"
+                            class="hidden"
+                            accept="image/jpeg,image/png,image/webp,image/avif"
+                            multiple
+                            @change="onFileInputChange"
+                        />
+                    </AppButton>
                 </div>
-            </div>
-        </main>
-    </div>
+
+                <div v-if="errorMessage" class="mt-4 text-sm text-red-600">
+                    <p>{{ errorMessage }}</p>
+                    <Link
+                        v-if="showPremiumUpsell"
+                        href="/premium"
+                        class="mt-1 inline-block underline"
+                    >
+                        Premiumについて詳しく見る
+                    </Link>
+                </div>
+
+                <ul v-if="selectedFiles.length > 0" class="mt-6 space-y-2">
+                    <li
+                        v-for="(file, index) in selectedFiles"
+                        :key="`${file.name}-${index}`"
+                        class="flex items-center justify-between rounded-md border border-gray-200 bg-white px-4 py-2 text-sm"
+                    >
+                        <span class="truncate text-gray-800">{{
+                            file.name
+                        }}</span>
+                        <button
+                            type="button"
+                            class="ml-4 text-gray-400 hover:text-red-600"
+                            @click="removeFile(index)"
+                        >
+                            削除
+                        </button>
+                    </li>
+                </ul>
+
+                <AppButton
+                    type="button"
+                    class="mt-6 w-full"
+                    :disabled="!canExtract"
+                    @click="extract"
+                >
+                    {{ isProcessing ? '抽出しています...' : '抽出する' }}
+                </AppButton>
+
+                <p v-if="copyFailed" class="mt-4 text-sm text-red-600">
+                    コピーできませんでした。HEXコードを手動で選択してください。
+                </p>
+
+                <div v-if="response" class="mt-8 space-y-4">
+                    <div
+                        v-for="(result, index) in response.results"
+                        :key="`${result.original_name}-${index}`"
+                        class="rounded-md border border-gray-200 bg-white px-4 py-3 text-sm"
+                    >
+                        <template v-if="isSuccess(result)">
+                            <p class="truncate text-gray-800">
+                                {{ result.original_name }}
+                            </p>
+                            <ul class="mt-3 flex flex-wrap gap-3">
+                                <li
+                                    v-for="color in result.colors"
+                                    :key="color.hex"
+                                    class="flex flex-col items-center gap-1"
+                                >
+                                    <button
+                                        type="button"
+                                        class="h-12 w-12 rounded-md border border-gray-200"
+                                        :style="{ backgroundColor: color.hex }"
+                                        :title="`${color.hex} をコピー`"
+                                        @click="copyHex(color.hex)"
+                                    />
+                                    <span
+                                        class="font-mono text-xs text-gray-600"
+                                    >
+                                        {{
+                                            copiedHex === color.hex
+                                                ? 'コピーしました'
+                                                : color.hex
+                                        }}
+                                    </span>
+                                </li>
+                            </ul>
+                        </template>
+                        <template v-else>
+                            <div class="flex items-center justify-between">
+                                <span class="truncate text-gray-500">{{
+                                    result.original_name
+                                }}</span>
+                                <span class="text-xs text-red-600">{{
+                                    result.reason
+                                }}</span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </PageMain>
+        </div>
+    </PublicLayout>
 </template>

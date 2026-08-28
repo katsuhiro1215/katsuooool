@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
-import { ref } from 'vue';
 
+import { ref } from 'vue';
+import PageHeader from '@/components/Public/PageHeader.vue';
+import PageMain from '@/components/Public/PageMain.vue';
 import AppButton from '@/components/tools/AppButton.vue';
+import PublicLayout from '@/layouts/Public/PublicLayout.vue';
+
 import { randomHex } from '@/lib/color';
 
 const SWATCH_COUNT = 5;
@@ -65,68 +69,61 @@ async function copy(hex: string) {
 <template>
     <Head title="カラーパレット生成 - katsuooool" />
 
-    <div class="min-h-screen bg-gray-50">
-        <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-7xl px-6 py-10">
-                <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
-                    >← トップに戻る</a
-                >
-                <h1 class="mt-2 text-2xl font-bold text-gray-900">
-                    カラーパレット生成
-                </h1>
-                <p class="mt-2 text-sm text-gray-600">
-                    ランダムな5色のパレットを生成します。気に入った色はロックして再生成できます。
-                </p>
-            </div>
-        </header>
+    <PublicLayout>
+        <div class="min-h-screen w-full">
+            <PageHeader
+                title="カラーパレット生成"
+                description="ランダムな5色のパレットを生成します。気に入った色はロックして再生成できます。"
+            />
 
-        <main class="mx-auto max-w-7xl px-6 py-10">
-            <AppButton type="button" class="mb-6 w-full" @click="generate">
-                生成する
-            </AppButton>
+            <PageMain>
+                <AppButton type="button" class="mb-6 w-full" @click="generate">
+                    生成する
+                </AppButton>
 
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-5">
-                <div
-                    v-for="(swatch, index) in swatches"
-                    :key="index"
-                    class="overflow-hidden rounded-lg border border-gray-200"
-                >
-                    <button
-                        type="button"
-                        class="h-32 w-full"
-                        :style="{ backgroundColor: swatch.hex }"
-                        :aria-label="`${swatch.hex} をコピー`"
-                        @click="copy(swatch.hex)"
-                    />
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-5">
                     <div
-                        class="flex items-center justify-between bg-white px-3 py-2"
+                        v-for="(swatch, index) in swatches"
+                        :key="index"
+                        class="overflow-hidden rounded-lg border border-gray-200"
                     >
-                        <span class="font-mono text-xs text-gray-600">
-                            {{
-                                copiedHex === swatch.hex
-                                    ? 'コピーしました'
-                                    : swatch.hex
-                            }}
-                        </span>
                         <button
                             type="button"
-                            class="text-xs"
-                            :class="
-                                swatch.locked
-                                    ? 'text-gray-900'
-                                    : 'text-gray-300 hover:text-gray-500'
-                            "
-                            :aria-pressed="swatch.locked"
-                            :aria-label="
-                                swatch.locked ? 'ロック解除' : 'ロック'
-                            "
-                            @click="toggleLock(index)"
+                            class="h-32 w-full"
+                            :style="{ backgroundColor: swatch.hex }"
+                            :aria-label="`${swatch.hex} をコピー`"
+                            @click="copy(swatch.hex)"
+                        />
+                        <div
+                            class="flex items-center justify-between bg-white px-3 py-2"
                         >
-                            {{ swatch.locked ? '🔒' : '🔓' }}
-                        </button>
+                            <span class="font-mono text-xs text-gray-600">
+                                {{
+                                    copiedHex === swatch.hex
+                                        ? 'コピーしました'
+                                        : swatch.hex
+                                }}
+                            </span>
+                            <button
+                                type="button"
+                                class="text-xs"
+                                :class="
+                                    swatch.locked
+                                        ? 'text-gray-900'
+                                        : 'text-gray-300 hover:text-gray-500'
+                                "
+                                :aria-pressed="swatch.locked"
+                                :aria-label="
+                                    swatch.locked ? 'ロック解除' : 'ロック'
+                                "
+                                @click="toggleLock(index)"
+                            >
+                                {{ swatch.locked ? '🔒' : '🔓' }}
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </main>
-    </div>
+            </PageMain>
+        </div>
+    </PublicLayout>
 </template>

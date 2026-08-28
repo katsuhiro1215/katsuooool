@@ -3,7 +3,10 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 
+import PageHeader from '@/components/Public/PageHeader.vue';
+import PageMain from '@/components/Public/PageMain.vue';
 import AppButton from '@/components/tools/AppButton.vue';
+import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 
 interface StructuredDataBlock {
     raw: string;
@@ -55,85 +58,83 @@ async function check() {
 <template>
     <Head title="構造化データ確認 - katsuooool" />
 
-    <div class="min-h-screen bg-gray-50">
-        <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-7xl px-6 py-10">
-                <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
-                    >← トップに戻る</a
+    <PublicLayout>
+        <div class="min-h-screen w-full">
+            <PageHeader
+                title="構造化データ確認"
+                description="URLを入力すると、ページ内のJSON-LD構造化データを取得・検証します。"
+            />
+
+            <PageMain>
+                <label
+                    for="url-input"
+                    class="block text-sm font-medium text-gray-700"
+                    >URL</label
                 >
-                <h1 class="mt-2 text-2xl font-bold text-gray-900">
-                    構造化データ確認
-                </h1>
-                <p class="mt-2 text-sm text-gray-600">
-                    URLを入力すると、ページ内のJSON-LD構造化データを取得・検証します。
-                </p>
-            </div>
-        </header>
-
-        <main class="mx-auto max-w-7xl px-6 py-10">
-            <label
-                for="url-input"
-                class="block text-sm font-medium text-gray-700"
-                >URL</label
-            >
-            <div class="mt-1 flex gap-2">
-                <input
-                    id="url-input"
-                    v-model="url"
-                    type="url"
-                    placeholder="https://example.com/"
-                    class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
-                />
-                <AppButton
-                    type="button"
-                    class="shrink-0"
-                    :disabled="!canCheck"
-                    @click="check"
-                >
-                    {{ isChecking ? 'チェック中...' : 'チェックする' }}
-                </AppButton>
-            </div>
-
-            <p v-if="errorMessage" class="mt-4 text-sm text-red-600">
-                {{ errorMessage }}
-            </p>
-
-            <p
-                v-if="result && result.blocks.length === 0"
-                class="mt-8 text-sm text-gray-500"
-            >
-                JSON-LD形式の構造化データは見つかりませんでした。
-            </p>
-
-            <div v-if="result" class="mt-8 space-y-4">
-                <div
-                    v-for="(block, index) in result.blocks"
-                    :key="index"
-                    class="rounded-md border border-gray-200 p-4"
-                >
-                    <p
-                        class="text-sm font-medium"
-                        :class="block.valid ? 'text-green-600' : 'text-red-600'"
+                <div class="mt-1 flex gap-2">
+                    <input
+                        id="url-input"
+                        v-model="url"
+                        type="url"
+                        placeholder="https://example.com/"
+                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                    />
+                    <AppButton
+                        type="button"
+                        class="shrink-0"
+                        :disabled="!canCheck"
+                        @click="check"
                     >
-                        {{
-                            block.valid
-                                ? '有効なJSON-LD'
-                                : `構文エラー: ${block.error}`
-                        }}
-                    </p>
-                    <ul
-                        v-if="block.warnings.length > 0"
-                        class="mt-2 list-inside list-disc text-sm text-amber-700"
-                    >
-                        <li v-for="warning in block.warnings" :key="warning">
-                            {{ warning }}
-                        </li>
-                    </ul>
-                    <pre
-                        class="mt-3 overflow-x-auto rounded bg-gray-50 p-3 font-mono text-xs text-gray-800"
-                        >{{ block.raw }}</pre>
+                        {{ isChecking ? 'チェック中...' : 'チェックする' }}
+                    </AppButton>
                 </div>
-            </div>
-        </main>
-    </div>
+
+                <p v-if="errorMessage" class="mt-4 text-sm text-red-600">
+                    {{ errorMessage }}
+                </p>
+
+                <p
+                    v-if="result && result.blocks.length === 0"
+                    class="mt-8 text-sm text-gray-500"
+                >
+                    JSON-LD形式の構造化データは見つかりませんでした。
+                </p>
+
+                <div v-if="result" class="mt-8 space-y-4">
+                    <div
+                        v-for="(block, index) in result.blocks"
+                        :key="index"
+                        class="rounded-md border border-gray-200 p-4"
+                    >
+                        <p
+                            class="text-sm font-medium"
+                            :class="
+                                block.valid ? 'text-green-600' : 'text-red-600'
+                            "
+                        >
+                            {{
+                                block.valid
+                                    ? '有効なJSON-LD'
+                                    : `構文エラー: ${block.error}`
+                            }}
+                        </p>
+                        <ul
+                            v-if="block.warnings.length > 0"
+                            class="mt-2 list-inside list-disc text-sm text-amber-700"
+                        >
+                            <li
+                                v-for="warning in block.warnings"
+                                :key="warning"
+                            >
+                                {{ warning }}
+                            </li>
+                        </ul>
+                        <pre
+                            class="mt-3 overflow-x-auto rounded bg-gray-50 p-3 font-mono text-xs text-gray-800"
+                            >{{ block.raw }}</pre>
+                    </div>
+                </div>
+            </PageMain>
+        </div>
+    </PublicLayout>
 </template>

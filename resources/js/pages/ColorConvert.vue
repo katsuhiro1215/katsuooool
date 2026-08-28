@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
+
 import { ref, watch } from 'vue';
+import PageHeader from '@/components/Public/PageHeader.vue';
+import PageMain from '@/components/Public/PageMain.vue';
+import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 
 import { hslToRgb, parseHex, rgbToHex, rgbToHsl } from '@/lib/color';
 import type { Hsl, Rgb } from '@/lib/color';
@@ -135,185 +139,182 @@ function track() {
 <template>
     <Head title="HEX/RGB/HSL変換 - katsuooool" />
 
-    <div class="min-h-screen bg-gray-50">
-        <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-7xl px-6 py-10">
-                <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
-                    >← トップに戻る</a
-                >
-                <h1 class="mt-2 text-2xl font-bold text-gray-900">
-                    HEX/RGB/HSL変換
-                </h1>
-                <p class="mt-2 text-sm text-gray-600">
-                    色を選択するか、いずれかの表記を入力すると他の表記がリアルタイムに更新されます。
-                </p>
-            </div>
-        </header>
+    <PublicLayout>
+        <div class="min-h-screen w-full">
+            <PageHeader
+                title="HEX/RGB/HSL変換"
+                description="色を選択するか、いずれかの表記を入力すると他の表記がリアルタイムに更新されます。"
+            />
 
-        <main class="mx-auto max-w-7xl px-6 py-10">
-            <div class="flex flex-col items-start gap-6 sm:flex-row">
-                <input
-                    :value="hexInput"
-                    type="color"
-                    class="h-32 w-32 cursor-pointer rounded-md border border-gray-200"
-                    aria-label="カラーピッカー"
-                    @input="
-                        (e) => (hexInput = (e.target as HTMLInputElement).value)
-                    "
-                />
+            <PageMain>
+                <div class="flex flex-col items-start gap-6 sm:flex-row">
+                    <input
+                        :value="hexInput"
+                        type="color"
+                        class="h-32 w-32 cursor-pointer rounded-md border border-gray-200"
+                        aria-label="カラーピッカー"
+                        @input="
+                            (e) =>
+                                (hexInput = (e.target as HTMLInputElement)
+                                    .value)
+                        "
+                    />
 
-                <div class="w-full space-y-4">
-                    <div>
-                        <label
-                            for="hex"
-                            class="block text-sm font-medium text-gray-700"
-                            >HEX</label
-                        >
-                        <div class="mt-1 flex gap-2">
-                            <input
-                                id="hex"
-                                v-model="hexInput"
-                                type="text"
-                                class="w-40 rounded-md border border-gray-300 px-3 py-2 font-mono text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
-                            />
-                            <button
-                                type="button"
-                                class="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-gray-400"
-                                @click="copy('hex', hexInput)"
+                    <div class="w-full space-y-4">
+                        <div>
+                            <label
+                                for="hex"
+                                class="block text-sm font-medium text-gray-700"
+                                >HEX</label
                             >
-                                {{
-                                    copiedField === 'hex'
-                                        ? 'コピーしました'
-                                        : 'コピー'
-                                }}
-                            </button>
+                            <div class="mt-1 flex gap-2">
+                                <input
+                                    id="hex"
+                                    v-model="hexInput"
+                                    type="text"
+                                    class="w-40 rounded-md border border-gray-300 px-3 py-2 font-mono text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                />
+                                <button
+                                    type="button"
+                                    class="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-gray-400"
+                                    @click="copy('hex', hexInput)"
+                                >
+                                    {{
+                                        copiedField === 'hex'
+                                            ? 'コピーしました'
+                                            : 'コピー'
+                                    }}
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div>
-                        <span class="block text-sm font-medium text-gray-700"
-                            >RGB</span
-                        >
-                        <div class="mt-1 flex flex-wrap items-center gap-2">
-                            <input
-                                v-model="rInput"
-                                type="number"
-                                min="0"
-                                max="255"
-                                aria-label="R"
-                                class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
-                                @input="onRgbChannelChange"
-                            />
-                            <input
-                                v-model="gInput"
-                                type="number"
-                                min="0"
-                                max="255"
-                                aria-label="G"
-                                class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
-                                @input="onRgbChannelChange"
-                            />
-                            <input
-                                v-model="bInput"
-                                type="number"
-                                min="0"
-                                max="255"
-                                aria-label="B"
-                                class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
-                                @input="onRgbChannelChange"
-                            />
-                            <button
-                                type="button"
-                                class="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-gray-400"
-                                @click="
-                                    copy(
-                                        'rgb',
-                                        `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`,
-                                    )
-                                "
+                        <div>
+                            <span
+                                class="block text-sm font-medium text-gray-700"
+                                >RGB</span
                             >
-                                {{
-                                    copiedField === 'rgb'
-                                        ? 'コピーしました'
-                                        : 'コピー'
-                                }}
-                            </button>
+                            <div class="mt-1 flex flex-wrap items-center gap-2">
+                                <input
+                                    v-model="rInput"
+                                    type="number"
+                                    min="0"
+                                    max="255"
+                                    aria-label="R"
+                                    class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                    @input="onRgbChannelChange"
+                                />
+                                <input
+                                    v-model="gInput"
+                                    type="number"
+                                    min="0"
+                                    max="255"
+                                    aria-label="G"
+                                    class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                    @input="onRgbChannelChange"
+                                />
+                                <input
+                                    v-model="bInput"
+                                    type="number"
+                                    min="0"
+                                    max="255"
+                                    aria-label="B"
+                                    class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                    @input="onRgbChannelChange"
+                                />
+                                <button
+                                    type="button"
+                                    class="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-gray-400"
+                                    @click="
+                                        copy(
+                                            'rgb',
+                                            `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`,
+                                        )
+                                    "
+                                >
+                                    {{
+                                        copiedField === 'rgb'
+                                            ? 'コピーしました'
+                                            : 'コピー'
+                                    }}
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div>
-                        <span class="block text-sm font-medium text-gray-700"
-                            >HSL</span
-                        >
-                        <div class="mt-1 flex flex-wrap items-center gap-2">
-                            <input
-                                :value="hsl.h"
-                                type="number"
-                                min="0"
-                                max="360"
-                                aria-label="H"
-                                class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
-                                @input="
-                                    (e) =>
-                                        onHslChannelChange(
-                                            'h',
-                                            (e.target as HTMLInputElement)
-                                                .value,
-                                        )
-                                "
-                            />
-                            <input
-                                :value="hsl.s"
-                                type="number"
-                                min="0"
-                                max="100"
-                                aria-label="S"
-                                class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
-                                @input="
-                                    (e) =>
-                                        onHslChannelChange(
-                                            's',
-                                            (e.target as HTMLInputElement)
-                                                .value,
-                                        )
-                                "
-                            />
-                            <input
-                                :value="hsl.l"
-                                type="number"
-                                min="0"
-                                max="100"
-                                aria-label="L"
-                                class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
-                                @input="
-                                    (e) =>
-                                        onHslChannelChange(
-                                            'l',
-                                            (e.target as HTMLInputElement)
-                                                .value,
-                                        )
-                                "
-                            />
-                            <button
-                                type="button"
-                                class="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-gray-400"
-                                @click="
-                                    copy(
-                                        'hsl',
-                                        `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`,
-                                    )
-                                "
+                        <div>
+                            <span
+                                class="block text-sm font-medium text-gray-700"
+                                >HSL</span
                             >
-                                {{
-                                    copiedField === 'hsl'
-                                        ? 'コピーしました'
-                                        : 'コピー'
-                                }}
-                            </button>
+                            <div class="mt-1 flex flex-wrap items-center gap-2">
+                                <input
+                                    :value="hsl.h"
+                                    type="number"
+                                    min="0"
+                                    max="360"
+                                    aria-label="H"
+                                    class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                    @input="
+                                        (e) =>
+                                            onHslChannelChange(
+                                                'h',
+                                                (e.target as HTMLInputElement)
+                                                    .value,
+                                            )
+                                    "
+                                />
+                                <input
+                                    :value="hsl.s"
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    aria-label="S"
+                                    class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                    @input="
+                                        (e) =>
+                                            onHslChannelChange(
+                                                's',
+                                                (e.target as HTMLInputElement)
+                                                    .value,
+                                            )
+                                    "
+                                />
+                                <input
+                                    :value="hsl.l"
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    aria-label="L"
+                                    class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                    @input="
+                                        (e) =>
+                                            onHslChannelChange(
+                                                'l',
+                                                (e.target as HTMLInputElement)
+                                                    .value,
+                                            )
+                                    "
+                                />
+                                <button
+                                    type="button"
+                                    class="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-gray-400"
+                                    @click="
+                                        copy(
+                                            'hsl',
+                                            `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`,
+                                        )
+                                    "
+                                >
+                                    {{
+                                        copiedField === 'hsl'
+                                            ? 'コピーしました'
+                                            : 'コピー'
+                                    }}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </main>
-    </div>
+            </PageMain>
+        </div>
+    </PublicLayout>
 </template>

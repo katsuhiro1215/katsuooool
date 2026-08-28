@@ -2,9 +2,12 @@
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref, watch } from 'vue';
+import PageHeader from '@/components/Public/PageHeader.vue';
+import PageMain from '@/components/Public/PageMain.vue';
 
 import AppButton from '@/components/tools/AppButton.vue';
 import PatternCard from '@/components/tools/PatternCard.vue';
+import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 import { buildModal } from '@/lib/uiPatternGenerators';
 import type { PatternSnippet } from '@/lib/uiPatternSnippet';
 
@@ -84,163 +87,164 @@ watch([title, text, backgroundColor, borderRadius, overlayOpacity], () => {
 <template>
     <Head title="モーダル - katsuooool" />
 
-    <div class="min-h-screen bg-gray-50">
-        <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-7xl px-6 py-10">
-                <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
-                    >← トップに戻る</a
-                >
-                <h1 class="mt-2 text-2xl font-bold text-gray-900">モーダル</h1>
-                <p class="mt-2 text-sm text-gray-600">
-                    値を調整すると、モーダルのHTML/CSS/JSコードがリアルタイムで生成されます。「開く」ボタンで実際の開閉動作を確認できます。
-                </p>
-            </div>
-        </header>
+    <PublicLayout>
+        <div class="min-h-screen w-full">
+            <PageHeader
+                title="モーダル"
+                description="値を調整すると、モーダルのHTML/CSS/JSコードがリアルタイムで生成されます。「開く」ボタンで実際の開閉動作を確認できます。"
+            />
 
-        <main class="mx-auto max-w-7xl px-6 py-10">
-            <div
-                class="relative mb-8 flex h-40 items-center justify-center rounded-md border border-gray-200 bg-white"
-            >
-                <AppButton type="button" @click="isPreviewOpen = true">
-                    開く
-                </AppButton>
-
+            <PageMain>
                 <div
-                    v-if="isPreviewOpen"
-                    class="absolute inset-0 flex items-center justify-center rounded-md"
-                    :style="overlayStyle"
+                    class="relative mb-8 flex h-40 items-center justify-center rounded-md border border-gray-200 bg-white"
                 >
-                    <div class="w-64 p-6" :style="modalStyle">
-                        <h3 class="mb-3 text-lg font-bold">{{ title }}</h3>
-                        <p class="mb-4 text-sm text-gray-600">{{ text }}</p>
-                        <button
-                            type="button"
-                            class="rounded bg-gray-200 px-4 py-2 text-sm"
-                            @click="isPreviewOpen = false"
-                        >
-                            閉じる
-                        </button>
+                    <AppButton type="button" @click="isPreviewOpen = true">
+                        開く
+                    </AppButton>
+
+                    <div
+                        v-if="isPreviewOpen"
+                        class="absolute inset-0 flex items-center justify-center rounded-md"
+                        :style="overlayStyle"
+                    >
+                        <div class="w-64 p-6" :style="modalStyle">
+                            <h3 class="mb-3 text-lg font-bold">{{ title }}</h3>
+                            <p class="mb-4 text-sm text-gray-600">{{ text }}</p>
+                            <button
+                                type="button"
+                                class="rounded bg-gray-200 px-4 py-2 text-sm"
+                                @click="isPreviewOpen = false"
+                            >
+                                閉じる
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <label class="text-sm text-gray-700">
-                    タイトル
-                    <input
-                        v-model="title"
-                        type="text"
-                        class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
-                    />
-                </label>
-                <label class="text-sm text-gray-700">
-                    本文
-                    <input
-                        v-model="text"
-                        type="text"
-                        class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
-                    />
-                </label>
-                <label class="text-sm text-gray-700">
-                    背景色
-                    <input
-                        v-model="backgroundColor"
-                        type="color"
-                        class="mt-1 h-9 w-full"
-                    />
-                </label>
-                <label class="text-sm text-gray-700">
-                    角丸: {{ borderRadius }}px
-                    <input
-                        v-model.number="borderRadius"
-                        type="range"
-                        min="0"
-                        max="24"
-                        class="mt-1 w-full"
-                    />
-                </label>
-                <label class="text-sm text-gray-700 sm:col-span-2">
-                    オーバーレイの不透明度: {{ overlayOpacity }}
-                    <input
-                        v-model.number="overlayOpacity"
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.05"
-                        class="mt-1 w-full"
-                    />
-                </label>
-            </div>
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <label class="text-sm text-gray-700">
+                        タイトル
+                        <input
+                            v-model="title"
+                            type="text"
+                            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                        />
+                    </label>
+                    <label class="text-sm text-gray-700">
+                        本文
+                        <input
+                            v-model="text"
+                            type="text"
+                            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                        />
+                    </label>
+                    <label class="text-sm text-gray-700">
+                        背景色
+                        <input
+                            v-model="backgroundColor"
+                            type="color"
+                            class="mt-1 h-9 w-full"
+                        />
+                    </label>
+                    <label class="text-sm text-gray-700">
+                        角丸: {{ borderRadius }}px
+                        <input
+                            v-model.number="borderRadius"
+                            type="range"
+                            min="0"
+                            max="24"
+                            class="mt-1 w-full"
+                        />
+                    </label>
+                    <label class="text-sm text-gray-700 sm:col-span-2">
+                        オーバーレイの不透明度: {{ overlayOpacity }}
+                        <input
+                            v-model.number="overlayOpacity"
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.05"
+                            class="mt-1 w-full"
+                        />
+                    </label>
+                </div>
 
-            <div class="mt-6">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium text-gray-700">HTML</span>
-                    <button
-                        type="button"
-                        class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
-                        @click="copyText(output.html, 'html')"
+                <div class="mt-6">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700"
+                            >HTML</span
+                        >
+                        <button
+                            type="button"
+                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            @click="copyText(output.html, 'html')"
+                        >
+                            {{ copiedHtml ? 'コピーしました' : 'コピー' }}
+                        </button>
+                    </div>
+                    <pre
+                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        >{{ output.html }}</pre>
+                </div>
+
+                <div class="mt-6">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700"
+                            >CSS</span
+                        >
+                        <button
+                            type="button"
+                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            @click="copyText(output.css, 'css')"
+                        >
+                            {{ copiedCss ? 'コピーしました' : 'コピー' }}
+                        </button>
+                    </div>
+                    <pre
+                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        >{{ output.css }}</pre>
+                </div>
+
+                <div class="mt-6">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700"
+                            >JS</span
+                        >
+                        <button
+                            type="button"
+                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            @click="copyText(output.js, 'js')"
+                        >
+                            {{ copiedJs ? 'コピーしました' : 'コピー' }}
+                        </button>
+                    </div>
+                    <pre
+                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        >{{ output.js }}</pre>
+                </div>
+
+                <section v-if="props.patterns.length > 0" class="mt-16">
+                    <h2 class="text-lg font-bold text-gray-900">
+                        いろんなモーダル
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-600">
+                        気に入ったものをそのままコピーして使えます。
+                    </p>
+                    <div
+                        class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
                     >
-                        {{ copiedHtml ? 'コピーしました' : 'コピー' }}
-                    </button>
-                </div>
-                <pre
-                    class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
-                    >{{ output.html }}</pre>
-            </div>
-
-            <div class="mt-6">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium text-gray-700">CSS</span>
-                    <button
-                        type="button"
-                        class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
-                        @click="copyText(output.css, 'css')"
-                    >
-                        {{ copiedCss ? 'コピーしました' : 'コピー' }}
-                    </button>
-                </div>
-                <pre
-                    class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
-                    >{{ output.css }}</pre>
-            </div>
-
-            <div class="mt-6">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium text-gray-700">JS</span>
-                    <button
-                        type="button"
-                        class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
-                        @click="copyText(output.js, 'js')"
-                    >
-                        {{ copiedJs ? 'コピーしました' : 'コピー' }}
-                    </button>
-                </div>
-                <pre
-                    class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
-                    >{{ output.js }}</pre>
-            </div>
-
-            <section v-if="props.patterns.length > 0" class="mt-16">
-                <h2 class="text-lg font-bold text-gray-900">
-                    いろんなモーダル
-                </h2>
-                <p class="mt-1 text-sm text-gray-600">
-                    気に入ったものをそのままコピーして使えます。
-                </p>
-                <div
-                    class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-                >
-                    <PatternCard
-                        v-for="pattern in props.patterns"
-                        :key="pattern.id"
-                        :title="pattern.title"
-                        :locked="pattern.locked"
-                        :html="pattern.html"
-                        :css="pattern.css"
-                        :locked-srcdoc="pattern.srcdoc"
-                    />
-                </div>
-            </section>
-        </main>
-    </div>
+                        <PatternCard
+                            v-for="pattern in props.patterns"
+                            :key="pattern.id"
+                            :title="pattern.title"
+                            :locked="pattern.locked"
+                            :html="pattern.html"
+                            :css="pattern.css"
+                            :locked-srcdoc="pattern.srcdoc"
+                        />
+                    </div>
+                </section>
+            </PageMain>
+        </div>
+    </PublicLayout>
 </template>

@@ -3,7 +3,11 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 
+import PageHeader from '@/components/Public/PageHeader.vue';
+import PageMain from '@/components/Public/PageMain.vue';
 import AppButton from '@/components/tools/AppButton.vue';
+import PublicLayout from '@/layouts/Public/PublicLayout.vue';
+
 import { decodeBase64, encodeBase64 } from '@/lib/textCodecs';
 
 const input = ref('');
@@ -75,74 +79,67 @@ function track() {
 <template>
     <Head title="Base64 Encode/Decode - katsuooool" />
 
-    <div class="min-h-screen bg-gray-50">
-        <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-7xl px-6 py-10">
-                <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
-                    >← トップに戻る</a
-                >
-                <h1 class="mt-2 text-2xl font-bold text-gray-900">
-                    Base64 Encode/Decode
-                </h1>
-                <p class="mt-2 text-sm text-gray-600">
-                    文字列のBase64エンコード・デコードを相互に変換します。
-                </p>
-            </div>
-        </header>
-
-        <main class="mx-auto max-w-7xl px-6 py-10">
-            <label
-                for="base64-input"
-                class="block text-sm font-medium text-gray-700"
-                >入力文字列</label
-            >
-            <textarea
-                id="base64-input"
-                v-model="input"
-                rows="6"
-                class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-xs focus:border-gray-400 focus:outline-none focus:ring-0"
+    <PublicLayout>
+        <div class="min-h-screen w-full">
+            <PageHeader
+                title="Base64 Encode/Decode"
+                description="文字列のBase64エンコード・デコードを相互に変換します。"
             />
 
-            <div class="mt-4 flex gap-2">
-                <AppButton
-                    type="button"
-                    class="flex-1"
-                    :disabled="!canProcess"
-                    @click="encode"
+            <PageMain>
+                <label
+                    for="base64-input"
+                    class="block text-sm font-medium text-gray-700"
+                    >入力文字列</label
                 >
-                    エンコード
-                </AppButton>
-                <AppButton
-                    type="button"
-                    class="flex-1"
-                    :disabled="!canProcess"
-                    @click="decode"
-                >
-                    デコード
-                </AppButton>
-            </div>
-
-            <p v-if="errorMessage" class="mt-4 text-sm text-red-600">
-                {{ errorMessage }}
-            </p>
-
-            <div v-if="output" class="mt-8">
-                <div class="mb-3 flex justify-end">
-                    <button
-                        type="button"
-                        class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:border-gray-400"
-                        @click="copyOutput"
-                    >
-                        {{ copied ? 'コピーしました' : 'コピー' }}
-                    </button>
-                </div>
                 <textarea
-                    :value="output"
+                    id="base64-input"
+                    v-model="input"
                     rows="6"
-                    readonly
-                    class="w-full rounded-md border border-gray-200 bg-white px-3 py-2 font-mono text-xs text-gray-800"
+                    class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-xs focus:border-gray-400 focus:outline-none focus:ring-0"
                 />
-            </div>
-        </main>
-    </div>
+
+                <div class="mt-4 flex gap-2">
+                    <AppButton
+                        type="button"
+                        class="flex-1"
+                        :disabled="!canProcess"
+                        @click="encode"
+                    >
+                        エンコード
+                    </AppButton>
+                    <AppButton
+                        type="button"
+                        class="flex-1"
+                        :disabled="!canProcess"
+                        @click="decode"
+                    >
+                        デコード
+                    </AppButton>
+                </div>
+
+                <p v-if="errorMessage" class="mt-4 text-sm text-red-600">
+                    {{ errorMessage }}
+                </p>
+
+                <div v-if="output" class="mt-8">
+                    <div class="mb-3 flex justify-end">
+                        <button
+                            type="button"
+                            class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:border-gray-400"
+                            @click="copyOutput"
+                        >
+                            {{ copied ? 'コピーしました' : 'コピー' }}
+                        </button>
+                    </div>
+                    <textarea
+                        :value="output"
+                        rows="6"
+                        readonly
+                        class="w-full rounded-md border border-gray-200 bg-white px-3 py-2 font-mono text-xs text-gray-800"
+                    />
+                </div>
+            </PageMain>
+        </div>
+    </PublicLayout>
 </template>

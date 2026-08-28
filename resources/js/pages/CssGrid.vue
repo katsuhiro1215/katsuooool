@@ -3,6 +3,10 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref, watch } from 'vue';
 
+import PageHeader from '@/components/Public/PageHeader.vue';
+import PageMain from '@/components/Public/PageMain.vue';
+import PublicLayout from '@/layouts/Public/PublicLayout.vue';
+
 import { buildGrid } from '@/lib/cssGenerators';
 
 const columns = ref(3);
@@ -53,86 +57,78 @@ watch([columns, rows, gap], () => {
 <template>
     <Head title="Grid ジェネレーター - katsuooool" />
 
-    <div class="min-h-screen bg-gray-50">
-        <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-7xl px-6 py-10">
-                <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
-                    >← トップに戻る</a
-                >
-                <h1 class="mt-2 text-2xl font-bold text-gray-900">
-                    Grid ジェネレーター
-                </h1>
-                <p class="mt-2 text-sm text-gray-600">
-                    列数・行数・gapを調整すると、下のプレビューに反映され、CSS
-                    Gridのコードが生成されます。
-                </p>
-            </div>
-        </header>
+    <PublicLayout>
+        <div class="min-h-screen w-full">
+            <PageHeader
+                title="Grid ジェネレーター"
+                description="列数・行数・gapを調整すると、下のプレビューに反映され、CSS Gridのコードが生成されます。"
+            />
 
-        <main class="mx-auto max-w-7xl px-6 py-10">
-            <div
-                class="mb-8 min-h-40 rounded-md border border-gray-200 bg-white p-4"
-                :style="previewStyle"
-            >
+            <PageMain>
                 <div
-                    v-for="n in cellCount"
-                    :key="n"
-                    class="flex items-center justify-center rounded-md bg-gray-900 text-sm font-medium text-white"
+                    class="mb-8 min-h-40 rounded-md border border-gray-200 bg-white p-4"
+                    :style="previewStyle"
                 >
-                    {{ n }}
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <label class="text-sm text-gray-700">
-                    列数: {{ columns }}
-                    <input
-                        v-model.number="columns"
-                        type="range"
-                        min="1"
-                        max="6"
-                        class="mt-1 w-full"
-                    />
-                </label>
-                <label class="text-sm text-gray-700">
-                    行数: {{ rows }}
-                    <input
-                        v-model.number="rows"
-                        type="range"
-                        min="1"
-                        max="6"
-                        class="mt-1 w-full"
-                    />
-                </label>
-                <label class="text-sm text-gray-700">
-                    gap: {{ gap }}px
-                    <input
-                        v-model.number="gap"
-                        type="range"
-                        min="0"
-                        max="50"
-                        class="mt-1 w-full"
-                    />
-                </label>
-            </div>
-
-            <div class="mt-6">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium text-gray-700"
-                        >生成されたCSS</span
+                    <div
+                        v-for="n in cellCount"
+                        :key="n"
+                        class="flex items-center justify-center rounded-md bg-gray-900 text-sm font-medium text-white"
                     >
-                    <button
-                        type="button"
-                        class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
-                        @click="copy"
-                    >
-                        {{ copied ? 'コピーしました' : 'コピー' }}
-                    </button>
+                        {{ n }}
+                    </div>
                 </div>
-                <pre
-                    class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
-                    >{{ css }}</pre>
-            </div>
-        </main>
-    </div>
+
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <label class="text-sm text-gray-700">
+                        列数: {{ columns }}
+                        <input
+                            v-model.number="columns"
+                            type="range"
+                            min="1"
+                            max="6"
+                            class="mt-1 w-full"
+                        />
+                    </label>
+                    <label class="text-sm text-gray-700">
+                        行数: {{ rows }}
+                        <input
+                            v-model.number="rows"
+                            type="range"
+                            min="1"
+                            max="6"
+                            class="mt-1 w-full"
+                        />
+                    </label>
+                    <label class="text-sm text-gray-700">
+                        gap: {{ gap }}px
+                        <input
+                            v-model.number="gap"
+                            type="range"
+                            min="0"
+                            max="50"
+                            class="mt-1 w-full"
+                        />
+                    </label>
+                </div>
+
+                <div class="mt-6">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700"
+                            >生成されたCSS</span
+                        >
+                        <button
+                            type="button"
+                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            @click="copy"
+                        >
+                            {{ copied ? 'コピーしました' : 'コピー' }}
+                        </button>
+                    </div>
+                    <pre
+                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        >{{ css }}</pre>
+                </div>
+            </PageMain>
+        </div>
+    </PublicLayout>
 </template>

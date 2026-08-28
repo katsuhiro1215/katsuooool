@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 
-import AppFooter from '@/components/AppFooter.vue';
+import PageHeader from '@/components/Public/PageHeader.vue';
+import PageMain from '@/components/Public/PageMain.vue';
+import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 
 interface FaqItem {
     question: string;
@@ -35,37 +37,28 @@ const ITEMS: FaqItem[] = [
 <template>
     <Head title="よくある質問 - katsuooool" />
 
-    <div class="min-h-screen bg-gray-50">
-        <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-3xl px-6 py-10">
-                <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
-                    >← トップに戻る</a
-                >
-                <h1 class="mt-2 text-2xl font-bold text-gray-900">
-                    よくある質問
-                </h1>
-            </div>
-        </header>
+    <PublicLayout>
+        <div class="min-h-screen w-full">
+            <PageHeader title="よくある質問" description="" />
 
-        <main class="mx-auto max-w-3xl px-6 py-10">
-            <div class="space-y-3">
-                <details
-                    v-for="item in ITEMS"
-                    :key="item.question"
-                    class="rounded-lg border border-gray-200 bg-white p-4"
-                >
-                    <summary
-                        class="cursor-pointer text-sm font-medium text-gray-900"
+            <PageMain>
+                <div class="space-y-3">
+                    <details
+                        v-for="item in ITEMS"
+                        :key="item.question"
+                        class="rounded-lg border border-gray-200 bg-white p-4"
                     >
-                        {{ item.question }}
-                    </summary>
-                    <p class="mt-2 text-sm leading-relaxed text-gray-700">
-                        {{ item.answer }}
-                    </p>
-                </details>
-            </div>
-        </main>
-
-        <AppFooter />
-    </div>
+                        <summary
+                            class="cursor-pointer text-sm font-medium text-gray-900"
+                        >
+                            {{ item.question }}
+                        </summary>
+                        <p class="mt-2 text-sm leading-relaxed text-gray-700">
+                            {{ item.answer }}
+                        </p>
+                    </details>
+                </div>
+            </PageMain>
+        </div>
+    </PublicLayout>
 </template>

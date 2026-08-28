@@ -3,6 +3,9 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref, watch } from 'vue';
 
+import PageHeader from '@/components/Public/PageHeader.vue';
+import PageMain from '@/components/Public/PageMain.vue';
+import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 import { buildWavePattern } from '@/lib/patternGenerators';
 
 const backgroundColor = ref('#ffffff');
@@ -56,83 +59,76 @@ watch([backgroundColor, patternColor, waveHeight, wavelength], () => {
 <template>
     <Head title="波模様パターン - katsuooool" />
 
-    <div class="min-h-screen bg-gray-50">
-        <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-7xl px-6 py-10">
-                <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
-                    >← トップに戻る</a
-                >
-                <h1 class="mt-2 text-2xl font-bold text-gray-900">
-                    波模様パターン
-                </h1>
-                <p class="mt-2 text-sm text-gray-600">
-                    値を調整すると、波模様の背景パターンのCSSコードがリアルタイムで生成されます。
-                </p>
-            </div>
-        </header>
+    <PublicLayout>
+        <div class="min-h-screen w-full">
+            <PageHeader
+                title="波模様パターン"
+                description="値を調整すると、波模様の背景パターンのCSSコードがリアルタイムで生成されます。"
+            />
 
-        <main class="mx-auto max-w-7xl px-6 py-10">
-            <div
-                class="mb-8 h-48 rounded-md border border-gray-200"
-                :style="previewStyle"
-            ></div>
+            <PageMain>
+                <div
+                    class="mb-8 h-48 rounded-md border border-gray-200"
+                    :style="previewStyle"
+                ></div>
 
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <label class="text-sm text-gray-700">
-                    背景色
-                    <input
-                        v-model="backgroundColor"
-                        type="color"
-                        class="mt-1 h-9 w-full"
-                    />
-                </label>
-                <label class="text-sm text-gray-700">
-                    パターン色
-                    <input
-                        v-model="patternColor"
-                        type="color"
-                        class="mt-1 h-9 w-full"
-                    />
-                </label>
-                <label class="text-sm text-gray-700">
-                    波の高さ: {{ waveHeight }}px
-                    <input
-                        v-model.number="waveHeight"
-                        type="range"
-                        min="5"
-                        max="30"
-                        class="mt-1 w-full"
-                    />
-                </label>
-                <label class="text-sm text-gray-700">
-                    波長: {{ wavelength }}px
-                    <input
-                        v-model.number="wavelength"
-                        type="range"
-                        min="20"
-                        max="200"
-                        class="mt-1 w-full"
-                    />
-                </label>
-            </div>
-
-            <div class="mt-6">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium text-gray-700"
-                        >生成されたCSS</span
-                    >
-                    <button
-                        type="button"
-                        class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
-                        @click="copy"
-                    >
-                        {{ copied ? 'コピーしました' : 'コピー' }}
-                    </button>
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <label class="text-sm text-gray-700">
+                        背景色
+                        <input
+                            v-model="backgroundColor"
+                            type="color"
+                            class="mt-1 h-9 w-full"
+                        />
+                    </label>
+                    <label class="text-sm text-gray-700">
+                        パターン色
+                        <input
+                            v-model="patternColor"
+                            type="color"
+                            class="mt-1 h-9 w-full"
+                        />
+                    </label>
+                    <label class="text-sm text-gray-700">
+                        波の高さ: {{ waveHeight }}px
+                        <input
+                            v-model.number="waveHeight"
+                            type="range"
+                            min="5"
+                            max="30"
+                            class="mt-1 w-full"
+                        />
+                    </label>
+                    <label class="text-sm text-gray-700">
+                        波長: {{ wavelength }}px
+                        <input
+                            v-model.number="wavelength"
+                            type="range"
+                            min="20"
+                            max="200"
+                            class="mt-1 w-full"
+                        />
+                    </label>
                 </div>
-                <pre
-                    class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
-                    >{{ css }}</pre>
-            </div>
-        </main>
-    </div>
+
+                <div class="mt-6">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700"
+                            >生成されたCSS</span
+                        >
+                        <button
+                            type="button"
+                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            @click="copy"
+                        >
+                            {{ copied ? 'コピーしました' : 'コピー' }}
+                        </button>
+                    </div>
+                    <pre
+                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        >{{ css }}</pre>
+                </div>
+            </PageMain>
+        </div>
+    </PublicLayout>
 </template>
