@@ -1,0 +1,60 @@
+import { AxiosError, AxiosHeaders } from 'axios';
+import { describe, expect, test } from 'vitest';
+
+import { resolveErrorMessage } from './toolErrorMessage';
+
+function makeAxiosError(status: number, data: unknown = undefined): AxiosError {
+    const error = new AxiosError('Request failed');
+    error.response = {
+        status,
+        statusText: '',
+        headers: {},
+        config: { headers: new AxiosHeaders() },
+        data,
+    };
+
+    return error;
+}
+
+describe('resolveErrorMessage', () => {
+    test('a 422 on the files key itself is a real batch-count error', () => {
+        const error = makeAxiosError(422, {
+            errors: {
+                files: ['files の項目数は、3 個以下である必要があります。'],
+            },
+        });
+
+        const result = resolveErrorMessage(error, 3, 'fallback');
+
+        expect(result.message).toContain('無料プランでは一度に3枚まで');
+        expect(result.showUpsell).toBe(true);
+    });
+
+    test('a 422 on a per-index files key is an upload failure, not a batch-count error', () => {
+        const error = makeAxiosError(422, {
+            errors: { 'files.0': ['files.0のアップロードに失敗しました。'] },
+        });
+
+        const result = resolveErrorMessage(error, 1, 'fallback');
+
+        expect(result.message).not.toContain('無料プランでは一度に');
+        expect(result.message).toContain('アップロードに失敗しました');
+        expect(result.showUpsell).toBe(false);
+    });
+
+    test('a 429 for a free-tier user shows the premium upsell', () => {
+        const error = makeAxiosError(429);
+
+        const result = resolveErrorMessage(error, 3, 'fallback');
+
+        expect(result.message).toContain('リクエストが多すぎます');
+        expect(result.showUpsell).toBe(true);
+    });
+
+    test('a non-axios error falls back to the generic message', () => {
+        const result = resolveErrorMessage(new Error('boom'), 3, 'fallback');
+
+        expect(result.message).toBe('fallback');
+        expect(result.showUpsell).toBe(false);
+    });
+});

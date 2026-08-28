@@ -10,6 +10,7 @@ use App\Services\Tools\ToolEventLogger;
 use App\Services\Tools\ToolUploadService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -123,7 +124,13 @@ class ImageConvertController extends Controller
                     outputPath: $disk->path($outputRelativePath),
                     targetMimeType: $targetMimeType,
                 );
-            } catch (Throwable) {
+            } catch (Throwable $exception) {
+                Log::warning('Image conversion failed', [
+                    'target_mime_type' => $targetMimeType,
+                    'original_name' => $uploadedToolFile->originalName,
+                    'exception' => $exception->getMessage(),
+                ]);
+
                 $results[] = [
                     'original_name' => $uploadedToolFile->originalName,
                     'status' => 'failed',
