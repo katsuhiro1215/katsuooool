@@ -50,9 +50,9 @@ function submit() {
 
     <PublicLayout>
         <div class="min-h-screen w-full">
-            <PageHeader title="お問い合わせ" description="" />
+            <PageHeader title="お問い合わせ" description="" narrow />
 
-            <PageMain>
+            <PageMain narrow>
                 <p
                     v-if="success"
                     class="mb-6 rounded-md border border-green-200 bg-green-50 p-4 text-sm text-green-700"

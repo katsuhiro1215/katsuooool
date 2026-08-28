@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 
-import AppFooter from '@/components/AppFooter.vue';
+import PageHeader from '@/components/Public/PageHeader.vue';
+import PageMain from '@/components/Public/PageMain.vue';
+import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 import { POST_TYPE_LABELS } from '@/lib/postType';
 
 interface PostSummary {
@@ -39,70 +41,68 @@ function formatDate(value: string): string {
 <template>
     <Head title="お知らせ - katsuooool" />
 
-    <div class="min-h-screen bg-gray-50">
-        <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-3xl px-6 py-10">
-                <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
-                    >← トップに戻る</a
-                >
-                <h1 class="mt-2 text-2xl font-bold text-gray-900">お知らせ</h1>
-            </div>
-        </header>
+    <PublicLayout>
+        <div class="min-h-screen w-full">
+            <PageHeader title="お知らせ" description="" narrow />
 
-        <main class="mx-auto max-w-3xl px-6 py-10">
-            <div v-if="posts.data.length === 0" class="text-sm text-gray-500">
-                お知らせはまだありません。
-            </div>
-
-            <ul v-else class="space-y-4">
-                <li
-                    v-for="post in posts.data"
-                    :key="post.slug"
-                    class="rounded-lg border border-gray-200 bg-white p-5"
+            <PageMain narrow>
+                <div
+                    v-if="posts.data.length === 0"
+                    class="text-sm text-gray-500"
                 >
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <span
-                            class="rounded-full px-2 py-0.5 font-medium"
-                            :class="TYPE_BADGE_CLASSES[post.type]"
-                        >
-                            {{ POST_TYPE_LABELS[post.type] }}
-                        </span>
-                        <span>{{ formatDate(post.published_at) }}</span>
-                    </div>
-                    <Link
-                        :href="route('blog.show', post.slug)"
-                        class="mt-2 block text-base font-semibold text-gray-900 hover:underline"
+                    お知らせはまだありません。
+                </div>
+
+                <ul v-else class="space-y-4">
+                    <li
+                        v-for="post in posts.data"
+                        :key="post.slug"
+                        class="rounded-lg border border-gray-200 bg-white p-5"
                     >
-                        {{ post.title }}
-                    </Link>
-                    <p class="mt-1 text-sm text-gray-600">
-                        {{ post.excerpt }}
-                    </p>
-                </li>
-            </ul>
+                        <div
+                            class="flex items-center gap-2 text-xs text-gray-500"
+                        >
+                            <span
+                                class="rounded-full px-2 py-0.5 font-medium"
+                                :class="TYPE_BADGE_CLASSES[post.type]"
+                            >
+                                {{ POST_TYPE_LABELS[post.type] }}
+                            </span>
+                            <span>{{ formatDate(post.published_at) }}</span>
+                        </div>
+                        <Link
+                            :href="route('blog.show', post.slug)"
+                            class="mt-2 block text-base font-semibold text-gray-900 hover:underline"
+                        >
+                            {{ post.title }}
+                        </Link>
+                        <p class="mt-1 text-sm text-gray-600">
+                            {{ post.excerpt }}
+                        </p>
+                    </li>
+                </ul>
 
-            <nav
-                v-if="posts.links.length > 3"
-                class="mt-6 flex flex-wrap gap-1"
-            >
-                <Link
-                    v-for="link in posts.links"
-                    :key="link.label"
-                    :href="link.url ?? ''"
-                    :class="[
-                        'rounded-md px-3 py-1.5 text-sm',
-                        link.active
-                            ? 'bg-gray-900 text-white'
-                            : 'text-gray-700 hover:bg-gray-100',
-                        link.url === null &&
-                            'pointer-events-none text-gray-300',
-                    ]"
+                <nav
+                    v-if="posts.links.length > 3"
+                    class="mt-6 flex flex-wrap gap-1"
                 >
-                    <span v-html="link.label"></span>
-                </Link>
-            </nav>
-        </main>
-
-        <AppFooter />
-    </div>
+                    <Link
+                        v-for="link in posts.links"
+                        :key="link.label"
+                        :href="link.url ?? ''"
+                        :class="[
+                            'rounded-md px-3 py-1.5 text-sm',
+                            link.active
+                                ? 'bg-gray-900 text-white'
+                                : 'text-gray-700 hover:bg-gray-100',
+                            link.url === null &&
+                                'pointer-events-none text-gray-300',
+                        ]"
+                    >
+                        <span v-html="link.label"></span>
+                    </Link>
+                </nav>
+            </PageMain>
+        </div>
+    </PublicLayout>
 </template>

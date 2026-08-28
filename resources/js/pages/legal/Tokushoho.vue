@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 
-import AppFooter from '@/components/AppFooter.vue';
+import PageHeader from '@/components/Public/PageHeader.vue';
+import PageMain from '@/components/Public/PageMain.vue';
+import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 
 interface LegalItem {
     label: string;
@@ -34,37 +36,32 @@ const ITEMS: LegalItem[] = [
 <template>
     <Head title="特定商取引法に基づく表記 - katsuooool" />
 
-    <div class="min-h-screen bg-gray-50">
-        <header class="border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-3xl px-6 py-10">
-                <a href="/" class="text-sm text-gray-500 hover:text-gray-700"
-                    >← トップに戻る</a
-                >
-                <h1 class="mt-2 text-2xl font-bold text-gray-900">
-                    特定商取引法に基づく表記
-                </h1>
-            </div>
-        </header>
+    <PublicLayout>
+        <div class="min-h-screen w-full">
+            <PageHeader
+                title="特定商取引法に基づく表記"
+                description=""
+                narrow
+            />
 
-        <main class="mx-auto max-w-3xl px-6 py-10">
-            <dl
-                class="divide-y divide-gray-200 rounded-lg border border-gray-200 bg-white"
-            >
-                <div
-                    v-for="item in ITEMS"
-                    :key="item.label"
-                    class="grid grid-cols-1 gap-1 px-4 py-4 sm:grid-cols-3 sm:gap-4"
+            <PageMain narrow>
+                <dl
+                    class="divide-y divide-gray-200 rounded-lg border border-gray-200 bg-white"
                 >
-                    <dt class="text-sm font-medium text-gray-500">
-                        {{ item.label }}
-                    </dt>
-                    <dd class="text-sm text-gray-900 sm:col-span-2">
-                        {{ item.value }}
-                    </dd>
-                </div>
-            </dl>
-        </main>
-
-        <AppFooter />
-    </div>
+                    <div
+                        v-for="item in ITEMS"
+                        :key="item.label"
+                        class="grid grid-cols-1 gap-1 px-4 py-4 sm:grid-cols-3 sm:gap-4"
+                    >
+                        <dt class="text-sm font-medium text-gray-500">
+                            {{ item.label }}
+                        </dt>
+                        <dd class="text-sm text-gray-900 sm:col-span-2">
+                            {{ item.value }}
+                        </dd>
+                    </div>
+                </dl>
+            </PageMain>
+        </div>
+    </PublicLayout>
 </template>

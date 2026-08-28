@@ -778,7 +778,7 @@ UIパターン集ギャラリー(Phase 24・25)の各パターンをAdmin側でP
 - [x] `Home.vue`を`PublicLayout`を使う構成に再構成し、ツール一覧グリッドの下にPremium訴求バナー(`PremiumBanner`、「Premiumを見る」リンクは`/premium`へ遷移)を追加
 - [x] `composer ci:check`がグリーン(Lint/Format/型チェック/Vitest/Pint/PHPStan/Pest全通過)
 - [x] Playwrightで実ブラウザ動作確認。未ログイン状態で`/`のヘッダー表示・「その他」ドロップダウンの4リンク(外部3件が新規タブで開くことを含む)・フッター4カラム全リンク・Premiumバナーの遷移先を確認。テストユーザーでログインし、ヘッダーがユーザー名ドロップダウン(マイページ/ログアウト)に切り替わること、ログアウトで表示が元に戻ることを確認。`/login`にアクセスし、`GuestLayout.vue`修正後のログイン画面(ロゴ・フォーム)が崩れずに表示されることを確認
-- [ ] 残り約11ページ(About/Service/FAQ/Contact/Blog/各種legalページ等、現状は個別ページごとのヘッダーと`AppFooter.vue`を使用)への`PublicLayout`展開は、本Planの対象外の別プロジェクト(サブプロジェクトB)として今後着手する
+- [x] 残り約11ページ(About/Service/FAQ/Contact/Blog/各種legalページ等)への`PublicLayout`展開は、サブプロジェクトBとしてPhase 31で完了
 
 ## Phase 29 — 画像ツールの不具合修正・処理中表示・マイページ無料開放
 
@@ -816,11 +816,22 @@ UIパターン集ギャラリー(Phase 24・25)の各パターンをAdmin側でP
 - [x] `composer test`(Pint/PHPStan/Pest)がグリーン
 - [x] `npm run lint:check`・`npm run format:check`・`npm run types:check`がグリーン
 
+## Phase 31 — Blog・legalページへの`PublicLayout`展開(サブプロジェクトB完了)
+
+Phase 28で積み残していたサブプロジェクトBとして、`Blog/Index.vue`・`Blog/Show.vue`・`legal/`配下4ページ(PrivacyPolicy/Terms/CookiePolicy/Tokushoho)を、個別実装のヘッダー/フッターから`PublicLayout`+`PageHeader`+`PageMain`構成に統一。あわせて、文章中心ページが`max-w-7xl`では横に広がりすぎる問題を`narrow`propで解消した。
+
+- [x] `PageMain.vue`に`narrow`prop追加(`true`で`max-w-3xl`、デフォルトは既存の`max-w-7xl`のまま)
+- [x] `PageHeader.vue`に`narrow`prop、および`backHref`/`backLabel`prop(デフォルトは既存の「← トップに戻る」/`/`のまま)を追加
+- [x] `About.vue`・`Faq.vue`・`Contact.vue`に`narrow`を適用(Contactが横に広すぎた表示崩れを解消)
+- [x] `Blog/Index.vue`・`Blog/Show.vue`を`PublicLayout`化。`Blog/Show.vue`は`backHref="/blog"`で「← お知らせ一覧に戻る」に、種別バッジ+日付を`PageHeader`の`description`に集約
+- [x] `legal/PrivacyPolicy.vue`・`legal/Terms.vue`・`legal/CookiePolicy.vue`・`legal/Tokushoho.vue`を`PublicLayout`化(`Tokushoho.vue`は`dl`構造のまま`PageMain narrow`に格納)
+- [x] 利用箇所がゼロになった`resources/js/components/AppFooter.vue`を削除
+- [x] `composer test`(Pint/PHPStan/Pest 420件/1921アサーション)・Vitest(183件)・`npm run lint:check`/`format:check`/`types:check`がグリーン
+- [x] Playwrightで実ブラウザ確認。`/contact`の幅が`max-w-3xl`に収まること、`/blog`一覧・`/blog/{slug}`詳細(戻りリンク・バッジ・日付)、`/legal/terms`・`/legal/tokushoho`の表示を確認
+
 ## 今後の実装順序
 
 カラーパレット/ボタン集のwishlist投票機能は、別途ブレインストーミングしてから着手する。
-
-サブプロジェクトB: `PublicLayout`(Phase 28で新規実装)を、About/Service/FAQ/Contact/Blog/各種legalページなど残り約11ページへ展開し、個別ヘッダーと`AppFooter.vue`を置き換える。
 
 ## 完了の定義(Definition of Done)
 

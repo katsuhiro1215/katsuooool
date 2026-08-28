@@ -11,9 +11,9 @@ import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 
     <PublicLayout>
         <div class="min-h-screen w-full">
-            <PageHeader title="About" description="" />
+            <PageHeader title="About" description="" narrow />
 
-            <PageMain>
+            <PageMain narrow>
                 <div
                     class="space-y-6 rounded-lg border border-gray-200 bg-white p-6 text-sm leading-relaxed text-gray-700"
                 >

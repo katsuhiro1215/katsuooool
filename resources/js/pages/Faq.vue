@@ -39,9 +39,9 @@ const ITEMS: FaqItem[] = [
 
     <PublicLayout>
         <div class="min-h-screen w-full">
-            <PageHeader title="よくある質問" description="" />
+            <PageHeader title="よくある質問" description="" narrow />
 
-            <PageMain>
+            <PageMain narrow>
                 <div class="space-y-3">
                     <details
                         v-for="item in ITEMS"
