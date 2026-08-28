@@ -135,6 +135,13 @@ return [
         'href' => '/generator-dummy-data',
     ],
     [
+        'slug' => 'website-starter',
+        'name' => 'Webサイトスターターキット',
+        'category' => 'generator',
+        'description' => 'サイト名・ロゴ・業種を入力するだけで、favicon・meta タグ・OGP画像をまとめて生成します。',
+        'href' => '/website-starter',
+    ],
+    [
         'slug' => 'svg-optimize',
         'name' => 'SVG最適化',
         'category' => 'developer',

@@ -58,6 +58,7 @@ use App\Http\Controllers\Tools\UiPatternPaginationController;
 use App\Http\Controllers\Tools\UiPatternSkeletonController;
 use App\Http\Controllers\Tools\UiPatternToastController;
 use App\Http\Controllers\Tools\UrlEncodeController;
+use App\Http\Controllers\Tools\WebsiteStarterController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -152,6 +153,14 @@ Route::get('/favicon-generate', [FaviconGenerateController::class, 'show'])->nam
 Route::post('/favicon-generate', [FaviconGenerateController::class, 'process'])
     ->middleware('throttle:image-tools')
     ->name('favicon-generate.process');
+
+Route::get('/website-starter', [WebsiteStarterController::class, 'show'])
+    ->middleware('auth')
+    ->name('website-starter.show');
+
+Route::post('/website-starter', [WebsiteStarterController::class, 'process'])
+    ->middleware(['auth', 'throttle:image-tools'])
+    ->name('website-starter.process');
 
 Route::get('/svg-optimize', [SvgOptimizeController::class, 'show'])->name('svg-optimize.show');
 Route::post('/svg-optimize/track', [SvgOptimizeController::class, 'track'])
