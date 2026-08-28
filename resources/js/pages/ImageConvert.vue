@@ -6,6 +6,7 @@ import { computed, ref } from 'vue';
 import PageHeader from '@/components/Public/PageHeader.vue';
 import PageMain from '@/components/Public/PageMain.vue';
 import AppButton from '@/components/tools/AppButton.vue';
+import ProcessingBanner from '@/components/tools/ProcessingBanner.vue';
 import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 import { resolveErrorMessage } from '@/lib/toolErrorMessage';
 
@@ -251,10 +252,16 @@ function isSuccess(result: ConvertResult): result is SuccessResult {
                     type="button"
                     class="mt-6 w-full"
                     :disabled="!canConvert"
+                    :loading="isProcessing"
                     @click="convert"
                 >
                     {{ isProcessing ? '変換しています...' : '変換する' }}
                 </AppButton>
+
+                <ProcessingBanner
+                    v-if="isProcessing"
+                    message="画像を変換しています。ファイルサイズや枚数によっては数十秒かかることがあります。しばらくお待ちください。"
+                />
 
                 <div v-if="response" class="mt-8">
                     <div v-if="response.batch_download_url" class="mb-4">
