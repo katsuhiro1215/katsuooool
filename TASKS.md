@@ -768,16 +768,16 @@ UIパターン集ギャラリー(Phase 24・25)の各パターンをAdmin側でP
 
 ## Phase 28 — 公開ページ共通ヘッダー/フッターの実装
 
-トップページ(`Home.vue`)を対象に、認証状態を反映したヘッダーと共通フッターを新規実装した。あわせて、破損していた`GuestLayout.vue`を復旧した。詳細仕様は`docs/superpowers/specs/2026-08-27-public-header-footer-design.md`を参照。
+トップページ(`Home.vue`)を対象に、認証状態を反映したヘッダーと共通フッターを新規実装した。あわせて、ローカル作業ツリーで消失していた(gitの履歴上は削除されていない)`GuestLayout.vue`を修正した。詳細仕様は`docs/superpowers/specs/2026-08-27-public-header-footer-design.md`を参照。
 
 - [x] `ApplicationLogo.vue`を修正し、`/upload/logo.svg`を参照するように変更
-- [x] 削除されていた`GuestLayout.vue`を復旧し、ログイン・登録・パスワードリセット等の認証系6ページの表示崩れを解消
+- [x] ローカル作業ツリーで消失していた(gitの履歴上は削除されていない)`GuestLayout.vue`を修正し、ログイン・登録・パスワードリセット等の認証系6ページの表示崩れを解消
 - [x] `resources/js/components/Public/PublicHeader.vue`を新規実装。左側にロゴ+「katsuooool」+キャッチコピー、右側に「Premium」リンクと、未ログイン時は「ログイン」「新規登録」、ログイン時はユーザー名の開閉式ドロップダウン(マイページ/ログアウト)を表示。加えて「その他」ドロップダウンから、かつコード・katsulog・SmartSprouts(いずれも外部リンク、`target="_blank"`+`rel="noopener noreferrer"`)とお問い合わせ(内部リンク)への導線を提供
 - [x] `resources/js/components/Public/PublicFooter.vue`を新規実装。「ツール集」「関連サービス」「規約・ポリシー」「会社情報」の4カラムのナビゲーションとコピーライト表記を表示
 - [x] `resources/js/layouts/Public/PublicLayout.vue`を新規実装し、`PublicHeader`と`PublicFooter`を組み合わせて配下ページに提供
 - [x] `Home.vue`を`PublicLayout`を使う構成に再構成し、ツール一覧グリッドの下にPremium訴求バナー(`PremiumBanner`、「Premiumを見る」リンクは`/premium`へ遷移)を追加
 - [x] `composer ci:check`がグリーン(Lint/Format/型チェック/Vitest/Pint/PHPStan/Pest全通過)
-- [x] Playwrightで実ブラウザ動作確認。未ログイン状態で`/`のヘッダー表示・「その他」ドロップダウンの4リンク(外部3件が新規タブで開くことを含む)・フッター4カラム全リンク・Premiumバナーの遷移先を確認。テストユーザーでログインし、ヘッダーがユーザー名ドロップダウン(マイページ/ログアウト)に切り替わること、ログアウトで表示が元に戻ることを確認。`/login`にアクセスし、`GuestLayout.vue`復旧後のログイン画面(ロゴ・フォーム)が崩れずに表示されることを確認
+- [x] Playwrightで実ブラウザ動作確認。未ログイン状態で`/`のヘッダー表示・「その他」ドロップダウンの4リンク(外部3件が新規タブで開くことを含む)・フッター4カラム全リンク・Premiumバナーの遷移先を確認。テストユーザーでログインし、ヘッダーがユーザー名ドロップダウン(マイページ/ログアウト)に切り替わること、ログアウトで表示が元に戻ることを確認。`/login`にアクセスし、`GuestLayout.vue`修正後のログイン画面(ロゴ・フォーム)が崩れずに表示されることを確認
 - [ ] 残り約11ページ(About/Service/FAQ/Contact/Blog/各種legalページ等、現状は個別ページごとのヘッダーと`AppFooter.vue`を使用)への`PublicLayout`展開は、本Planの対象外の別プロジェクト(サブプロジェクトB)として今後着手する
 
 ## 今後の実装順序

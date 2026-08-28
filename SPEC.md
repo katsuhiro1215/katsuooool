@@ -575,5 +575,5 @@ UIパターン系ジェネレーターツール(`/ui-pattern-*`)の下部に、A
 - **構成コンポーネント**: `resources/js/components/Public/PublicHeader.vue`(ヘッダー)・`resources/js/components/Public/PublicFooter.vue`(フッター)・`resources/js/layouts/Public/PublicLayout.vue`(両者を組み合わせる公開ページ用レイアウト)。現時点では`Home.vue`のみが`PublicLayout`を使用する。
 - **ヘッダー(`PublicHeader.vue`)**: 左側にロゴ(`ApplicationLogo.vue`、`/upload/logo.svg`を参照)+サイト名「katsuooool」+キャッチコピーを表示。右側は「Premium」リンク(`/premium`)に加え、未ログイン時は「ログイン」「新規登録」、ログイン時はユーザー名の開閉式ドロップダウン(「マイページ」`/mypage`・「ログアウト」)を表示する。さらに「その他」ドロップダウンから、かつコード・katsulog・SmartSprouts(いずれも外部サイトへのリンクで`target="_blank"`+`rel="noopener noreferrer"`を付与)と「お問い合わせ」(`/contact`、内部リンク)への導線を提供する。
 - **フッター(`PublicFooter.vue`)**: 「ツール集」「関連サービス」「規約・ポリシー」「会社情報」の4カラムのナビゲーションと、コピーライト表記(`© {年} katsuooool`)を表示する。
-- **`GuestLayout.vue`の復旧**: 本Planの着手前に`GuestLayout.vue`が誤って削除されており、ログイン・登録・パスワードリセット等の認証系6ページの表示が崩れていた。本Planでこれを復旧している。
+- **`GuestLayout.vue`の修正**: 本Planの着手前、`GuestLayout.vue`がローカル作業ツリー上で消失しており(gitの履歴上は削除されていない)、ログイン・登録・パスワードリセット等の認証系6ページの表示が崩れていた。本Planでこれを修正している。
 - **既知の残作業(サブプロジェクトB)**: About/Service/FAQ/Contact/Blog/各種legalページなど、`Home.vue`以外の公開ページ約11件は、本Plan時点では従来どおり個別ページごとのヘッダーと`AppFooter.vue`を使用しており、`PublicLayout`への置き換えは未実施。別プロジェクトとして今後着手する(TASKS.md Phase 28参照)。

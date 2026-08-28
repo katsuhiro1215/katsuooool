@@ -18,6 +18,7 @@ test('renders all four navigation groups with the correct links', () => {
         '/legal/privacy-policy',
         '/legal/terms',
         '/legal/cookie-policy',
+        '/legal/tokushoho',
         '/contact',
         '/blog',
     ];

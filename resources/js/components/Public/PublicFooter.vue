@@ -50,6 +50,10 @@ const NAV_GROUPS: NavGroup[] = [
             { label: 'プライバシーポリシー', href: '/legal/privacy-policy' },
             { label: '利用規約', href: '/legal/terms' },
             { label: 'クッキーポリシー', href: '/legal/cookie-policy' },
+            {
+                label: '特定商取引法に基づく表記',
+                href: '/legal/tokushoho',
+            },
         ],
     },
     {

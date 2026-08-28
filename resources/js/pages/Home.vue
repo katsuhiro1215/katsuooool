@@ -23,11 +23,13 @@ const filteredTools = computed(() =>
 
     <PublicLayout>
         <div class="mx-auto max-w-7xl px-6 py-10">
+            <h1 class="text-2xl font-bold text-gray-900">katsuooool</h1>
+
             <input
                 v-model="query"
                 type="search"
                 placeholder="ツールを検索..."
-                class="w-full max-w-md rounded-md border border-gray-300 px-4 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                class="mt-4 w-full max-w-md rounded-md border border-gray-300 px-4 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
             />
 
             <div class="-mx-6 mt-4 overflow-x-auto px-6">
