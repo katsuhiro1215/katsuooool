@@ -101,6 +101,17 @@ test('a missing logo is rejected', function () {
     $response->assertStatus(422);
 });
 
+test('a logo with an invalid mimetype is rejected and no submission is stored', function () {
+    $user = User::factory()->create();
+
+    $response = postWebsiteStarter($user, [
+        'logo' => UploadedFile::fake()->create('logo.txt', 10, 'text/plain'),
+    ]);
+
+    $response->assertStatus(422);
+    expect(WebsiteStarterSubmission::count())->toBe(0);
+});
+
 test('target_age_range, target_gender, and purpose are optional', function () {
     $user = User::factory()->create();
 
