@@ -577,3 +577,14 @@ UIパターン系ジェネレーターツール(`/ui-pattern-*`)の下部に、A
 - **フッター(`PublicFooter.vue`)**: 「ツール集」「関連サービス」「規約・ポリシー」「会社情報」の4カラムのナビゲーションと、コピーライト表記(`© {年} katsuooool`)を表示する。
 - **`GuestLayout.vue`の修正**: 本Planの着手前、`GuestLayout.vue`がローカル作業ツリー上で消失しており(gitの履歴上は削除されていない)、ログイン・登録・パスワードリセット等の認証系6ページの表示が崩れていた。本Planでこれを修正している。
 - **既知の残作業(サブプロジェクトB)**: About/Service/FAQ/Contact/Blog/各種legalページなど、`Home.vue`以外の公開ページ約11件は、本Plan時点では従来どおり個別ページごとのヘッダーと`AppFooter.vue`を使用しており、`PublicLayout`への置き換えは未実施。別プロジェクトとして今後着手する(TASKS.md Phase 28参照)。
+
+## 35. カラー例・UIパターン集のコピー人気度計測(Phase 30)
+
+カラー系ツール(パレット生成・グラデーション生成・色の組み合わせ)にAdmin登録の「例」ギャラリーを新設し、UIパターン集と共通の仕組みで、コピーされた回数を計測・集計することで「人気カラー」「人気のボタン」を自然に可視化する機能。詳細は`docs/superpowers/specs/2026-08-28-copy-popularity-design.md`を参照。
+
+- **スコープ**: 対象は`ColorPalette`・`ColorGradient`・`ColorScheme`の3ツール(新規「例」ギャラリー)および既存のUIパターン集14カテゴリ(コピー回数の計測・並び替えのみ追加)。`ColorConvert`・`ColorContrast`は値のチェック/変換ツールであり「例」という概念がなじまないためスコープ外。Admin投稿・自動生成・UGC投稿は行わない。ランキング専用ページは作らず、各ツールページ内の一覧をコピー回数順に並べ替えるのみ。
+- **データモデル**: 新規テーブル`color_examples`(type/title/colors/angle/copy_count)、新規テーブル`copy_events`(重複防止用、morphsで`ColorExample`/`UiPatternSnippet`の両方を参照)、`ui_pattern_snippets`への`copy_count`カラム追加。
+- **匿名計測の方式**: クリップボードコピー時に各例のコピーエンドポイントへaxios.postを送信。複数回カウントの防止は`copy_events`のユニーク制約(`copyable_type` + `copyable_id` + `ip_hash`)で実装。IPハッシュは`tool_events`と同じ方式(SHA-256 + 日次ソルト付き)で、日付が変わればハッシュが変わり再度カウント可能となる設計。IP取得不可の場合(稀)は毎回カウントされることを許容。
+- **表示箇所・並び替え**: 各ツールページ(`/color-palette`・`/color-gradient`・`/color-scheme`)下部と各UIパターンページ(`/ui-pattern-*`)に「例」ギャラリーを追加し、登録済み例をカード表示。コンポーネント`ColorExampleGallery.vue`で「コピー」ボタンを備え、クリック時に`navigator.clipboard.writeText()`でクリップボード書き込みと同時にサーバー計測リクエストを送信(計測失敗は無視、コピーのUXをブロックしない)。全ツール・全カテゴリともデフォルトでコピー回数の多い順に並べ替える(追加UI不要、サーバー側`OrderByDesc('copy_count')`で実装)。
+- **Admin CRUD(`color_examples`)**: `/admin/color-examples`でフルCRUD(一覧・新規作成・編集・削除)を実装。フォーム(`ColorExampleForm.vue`)は`type`セレクト(palette/gradient/scheme)・`title`・`colors`(カンマ区切りhex文字列)・`angle`(type=gradient時のみ)。一覧にはcopy_count列を追加(生の数値を表示、Admin確認用)。`copy_count`はAdmin画面からは編集不可(increment()のみ、計測の整合性を保つ)。
+- **テスト**: CopyPopularityTrackerのユニットテスト(同一copyable/IP/同日の連続呼び出しで1回のみカウント、IP異なれば別カウント、日付変わればハッシュが変わり再度カウント)。ColorExampleモデルのスコープテスト(ofType絞り込み・copy_count降順)。各カラーツール・UIパターンのFeatureテスト(copy_countインクリメント、連打でも1回のみ、type異なるIDで404)。ColorExampleGallery.vueのコンポーネントテスト(クリップボード・計測API呼び出し確認)。
