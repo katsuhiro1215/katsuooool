@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthenticatedSessionController;
+use App\Http\Controllers\Admin\ColorExampleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\UiPatternSnippetController;
@@ -31,6 +32,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('ui-pattern-snippets/{snippet}/edit', [UiPatternSnippetController::class, 'edit'])->name('ui-pattern-snippets.edit');
         Route::put('ui-pattern-snippets/{snippet}', [UiPatternSnippetController::class, 'update'])->name('ui-pattern-snippets.update');
         Route::delete('ui-pattern-snippets/{snippet}', [UiPatternSnippetController::class, 'destroy'])->name('ui-pattern-snippets.destroy');
+        Route::get('color-examples', [ColorExampleController::class, 'index'])->name('color-examples.index');
+        Route::get('color-examples/create', [ColorExampleController::class, 'create'])->name('color-examples.create');
+        Route::post('color-examples', [ColorExampleController::class, 'store'])->name('color-examples.store');
+        Route::get('color-examples/{colorExample}/edit', [ColorExampleController::class, 'edit'])->name('color-examples.edit');
+        Route::put('color-examples/{colorExample}', [ColorExampleController::class, 'update'])->name('color-examples.update');
+        Route::delete('color-examples/{colorExample}', [ColorExampleController::class, 'destroy'])->name('color-examples.destroy');
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
     });
 });

@@ -26,6 +26,11 @@ const NAV_ITEMS: NavItem[] = [
         routeName: 'admin.ui-pattern-snippets.index',
         activePattern: 'admin.ui-pattern-snippets.*',
     },
+    {
+        label: 'カラー例管理',
+        routeName: 'admin.color-examples.index',
+        activePattern: 'admin.color-examples.*',
+    },
 ];
 
 const showUserMenu = ref(false);
