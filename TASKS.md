@@ -797,7 +797,7 @@ UIパターン集ギャラリー(Phase 24・25)の各パターンをAdmin側でP
 - [x] Migrationを新規作成(`color_examples`・`copy_events`テーブル、`ui_pattern_snippets.copy_count`カラム追加)
 - [x] `App\Models\ColorExample`モデル作成(`type`/`title`/`colors`/`angle`/`copy_count`プロパティ、`ofType()`スコープで型絞り込み・copy_count降順)
 - [x] `App\Models\CopyEvent`モデル作成(morphs型で`ColorExample`・`UiPatternSnippet`の両方に対応、`copyable_type`/`copyable_id`/`ip_hash`のユニーク制約)
-- [x] `App\Services\CopyPopularityTracker`サービス実装(IPハッシュ化・`copy_events`への`firstOrCreate`・`increment()`の一連処理、日次ソルト付きSHA-256ハッシュで重複防止)
+- [x] `App\Services\CopyPopularityTracker`サービス実装(IPハッシュ化・`copy_events`への`createOrFirst`・`increment()`の一連処理、日次ソルト付きSHA-256ハッシュで重複防止)
 - [x] 3つのカラーツール(`ColorPaletteController`・`ColorGradientController`・`ColorSchemeController`)に`show()`メソッド内で`examples`propsを追加し、`ColorExample::ofType()`で該当タイプの例一覧を取得・渡す
 - [x] 各カラーツールに`copyExample()`アクション追加(type検証・CopyPopularityTracker::record呼び出し、throttleミドルウェア)
 - [x] `App\Http\Controllers\Tools\UiPatternCopyController`新規作成(`store()`アクション、UIパターン集のコピー計測エンドポイント、throttleミドルウェア)
@@ -805,7 +805,7 @@ UIパターン集ギャラリー(Phase 24・25)の各パターンをAdmin側でP
 - [x] `App\Models\UiPatternSnippet`の`forCategory()`スコープを`copy_count`降順ソートに変更
 - [x] `App\Http\Controllers\Admin\ColorExampleController`新規作成(index/create/store/edit/update/destroy、`auth:admin`ミドルウェア)
 - [x] Admin側フォームコンポーネント`resources/js/components/admin/ColorExampleForm.vue`実装(type/title/colors/angle入力、バリデーション、プレビュー)
-- [x] Admin側ページ一式(`resources/js/pages/admin/ColorExamples/Index.vue`・`Create.vue`・`Edit.vue`)実装、一覧にcopy_count列追加
+- [x] Admin側ページ一式(`resources/js/pages/admin/color-examples/Index.vue`・`Create.vue`・`Edit.vue`)実装、一覧にcopy_count列追加
 - [x] `resources/js/components/tools/ColorExampleGallery.vue`コンポーネント実装(examples/type props、カード表示、「コピー」ボタン、クリップボード書き込み＆計測API呼び出し)
 - [x] 3つのカラーツールページ(`ColorPalette.vue`・`ColorGradient.vue`・`ColorScheme.vue`)にギャラリーセクション組み込み(`<ColorExampleGallery :examples="examples" type="palette" />`等)
 - [x] `resources/js/components/tools/PatternCard.vue`のコピーボタンに、対応する`copy`エンドポイントへのaxios.post呼び出し追加
