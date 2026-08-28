@@ -120,16 +120,25 @@ Route::get('/color-palette', [ColorPaletteController::class, 'show'])->name('col
 Route::post('/color-palette/track', [ColorPaletteController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('color-palette.track');
+Route::post('/color-palette/examples/{colorExample}/copy', [ColorPaletteController::class, 'copyExample'])
+    ->middleware('throttle:30,1')
+    ->name('color-palette.examples.copy');
 
 Route::get('/color-gradient', [ColorGradientController::class, 'show'])->name('color-gradient.show');
 Route::post('/color-gradient/track', [ColorGradientController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('color-gradient.track');
+Route::post('/color-gradient/examples/{colorExample}/copy', [ColorGradientController::class, 'copyExample'])
+    ->middleware('throttle:30,1')
+    ->name('color-gradient.examples.copy');
 
 Route::get('/color-scheme', [ColorSchemeController::class, 'show'])->name('color-scheme.show');
 Route::post('/color-scheme/track', [ColorSchemeController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('color-scheme.track');
+Route::post('/color-scheme/examples/{colorExample}/copy', [ColorSchemeController::class, 'copyExample'])
+    ->middleware('throttle:30,1')
+    ->name('color-scheme.examples.copy');
 
 Route::get('/ogp-image', [OgpImageController::class, 'show'])->name('ogp-image.show');
 
