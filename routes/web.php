@@ -44,6 +44,7 @@ use App\Http\Controllers\Tools\SvgOptimizeController;
 use App\Http\Controllers\Tools\ToolDownloadController;
 use App\Http\Controllers\Tools\UiPatternButtonController;
 use App\Http\Controllers\Tools\UiPatternCardController;
+use App\Http\Controllers\Tools\UiPatternCopyController;
 use App\Http\Controllers\Tools\UiPatternFooterController;
 use App\Http\Controllers\Tools\UiPatternFormCheckController;
 use App\Http\Controllers\Tools\UiPatternFormGroupController;
@@ -326,6 +327,10 @@ Route::get('/ui-pattern-footer', [UiPatternFooterController::class, 'show'])->na
 Route::post('/ui-pattern-footer/track', [UiPatternFooterController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('ui-pattern-footer.track');
+
+Route::post('/ui-pattern-snippets/{uiPatternSnippet}/copy', [UiPatternCopyController::class, 'store'])
+    ->middleware('throttle:30,1')
+    ->name('ui-pattern-snippets.copy');
 
 Route::get('/premium', [PremiumController::class, 'index'])->name('premium.index');
 

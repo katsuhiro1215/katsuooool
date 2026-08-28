@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import axios from 'axios';
 import { computed, ref } from 'vue';
 
 import { buildPatternDocument } from '@/lib/uiPatternSnippet';
 
 const props = defineProps<{
+    id: number;
     title: string;
     locked: boolean;
     html?: string;
@@ -31,6 +33,10 @@ async function copyCode() {
         setTimeout(() => {
             copied.value = false;
         }, 1500);
+
+        axios.post(route('ui-pattern-snippets.copy', props.id)).catch(() => {
+            // Analytics-only endpoint; ignore failures.
+        });
     } catch {
         // Clipboard unavailable; the value is still visible as text.
     }

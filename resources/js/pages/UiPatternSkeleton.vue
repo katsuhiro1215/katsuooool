@@ -232,6 +232,7 @@ watch([type, lines, color], () => {
                         <PatternCard
                             v-for="pattern in props.patterns"
                             :key="pattern.id"
+                            :id="pattern.id"
                             :title="pattern.title"
                             :locked="pattern.locked"
                             :html="pattern.html"
