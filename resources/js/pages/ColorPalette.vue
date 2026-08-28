@@ -6,6 +6,7 @@ import { ref } from 'vue';
 import PageHeader from '@/components/Public/PageHeader.vue';
 import PageMain from '@/components/Public/PageMain.vue';
 import AppButton from '@/components/tools/AppButton.vue';
+import ColorExampleGallery from '@/components/tools/ColorExampleGallery.vue';
 import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 
 import { randomHex } from '@/lib/color';
@@ -16,6 +17,16 @@ interface Swatch {
     hex: string;
     locked: boolean;
 }
+
+interface ColorExampleData {
+    id: number;
+    title: string;
+    colors: string[];
+    angle: number | null;
+    copy_count: number;
+}
+
+const props = defineProps<{ examples: ColorExampleData[] }>();
 
 const swatches = ref<Swatch[]>(
     Array.from({ length: SWATCH_COUNT }, () => ({
@@ -123,6 +134,8 @@ async function copy(hex: string) {
                         </div>
                     </div>
                 </div>
+
+                <ColorExampleGallery :examples="props.examples" type="palette" />
             </PageMain>
         </div>
     </PublicLayout>

@@ -5,7 +5,18 @@ import axios from 'axios';
 import { computed, ref, watch } from 'vue';
 import PageHeader from '@/components/Public/PageHeader.vue';
 import PageMain from '@/components/Public/PageMain.vue';
+import ColorExampleGallery from '@/components/tools/ColorExampleGallery.vue';
 import PublicLayout from '@/layouts/Public/PublicLayout.vue';
+
+interface ColorExampleData {
+    id: number;
+    title: string;
+    colors: string[];
+    angle: number | null;
+    copy_count: number;
+}
+
+const props = defineProps<{ examples: ColorExampleData[] }>();
 
 const startColor = ref('#3366ff');
 const endColor = ref('#ff3366');
@@ -120,6 +131,8 @@ watch([startColor, endColor, angle], track);
                         {{ copied ? 'コピーしました' : 'コピー' }}
                     </button>
                 </div>
+
+                <ColorExampleGallery :examples="props.examples" type="gradient" />
             </PageMain>
         </div>
     </PublicLayout>

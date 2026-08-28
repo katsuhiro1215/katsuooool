@@ -5,9 +5,20 @@ import axios from 'axios';
 import { computed, ref, watch } from 'vue';
 import PageHeader from '@/components/Public/PageHeader.vue';
 import PageMain from '@/components/Public/PageMain.vue';
+import ColorExampleGallery from '@/components/tools/ColorExampleGallery.vue';
 import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 
 import { rotateHue } from '@/lib/color';
+
+interface ColorExampleData {
+    id: number;
+    title: string;
+    colors: string[];
+    angle: number | null;
+    copy_count: number;
+}
+
+const props = defineProps<{ examples: ColorExampleData[] }>();
 
 const baseColor = ref('#3366ff');
 const copiedHex = ref('');
@@ -119,6 +130,8 @@ watch(baseColor, track);
                         </div>
                     </div>
                 </div>
+
+                <ColorExampleGallery :examples="props.examples" type="scheme" />
             </PageMain>
         </div>
     </PublicLayout>
