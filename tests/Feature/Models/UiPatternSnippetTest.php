@@ -52,3 +52,36 @@ test('a snippet can be marked as premium', function () {
 
     expect($snippet->fresh()->is_premium)->toBeTrue();
 });
+
+test('forCategory orders by copy_count desc then id asc', function () {
+    $lowCount = UiPatternSnippet::create([
+        'category' => 'button',
+        'title' => '低人気ボタン',
+        'html' => '<a href="#">low</a>',
+        'css' => 'a {}',
+        'copy_count' => 1,
+    ]);
+    $highCount = UiPatternSnippet::create([
+        'category' => 'button',
+        'title' => '高人気ボタン',
+        'html' => '<a href="#">high</a>',
+        'css' => 'a {}',
+        'copy_count' => 5,
+    ]);
+
+    $results = UiPatternSnippet::forCategory('button')->get();
+
+    expect($results->first()->id)->toBe($highCount->id);
+    expect($results->last()->id)->toBe($lowCount->id);
+});
+
+test('copy_count defaults to zero', function () {
+    $snippet = UiPatternSnippet::create([
+        'category' => 'button',
+        'title' => 'デフォルト値',
+        'html' => '<a href="#">x</a>',
+        'css' => 'a {}',
+    ]);
+
+    expect($snippet->copy_count)->toBe(0);
+});

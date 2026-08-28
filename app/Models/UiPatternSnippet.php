@@ -14,10 +14,11 @@ use Illuminate\Support\Carbon;
  * @property string $html
  * @property string $css
  * @property bool $is_premium
+ * @property int $copy_count
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
-#[Fillable(['category', 'title', 'html', 'css', 'is_premium'])]
+#[Fillable(['category', 'title', 'html', 'css', 'is_premium', 'copy_count'])]
 class UiPatternSnippet extends Model
 {
     /**
@@ -25,6 +26,7 @@ class UiPatternSnippet extends Model
      */
     protected $attributes = [
         'is_premium' => false,
+        'copy_count' => 0,
     ];
 
     /**
@@ -53,7 +55,7 @@ class UiPatternSnippet extends Model
      */
     public function scopeForCategory(Builder $query, string $category): Builder
     {
-        return $query->where('category', $category)->orderBy('id');
+        return $query->where('category', $category)->orderByDesc('copy_count')->orderBy('id');
     }
 
     /**
