@@ -13,6 +13,7 @@ const form = useForm({
 
 function submit() {
     form.post('/admin/two-factor-setup/confirm', {
+        errorBag: 'confirmTwoFactorAuthentication',
         onFinish: () => form.reset('code'),
     });
 }

@@ -12,17 +12,18 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        // The frontend build (public/build/manifest.json) is not produced during
-        // the test run, and pre-existing frontend module resolution issues in
-        // this starter kit are out of scope here. Feature tests only need to
-        // verify the backend response and Inertia payload, not compiled assets.
+        // フロントエンドのビルド成果物(public/build/manifest.json)はテスト実行時に
+        // 生成されないうえ、このスターターキットに元々あるフロントエンドの
+        // モジュール解決の問題はここでは対象外とする。Feature テストではバックエンドの
+        // レスポンスと Inertia のペイロードのみを検証すればよく、コンパイル済み
+        // アセットは不要なため無効化する。
         $this->withoutVite();
 
-        // Password::uncompromised() calls out to the Have I Been Pwned API via
-        // the Http facade. Fake it globally so tests never make a real network
-        // call and never fail due to that service being unreachable; a test
-        // that specifically wants to verify "known-compromised password
-        // rejected" behavior can override this with its own Http::fake().
+        // Password::uncompromised() は Http ファサード経由で Have I Been Pwned API を
+        // 呼び出す。テストが実際にネットワーク通信を行ったり、外部サービスの
+        // 到達不能によって失敗したりしないよう、グローバルにフェイクしておく。
+        // 「漏洩済みパスワードが拒否されること」を個別に検証したいテストは、
+        // 自前の Http::fake() で上書きできる。
         Http::fake([
             'api.pwnedpasswords.com/*' => Http::response('', 200),
         ]);

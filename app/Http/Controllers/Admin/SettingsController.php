@@ -23,7 +23,7 @@ class SettingsController extends Controller
     /**
      * 設定画面を表示する。
      */
-    public function edit(): Response
+    public function edit(Request $request): Response
     {
         /** @var Admin $admin */
         $admin = Auth::guard('admin')->user();
@@ -31,6 +31,7 @@ class SettingsController extends Controller
         return Inertia::render('admin/Settings', [
             'email' => $admin->email,
             'twoFactorConfirmed' => ! is_null($admin->two_factor_confirmed_at),
+            'status' => $request->session()->get('status'),
         ]);
     }
 

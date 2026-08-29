@@ -32,7 +32,7 @@ class TwoFactorChallengeController extends Controller
             $code,
         );
 
-        $validRecoveryCode = $recoveryCode !== '' && in_array($recoveryCode, $admin->recoveryCodes(), true);
+        $validRecoveryCode = $recoveryCode !== '' && ! is_null($admin->two_factor_recovery_codes) && in_array($recoveryCode, $admin->recoveryCodes(), true);
 
         if (! $validCode && ! $validRecoveryCode) {
             throw ValidationException::withMessages([

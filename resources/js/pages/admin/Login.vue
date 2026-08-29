@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
+defineProps<{ status?: string }>();
+
 const form = useForm({
     email: '',
     password: '',
@@ -22,6 +24,10 @@ function submit() {
             class="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-8 shadow-sm"
         >
             <h1 class="text-lg font-bold text-gray-900">Admin ログイン</h1>
+
+            <p v-if="status" class="mt-4 text-sm text-green-700">
+                {{ status }}
+            </p>
 
             <form class="mt-6 space-y-4" @submit.prevent="submit">
                 <div>

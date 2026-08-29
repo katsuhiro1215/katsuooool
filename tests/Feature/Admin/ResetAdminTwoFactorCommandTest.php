@@ -8,10 +8,14 @@ test('admin:reset-two-factor clears the two-factor columns for the given admin',
         'name' => 'Test Admin',
         'email' => 'reset-2fa@example.com',
         'password' => Hash::make('Str0ng!Passw0rd'),
+    ]);
+
+    // two_factor_* カラムは $fillable に含まれないため forceFill で設定する。
+    $admin->forceFill([
         'two_factor_secret' => 'encrypted-secret-placeholder',
         'two_factor_recovery_codes' => 'encrypted-codes-placeholder',
         'two_factor_confirmed_at' => now(),
-    ]);
+    ])->save();
 
     $this->artisan('admin:reset-two-factor', ['email' => $admin->email])
         ->assertSuccessful();

@@ -17,9 +17,11 @@ class PasswordResetLinkController extends Controller
     /**
      * パスワードリセットリンク送信フォームを表示する。
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
-        return Inertia::render('admin/ForgotPassword');
+        return Inertia::render('admin/ForgotPassword', [
+            'status' => $request->session()->get('status'),
+        ]);
     }
 
     /**

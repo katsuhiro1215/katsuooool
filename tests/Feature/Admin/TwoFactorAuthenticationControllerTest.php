@@ -63,6 +63,26 @@ test('confirming with an invalid code fails validation', function () {
     expect($admin->fresh()->two_factor_confirmed_at)->toBeNull();
 });
 
+test('confirming with an invalid code via a real Inertia request puts the error in the confirmTwoFactorAuthentication error bag', function () {
+    // Fortify の ConfirmTwoFactorAuthentication アクションは
+    // ->errorBag('confirmTwoFactorAuthentication') で ValidationException を投げるため、
+    // 通常の(名前なし)Inertia リクエストではエラーが `default` バッグではなく
+    // 名前付きバッグに入る。Vue 側は名前付きバッグを読む必要があり、それを
+    // 検証するテスト。JSON リクエストで 422 を返すことだけを確認しても、
+    // エラーがどのバッグに入るかまでは検証できない。
+    $admin = createUnconfirmedAdmin();
+    $this->actingAs($admin, 'admin')->get(route('admin.two-factor.setup'));
+
+    $response = $this->actingAs($admin, 'admin')
+        ->withHeaders(['X-Inertia' => 'true'])
+        ->from(route('admin.two-factor.setup'))
+        ->post(route('admin.two-factor.confirm'), ['code' => '000000']);
+
+    $response->assertSessionHasErrorsIn('confirmTwoFactorAuthentication', ['code']);
+    $response->assertSessionDoesntHaveErrors(['code']);
+    expect($admin->fresh()->two_factor_confirmed_at)->toBeNull();
+});
+
 test('regenerating recovery codes requires the current password and replaces the old codes', function () {
     $admin = createUnconfirmedAdmin();
     $this->actingAs($admin, 'admin')->get(route('admin.two-factor.setup'));

@@ -35,7 +35,7 @@ class AuthenticatedSessionController extends Controller
 
         $admin = Admin::where('email', $credentials['email'])->firstOrFail();
 
-        if ($admin->hasEnabledTwoFactorAuthentication()) {
+        if (! is_null($admin->two_factor_confirmed_at)) {
             $request->session()->put('admin_login.id', $admin->id);
             $request->session()->put('admin_login.remember', $remember);
 

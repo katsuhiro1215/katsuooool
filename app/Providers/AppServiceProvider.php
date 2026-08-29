@@ -104,17 +104,19 @@ class AppServiceProvider extends ServiceProvider
         // /admin/* doesn't silently fall back to the web-guard login route.
         AuthenticationException::redirectUsing($redirectUnauthenticatedTo);
 
-        // Illuminate\Auth\Notifications\ResetPassword builds its reset link
-        // via route('password.reset', ...) by default, which always
-        // resolves to Fortify's user-facing route — even when the
-        // notifiable is an Admin. Without this override, an admin's
-        // password-reset email would link to /reset-password/{token}
-        // (the User form) instead of /admin/reset-password/{token} (the
-        // Admin form registered in routes/admin.php), and the User form
-        // authenticates against the wrong password broker. This callback is
-        // a single global static hook (not guard-scoped), so it must branch
-        // on the notifiable's class to keep the existing User behavior
-        // unchanged.
+        // Illuminate\Auth\Notifications\ResetPassword はデフォルトで
+        // route('password.reset', ...) を使ってリセットリンクを組み立てるが、
+        // これは常に Fortify の User 向けルートを指す(notifiable が Admin で
+        // あっても同じ)。このオーバーライドがないと、Admin 宛のパスワード
+        // リセットメールが /admin/reset-password/{token}(routes/admin.php に
+        // 登録されている Admin 用フォーム)ではなく /reset-password/{token}
+        // (User 用フォーム)にリンクしてしまう。トークン自体は password broker
+        // ごとにスコープされているため User 用フォームに送っても「無効な
+        // トークン」として弾かれるだけで認証が突破されるわけではないが、
+        // Admin が正しい画面にたどり着けずパスワードを再設定できないという
+        // ルーティング・UX上の不具合になる。このコールバックは(guard ごとで
+        // はなく)アプリ全体で単一のグローバルな静的フックのため、既存の
+        // User 側の挙動を変えないよう notifiable のクラスで分岐させる。
         ResetPassword::createUrlUsing(function ($notifiable, string $token) {
             if ($notifiable instanceof Admin) {
                 return url(route('admin.password.reset', [
