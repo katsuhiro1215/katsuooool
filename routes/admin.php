@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\ColorExampleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\TwoFactorAuthenticationController;
 use App\Http\Controllers\Admin\UiPatternSnippetController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 
     Route::middleware('auth:admin')->group(function () {
+        Route::get('two-factor-setup', [TwoFactorAuthenticationController::class, 'create'])->name('two-factor.setup');
+        Route::post('two-factor-setup/confirm', [TwoFactorAuthenticationController::class, 'confirm'])->name('two-factor.confirm');
+        Route::post('two-factor-setup/recovery-codes', [TwoFactorAuthenticationController::class, 'regenerateRecoveryCodes'])->name('two-factor.recovery-codes');
+
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('users', [UserController::class, 'index'])->name('users.index');
         Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
