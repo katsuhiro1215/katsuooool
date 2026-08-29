@@ -2,7 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import axios from 'axios';
 
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import PageHeader from '@/components/Public/PageHeader.vue';
 import PageMain from '@/components/Public/PageMain.vue';
 import AppButton from '@/components/tools/AppButton.vue';
@@ -37,6 +37,16 @@ const DIRECTION_OPTIONS: { value: Direction; label: string }[] = [
     { value: 'right', label: '右に90度' },
 ];
 
+// Matches ImageRotateService's server-side rotation: Intervention Image
+// treats a positive angle as counter-clockwise, the opposite of CSS's
+// rotate(), so "left" (counter-clockwise) and "right" (clockwise) are
+// negated relative to their Intervention angle to look the same on screen.
+const PREVIEW_ROTATION_DEGREES: Record<Direction, number> = {
+    left: -90,
+    '180': 180,
+    right: 90,
+};
+
 const props = defineProps<{ maxFiles: number }>();
 
 const MAX_FILES = computed<number>(() => props.maxFiles);
@@ -52,6 +62,21 @@ const response = ref<RotateResponse | null>(null);
 const canRotate = computed(
     () => selectedFiles.value.length > 0 && !isProcessing.value,
 );
+
+const previewRotationDegrees = computed(
+    () => PREVIEW_ROTATION_DEGREES[direction.value],
+);
+
+const previewUrls = ref<string[]>([]);
+
+watch(selectedFiles, (files) => {
+    previewUrls.value.forEach((url) => URL.revokeObjectURL(url));
+    previewUrls.value = files.map((file) => URL.createObjectURL(file));
+});
+
+onBeforeUnmount(() => {
+    previewUrls.value.forEach((url) => URL.revokeObjectURL(url));
+});
 
 function addFiles(files: FileList | null) {
     if (!files) {
@@ -224,22 +249,39 @@ function isSuccess(result: RotateResult): result is SuccessResult {
                     </Link>
                 </div>
 
-                <ul v-if="selectedFiles.length > 0" class="mt-6 space-y-2">
+                <ul
+                    v-if="selectedFiles.length > 0"
+                    class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4"
+                >
                     <li
                         v-for="(file, index) in selectedFiles"
                         :key="`${file.name}-${index}`"
-                        class="flex items-center justify-between rounded-md border border-gray-200 bg-white px-4 py-2 text-sm"
+                        class="rounded-md border border-gray-200 bg-white p-3 text-sm"
                     >
-                        <span class="truncate text-gray-800">{{
-                            file.name
-                        }}</span>
-                        <button
-                            type="button"
-                            class="ml-4 text-gray-400 hover:text-red-600"
-                            @click="removeFile(index)"
+                        <div
+                            class="flex aspect-square items-center justify-center overflow-hidden rounded bg-gray-100"
                         >
-                            削除
-                        </button>
+                            <img
+                                :src="previewUrls[index]"
+                                :alt="file.name"
+                                class="rotate-preview h-full w-full object-contain transition-transform duration-200"
+                                :style="{
+                                    transform: `rotate(${previewRotationDegrees}deg)`,
+                                }"
+                            />
+                        </div>
+                        <div class="mt-2 flex items-center justify-between">
+                            <span class="truncate text-gray-800">{{
+                                file.name
+                            }}</span>
+                            <button
+                                type="button"
+                                class="ml-2 shrink-0 text-gray-400 hover:text-red-600"
+                                @click="removeFile(index)"
+                            >
+                                削除
+                            </button>
+                        </div>
                     </li>
                 </ul>
 
