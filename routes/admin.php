@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ColorExampleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\TwoFactorAuthenticationController;
+use App\Http\Controllers\Admin\TwoFactorChallengeController;
 use App\Http\Controllers\Admin\UiPatternSnippetController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('login', [AuthenticatedSessionController::class, 'store'])
             ->middleware('throttle:admin-login')
             ->name('login.store');
+    });
+
+    Route::middleware('admin.pending-2fa')->group(function () {
+        Route::get('two-factor-challenge', [TwoFactorChallengeController::class, 'create'])->name('two-factor.challenge');
+        Route::post('two-factor-challenge', [TwoFactorChallengeController::class, 'store'])
+            ->middleware('throttle:admin-login')
+            ->name('two-factor.challenge.store');
     });
 
     Route::middleware('auth:admin')->group(function () {

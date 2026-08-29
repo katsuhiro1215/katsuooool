@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,12 +25,24 @@ class AuthenticatedSessionController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
+        $remember = $request->boolean('remember');
+
+        if (! Auth::guard('admin')->validate($credentials)) {
             throw ValidationException::withMessages([
                 'email' => 'メールアドレスまたはパスワードが正しくありません。',
             ]);
         }
 
+        $admin = Admin::where('email', $credentials['email'])->firstOrFail();
+
+        if ($admin->hasEnabledTwoFactorAuthentication()) {
+            $request->session()->put('admin_login.id', $admin->id);
+            $request->session()->put('admin_login.remember', $remember);
+
+            return redirect()->route('admin.two-factor.challenge');
+        }
+
+        Auth::guard('admin')->login($admin, $remember);
         $request->session()->regenerate();
 
         return redirect()->route('admin.dashboard');

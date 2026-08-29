@@ -2,6 +2,8 @@
 
 use App\Models\Admin;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Fortify\Fortify;
+use PragmaRX\Google2FA\Google2FA;
 
 test('the admin login page can be rendered', function () {
     $response = $this->get(route('admin.login'));
@@ -80,6 +82,45 @@ test('an authenticated admin can log out', function () {
 
     $response->assertRedirect(route('admin.login'));
     $this->assertGuest('admin');
+});
+
+test('logging in with 2FA already confirmed does not fully authenticate yet and redirects to the challenge', function () {
+    $admin = Admin::create([
+        'name' => 'Test Admin',
+        'email' => 'confirmed-login@example.com',
+        'password' => Hash::make('Str0ng!Passw0rd'),
+    ]);
+    $admin->forceFill([
+        'two_factor_secret' => Fortify::currentEncrypter()->encrypt(
+            app(Google2FA::class)->generateSecretKey()
+        ),
+        'two_factor_confirmed_at' => now(),
+    ])->save();
+
+    $response = $this->post(route('admin.login.store'), [
+        'email' => 'confirmed-login@example.com',
+        'password' => 'Str0ng!Passw0rd',
+    ]);
+
+    $response->assertRedirect(route('admin.two-factor.challenge'));
+    $this->assertGuest('admin');
+    expect(session('admin_login.id'))->toBe($admin->id);
+});
+
+test('logging in without 2FA confirmed fully authenticates immediately', function () {
+    $admin = Admin::create([
+        'name' => 'Test Admin',
+        'email' => 'unconfirmed-login@example.com',
+        'password' => Hash::make('Str0ng!Passw0rd'),
+    ]);
+
+    $response = $this->post(route('admin.login.store'), [
+        'email' => 'unconfirmed-login@example.com',
+        'password' => 'Str0ng!Passw0rd',
+    ]);
+
+    $response->assertRedirect(route('admin.dashboard'));
+    $this->assertAuthenticatedAs($admin, 'admin');
 });
 
 test('login attempts are rate limited after repeated failures', function () {

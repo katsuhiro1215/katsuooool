@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
     email: '',
@@ -83,6 +83,13 @@ function submit() {
                     ログイン
                 </button>
             </form>
+
+            <Link
+                href="/admin/forgot-password"
+                class="mt-4 block text-center text-sm text-gray-500 underline"
+            >
+                パスワードをお忘れですか?
+            </Link>
         </div>
     </div>
 </template>
