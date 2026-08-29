@@ -31,6 +31,11 @@ const NAV_ITEMS: NavItem[] = [
         routeName: 'admin.color-examples.index',
         activePattern: 'admin.color-examples.*',
     },
+    {
+        label: '設定',
+        routeName: 'admin.settings.edit',
+        activePattern: 'admin.settings.*',
+    },
 ];
 
 const showUserMenu = ref(false);

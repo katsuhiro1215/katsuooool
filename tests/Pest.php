@@ -54,6 +54,11 @@ function actingAsAdmin(): Admin
         'password' => Hash::make('password1234'),
     ]);
 
+    // two_factor_confirmed_at は $fillable に含まれないため forceFill で設定する。
+    $admin->forceFill([
+        'two_factor_confirmed_at' => now(),
+    ])->save();
+
     test()->actingAs($admin, 'admin');
 
     return $admin;
