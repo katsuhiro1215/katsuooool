@@ -366,6 +366,7 @@ Route::get('/legal/cookie-policy', [LegalController::class, 'cookiePolicy'])->na
 
 Route::get('/about', [PageController::class, 'about'])->name('page.about');
 Route::get('/service', [PageController::class, 'service'])->name('page.service');
+Route::get('/company', [PageController::class, 'company'])->name('page.company');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');
 
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');

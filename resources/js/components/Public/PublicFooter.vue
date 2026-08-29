@@ -70,7 +70,7 @@ const NAV_GROUPS: NavGroup[] = [
     {
         heading: '会社情報',
         links: [
-            { label: '会社案内', href: '/about' },
+            { label: '会社案内', href: '/company' },
             { label: 'お問い合わせ', href: '/contact' },
             { label: 'ブログ・お知らせ', href: '/blog' },
         ],

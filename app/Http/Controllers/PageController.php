@@ -16,4 +16,11 @@ class PageController extends Controller
     {
         return Inertia::render('Service');
     }
+
+    public function company(): Response
+    {
+        return Inertia::render('Company', [
+            'company' => config('company'),
+        ]);
+    }
 }
