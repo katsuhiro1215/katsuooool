@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\Admin;
 use App\Models\User;
 use App\Services\Tools\Dns\DnsResolver;
 use App\Services\Tools\Dns\SystemDnsResolver;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -101,5 +103,30 @@ class AppServiceProvider extends ServiceProvider
         // is kept in sync here too so a future bare-exception path under
         // /admin/* doesn't silently fall back to the web-guard login route.
         AuthenticationException::redirectUsing($redirectUnauthenticatedTo);
+
+        // Illuminate\Auth\Notifications\ResetPassword builds its reset link
+        // via route('password.reset', ...) by default, which always
+        // resolves to Fortify's user-facing route — even when the
+        // notifiable is an Admin. Without this override, an admin's
+        // password-reset email would link to /reset-password/{token}
+        // (the User form) instead of /admin/reset-password/{token} (the
+        // Admin form registered in routes/admin.php), and the User form
+        // authenticates against the wrong password broker. This callback is
+        // a single global static hook (not guard-scoped), so it must branch
+        // on the notifiable's class to keep the existing User behavior
+        // unchanged.
+        ResetPassword::createUrlUsing(function ($notifiable, string $token) {
+            if ($notifiable instanceof Admin) {
+                return url(route('admin.password.reset', [
+                    'token' => $token,
+                    'email' => $notifiable->getEmailForPasswordReset(),
+                ], false));
+            }
+
+            return url(route('password.reset', [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ], false));
+        });
     }
 }

@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\ColorExampleController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\NewPasswordController;
+use App\Http\Controllers\Admin\PasswordResetLinkController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\TwoFactorAuthenticationController;
 use App\Http\Controllers\Admin\TwoFactorChallengeController;
@@ -16,6 +18,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('login', [AuthenticatedSessionController::class, 'store'])
             ->middleware('throttle:admin-login')
             ->name('login.store');
+        Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
+        Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
+            ->middleware('throttle:admin-login')
+            ->name('password.email');
+        Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+        Route::post('reset-password', [NewPasswordController::class, 'store'])
+            ->middleware('throttle:admin-login')
+            ->name('password.store');
     });
 
     Route::middleware('admin.pending-2fa')->group(function () {
