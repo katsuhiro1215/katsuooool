@@ -6,8 +6,8 @@ test('a normal registration creates a user and redirects to the dashboard', func
     $response = $this->post(route('register'), [
         'name' => 'Taro Yamada',
         'email' => 'taro@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
+        'password' => 'a-secure-test-password',
+        'password_confirmation' => 'a-secure-test-password',
     ]);
 
     $response->assertRedirect('/dashboard');
@@ -18,8 +18,8 @@ test('opting into premium without a plan or terms agreement fails validation', f
     $response = $this->from(route('register'))->post(route('register'), [
         'name' => 'Taro Yamada',
         'email' => 'taro@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
+        'password' => 'a-secure-test-password',
+        'password_confirmation' => 'a-secure-test-password',
         'want_premium' => true,
     ]);
 
@@ -34,8 +34,8 @@ test('opting into premium with a plan and terms agreement creates the user and s
     $response = $this->post(route('register'), [
         'name' => 'Taro Yamada',
         'email' => 'taro@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
+        'password' => 'a-secure-test-password',
+        'password_confirmation' => 'a-secure-test-password',
         'want_premium' => true,
         'plan' => 'monthly',
         'terms_agree' => true,
