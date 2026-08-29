@@ -9,17 +9,23 @@ class LegalController extends Controller
 {
     public function tokushoho(): Response
     {
-        return Inertia::render('legal/Tokushoho');
+        return Inertia::render('legal/Tokushoho', [
+            'company' => config('company'),
+        ]);
     }
 
     public function privacyPolicy(): Response
     {
-        return Inertia::render('legal/PrivacyPolicy');
+        return Inertia::render('legal/PrivacyPolicy', [
+            'company' => config('company'),
+        ]);
     }
 
     public function terms(): Response
     {
-        return Inertia::render('legal/Terms');
+        return Inertia::render('legal/Terms', [
+            'company' => config('company'),
+        ]);
     }
 
     public function cookiePolicy(): Response

@@ -1,20 +1,36 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 import PageHeader from '@/components/Public/PageHeader.vue';
 import PageMain from '@/components/Public/PageMain.vue';
 import PublicLayout from '@/layouts/Public/PublicLayout.vue';
+import type { Company } from '@/types';
+
+const props = defineProps<{
+    company: Company;
+}>();
 
 interface LegalSection {
     heading: string;
     paragraphs: string[];
 }
 
-const SECTIONS: LegalSection[] = [
+const companyName = computed(
+    () => props.company.name ?? '【事業者名を入力してください】',
+);
+
+const companyContact = computed(
+    () =>
+        props.company.contact ??
+        '【メールアドレス等の連絡先を入力してください】',
+);
+
+const SECTIONS = computed<LegalSection[]>(() => [
     {
         heading: '1. 基本方針',
         paragraphs: [
-            '【事業者名を入力してください】(以下「当社」といいます)は、当社が提供するWeb制作者向けツール集サイト「katsuooool」(以下「本サービス」といいます)における、利用者の個人情報の取り扱いについて、以下のとおりプライバシーポリシー(以下「本ポリシー」といいます)を定めます。',
+            `${companyName.value}(以下「当社」といいます)は、当社が提供するWeb制作者向けツール集サイト「katsuooool」(以下「本サービス」といいます)における、利用者の個人情報の取り扱いについて、以下のとおりプライバシーポリシー(以下「本ポリシー」といいます)を定めます。`,
         ],
     },
     {
@@ -76,9 +92,9 @@ const SECTIONS: LegalSection[] = [
     },
     {
         heading: '10. お問い合わせ窓口',
-        paragraphs: ['【メールアドレス等の連絡先を入力してください】'],
+        paragraphs: [companyContact.value],
     },
-];
+]);
 </script>
 
 <template>

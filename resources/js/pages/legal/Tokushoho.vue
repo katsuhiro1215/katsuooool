@@ -1,22 +1,41 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 import PageHeader from '@/components/Public/PageHeader.vue';
 import PageMain from '@/components/Public/PageMain.vue';
 import PublicLayout from '@/layouts/Public/PublicLayout.vue';
+import type { Company } from '@/types';
+
+const props = defineProps<{
+    company: Company;
+}>();
 
 interface LegalItem {
     label: string;
     value: string;
 }
 
-const ITEMS: LegalItem[] = [
-    { label: '販売事業者', value: '【事業者名を入力してください】' },
-    { label: '運営責任者', value: '【運営責任者名を入力してください】' },
-    { label: '所在地', value: '【所在地を入力してください】' },
+const ITEMS = computed<LegalItem[]>(() => [
+    {
+        label: '販売事業者',
+        value: props.company.name ?? '【事業者名を入力してください】',
+    },
+    {
+        label: '運営責任者',
+        value:
+            props.company.representative ??
+            '【運営責任者名を入力してください】',
+    },
+    {
+        label: '所在地',
+        value: props.company.address ?? '【所在地を入力してください】',
+    },
     {
         label: '連絡先',
-        value: '【メールアドレス等の連絡先を入力してください】',
+        value:
+            props.company.contact ??
+            '【メールアドレス等の連絡先を入力してください】',
     },
     { label: '販売価格', value: '月額¥600(税込)・年額¥6,600(税込)' },
     { label: '商品代金以外の必要料金', value: 'なし' },
@@ -30,7 +49,7 @@ const ITEMS: LegalItem[] = [
         label: '返品・キャンセルについて',
         value: 'デジタルサービスの性質上、返金は行っておりません。解約はいつでも可能で、解約後もお支払い済みの期間終了まではサービスをご利用いただけます。',
     },
-];
+]);
 </script>
 
 <template>

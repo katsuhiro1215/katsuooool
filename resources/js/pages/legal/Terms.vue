@@ -1,20 +1,30 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 import PageHeader from '@/components/Public/PageHeader.vue';
 import PageMain from '@/components/Public/PageMain.vue';
 import PublicLayout from '@/layouts/Public/PublicLayout.vue';
+import type { Company } from '@/types';
+
+const props = defineProps<{
+    company: Company;
+}>();
 
 interface LegalSection {
     heading: string;
     paragraphs: string[];
 }
 
-const SECTIONS: LegalSection[] = [
+const companyName = computed(
+    () => props.company.name ?? '【事業者名を入力してください】',
+);
+
+const SECTIONS = computed<LegalSection[]>(() => [
     {
         heading: '第1条(適用)',
         paragraphs: [
-            '本利用規約(以下「本規約」といいます)は、【事業者名を入力してください】(以下「当社」といいます)が提供するWeb制作者向けツール集サイト「katsuooool」(以下「本サービス」といいます)の利用条件を定めるものです。利用者は、本サービスを利用することにより、本規約に同意したものとみなします。',
+            `本利用規約(以下「本規約」といいます)は、${companyName.value}(以下「当社」といいます)が提供するWeb制作者向けツール集サイト「katsuooool」(以下「本サービス」といいます)の利用条件を定めるものです。利用者は、本サービスを利用することにより、本規約に同意したものとみなします。`,
         ],
     },
     {
@@ -79,7 +89,7 @@ const SECTIONS: LegalSection[] = [
             '本規約の解釈にあたっては、日本法を準拠法とします。本サービスに関して紛争が生じた場合には、当社の本店所在地を管轄する裁判所を専属的合意管轄とします。',
         ],
     },
-];
+]);
 </script>
 
 <template>
