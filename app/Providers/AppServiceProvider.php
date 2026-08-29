@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Laravel\Cashier\Cashier;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +25,20 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(DnsResolver::class, SystemDnsResolver::class);
+
+        // Cashier registers its routes (including POST /stripe/webhook) from
+        // its own ServiceProvider::boot(), which runs after every
+        // provider's register(). This must happen here, not in this
+        // provider's own boot(), or boot-order could let Cashier register
+        // the webhook route before this flag takes effect — leaving it
+        // reachable with signature verification skipped (STRIPE_WEBHOOK_SECRET
+        // unset) while Premium is meant to be fully disabled.
+        //
+        // $registersRoutes is a static property that outlives a single
+        // request in a long-running process (e.g. repeated application
+        // boots within one test run), so both branches are set explicitly
+        // rather than relying on Cashier's own true-by-default value.
+        Cashier::$registersRoutes = (bool) config('premium.enabled');
     }
 
     /**

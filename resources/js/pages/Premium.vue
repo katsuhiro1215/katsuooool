@@ -6,7 +6,7 @@ import PageHeader from '@/components/Public/PageHeader.vue';
 import PageMain from '@/components/Public/PageMain.vue';
 import PublicLayout from '@/layouts/Public/PublicLayout.vue';
 
-defineProps<{ isPremium: boolean }>();
+defineProps<{ isPremium: boolean; enabled: boolean }>();
 
 const page = usePage();
 const isAuthenticated = computed(() => page.props.auth.user !== null);
@@ -65,8 +65,14 @@ const PLANS = [
                         <p v-if="plan.note" class="mt-1 text-xs text-gray-500">
                             {{ plan.note }}
                         </p>
+                        <p
+                            v-if="!enabled && !isPremium"
+                            class="mt-4 block w-full rounded-md border border-gray-300 px-4 py-2 text-center text-sm font-medium text-gray-500"
+                        >
+                            近日公開
+                        </p>
                         <Link
-                            v-if="!isPremium && isAuthenticated"
+                            v-else-if="!isPremium && isAuthenticated"
                             :href="
                                 route('premium.checkout', { plan: plan.key })
                             "

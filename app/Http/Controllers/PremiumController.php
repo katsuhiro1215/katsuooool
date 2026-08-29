@@ -18,6 +18,7 @@ class PremiumController extends Controller
 
         return Inertia::render('Premium', [
             'isPremium' => $user instanceof User && $user->isPremium(),
+            'enabled' => config('premium.enabled'),
         ]);
     }
 
