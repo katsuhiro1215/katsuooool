@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureAdminTwoFactorConfirmed;
+use App\Http\Middleware\EnsurePendingTwoFactorChallenge;
 use App\Http\Middleware\EnsurePremium;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -16,7 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias(['premium' => EnsurePremium::class]);
+        $middleware->alias([
+            'premium' => EnsurePremium::class,
+            'admin.2fa-confirmed' => EnsureAdminTwoFactorConfirmed::class,
+            'admin.pending-2fa' => EnsurePendingTwoFactorChallenge::class,
+        ]);
 
         $middleware->web(append: [
             HandleInertiaRequests::class,
