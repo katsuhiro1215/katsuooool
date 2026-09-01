@@ -845,7 +845,7 @@ Phase 28で積み残していたサブプロジェクトBとして、`Blog/Index
 - [x] Cron設定: Xserverパネルは毎分実行を強く非推奨(負荷次第でアカウント制限の可能性ありと警告)。現状のScheduler登録タスクが時次/日次のみのため、「毎時0分」実行を採用。コマンド欄が半角64文字制限のため`~/cron_schedule.sh`ラッパースクリプト経由で`sh ~/cron_schedule.sh`を登録
 - [x] `Password::uncompromised()`(HaveIBeenPwned API)の外部疎通確認 — 200 OK
 - [x] Admin初回作成(`php artisan admin:create`)・2FAセットアップ(Google Authenticator)・ログアウト→2FAチャレンジ再ログイン・パスワードリセットメール・`/admin/settings`でのパスワード/メール変更、すべて実機で動作確認済み
-- [ ] `/legal/tokushoho`の事業者情報プレースホルダーを実データへ差し替え(公開前に必須、対応保留中)
+- [x] `/legal/tokushoho`の事業者情報プレースホルダーを実データへ差し替え(公開前に必須) — 2026-09-01、本番で実データ(販売事業者・運営責任者・所在地・連絡先・価格・支払い方法・返品規定)を確認済み
 - [ ] 画像圧縮ツール(`image-compress`)がJPEGで実質的に圧縮効果を得られていない件を調査。バグではなく`ImageCompressController`の「圧縮後 ≥ 元サイズなら元ファイルを返す」フォールバックが正しく機能した結果と判明(2026-08-31、本番でiPhone撮影の4032×3024 JPEGにて確認: Imagick quality80再エンコードで1,752,520→1,955,714バイトに増加し元ファイルへフォールバック)。ImageMagickの標準JPEGエンコードが、既に最適化済みのカメラ出力JPEGに対して非効率なことが原因と推測。GDドライバーでの挙動比較、`sampling-factor`/`interlace`等のエンコードオプション調整、mozjpeg利用可否の検討が今後の対応候補
 
 ## 今後の実装順序
