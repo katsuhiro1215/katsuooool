@@ -20,7 +20,7 @@ const filteredTools = computed(() =>
 </script>
 
 <template>
-    <Head title="katsuooool - Web制作ツール集" />
+    <Head title="Web制作ツール集 - katsuooool" />
 
     <PublicLayout>
         <div class="mx-auto max-w-7xl px-6 py-10">
