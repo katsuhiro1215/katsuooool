@@ -26,3 +26,11 @@ test('strips unsafe link schemes like javascript:', function () {
 
     expect($html)->not->toContain('href="javascript:');
 });
+
+test('renders a single line break within a paragraph as <br>', function () {
+    $renderer = new MarkdownRenderer;
+
+    $html = $renderer->toHtml("1行目\n2行目");
+
+    expect($html)->toContain("1行目<br />\n2行目");
+});

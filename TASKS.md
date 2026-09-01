@@ -10,7 +10,7 @@
 - [x] GitHub上にPrivateリポジトリを新規作成し、リモート登録
 - [x] 初回コミット・push
 - [x] `.env` の DB接続先を MySQL(MAMP)に設定し、ローカルで疎通確認 — 原因は `.env` の `DB_USERNAME=katsuooool` に対しMAMP側のMySQLユーザーが `katsuoool`(oが1つ少ないtypo)だったこと。`.env` の値に合わせて `katsuooool`@`localhost`/`127.0.0.1` ユーザーを作成し解消、`php artisan migrate` 成功済み
-- [ ] Xserverの実際の制限値(upload_max_filesize / post_max_size / max_execution_time、GD/Imagick/ZipArchive拡張の有無)を確認し、SPEC.mdの前提と齟齬がないか検証
+- [x] Xserverの実際の制限値(upload_max_filesize / post_max_size / max_execution_time、GD/Imagick/ZipArchive拡張の有無)を確認し、SPEC.mdの前提と齟齬がないか検証 — 2026-08-31に本番初回デプロイ時に確認。PHP 8.3.33(`/opt/php-8.3.33/`、SSH側は`.bash_profile`のPATHで切替)、Imagick/GDとも利用可能。ドキュメントルートはXserverの仕様でサブドメインごとに固定変更不可のため、`public/`へのシンボリックリンクで対応(詳細は下記デプロイ記録参照)
 
 ### 0.2 不要依存の整理
 
@@ -31,7 +31,7 @@
 - [x] `ToolEvent` モデル作成
 - [x] `ToolEventLogger` サービス作成(IPを日次ソルト付きSHA-256でハッシュ化して記録)
 - [x] 30日超過ログを削除するArtisanコマンド作成 + `routes/console.php` の Scheduler に登録
-- [ ] Xserver cron設定手順をドキュメント化(README or docs配下)
+- [x] Xserver cron設定手順をドキュメント化(README or docs配下) — 2026-08-31、下記デプロイ記録に集約。Xserverのcron機能は毎分実行を強く非推奨(負荷次第でアカウント制限の可能性)と警告するため、現状のタスクが時次/日次のみであることを踏まえ「毎時0分」実行を採用
 
 ### 0.5 共通ツール基盤(Service層)
 
@@ -828,6 +828,25 @@ Phase 28で積み残していたサブプロジェクトBとして、`Blog/Index
 - [x] 利用箇所がゼロになった`resources/js/components/AppFooter.vue`を削除
 - [x] `composer test`(Pint/PHPStan/Pest 420件/1921アサーション)・Vitest(183件)・`npm run lint:check`/`format:check`/`types:check`がグリーン
 - [x] Playwrightで実ブラウザ確認。`/contact`の幅が`max-w-3xl`に収まること、`/blog`一覧・`/blog/{slug}`詳細(戻りリンク・バッジ・日付)、`/legal/terms`・`/legal/tokushoho`の表示を確認
+
+## Phase 32 — Xserver本番初回デプロイ(katsuooool.katsucode.jp)
+
+2026-08-31、SSH+Gitでの初回本番デプロイを実施。Admin認証強化(2FA・パスワードリセット・設定画面)一式を含む`main`ブランチを公開。今後の再デプロイ・障害対応のための記録。
+
+- [x] SSH接続: サーバーパネルの「SSH設定」で発行した公開鍵と、ログイン用ユーザー名(`katsu1215`。サーバーID`sv7465`とは別物)を用いて接続。当初サーバーIDをユーザー名として使い`Permission denied`になった
+- [x] `~/.bash_profile`の1行目に不可解な`sh_profile`という文字列が残っており毎回エラー表示されていたため削除(実害はなかったが解消)
+- [x] リポジトリを`~/katsuooool`にclone(初回は`origin/main`へのpush漏れにより2コミット古い状態でcloneしてしまい、pushし直して再clone)
+- [x] PHPは`/opt/php-8.3.33/bin`を`.bash_profile`のPATHに追加して切替(サーバーのデフォルトは8.0系のため)
+- [x] `composer install --no-dev --optimize-autoloader`実行
+- [x] Node.jsが未導入のため、フロントエンドはローカルMacで`npm run build`し、`public/build`のみ`scp`でアップロード(共有サーバーのリソース制約回避)
+- [x] `.env`作成。`APP_DEBUG=false`・`PREMIUM_ENABLED=false`(Stripe審査完了まで非公開)・`QUEUE_CONNECTION=sync`(キュージョブ未使用のため)を確認
+- [x] `php artisan key:generate` / `migrate --force` / `storage:link` / `config:cache` / `route:cache` / `view:cache`
+- [x] **ドキュメントルートはXserverの仕様でサブドメインごとに固定されており、パネルから変更不可**(公式に非対応)。固定ディレクトリ(`~/katsucode.jp/public_html/katsuooool.katsucode.jp/`、旧WordPressの残骸`.htaccess`と自動生成`.user.ini`のみ)を削除し、`ln -s ~/katsuooool/public`へのシンボリックリンクに置き換えて対応。この方法は今後別サブドメインを追加する際も踏襲する
+- [x] Cron設定: Xserverパネルは毎分実行を強く非推奨(負荷次第でアカウント制限の可能性ありと警告)。現状のScheduler登録タスクが時次/日次のみのため、「毎時0分」実行を採用。コマンド欄が半角64文字制限のため`~/cron_schedule.sh`ラッパースクリプト経由で`sh ~/cron_schedule.sh`を登録
+- [x] `Password::uncompromised()`(HaveIBeenPwned API)の外部疎通確認 — 200 OK
+- [x] Admin初回作成(`php artisan admin:create`)・2FAセットアップ(Google Authenticator)・ログアウト→2FAチャレンジ再ログイン・パスワードリセットメール・`/admin/settings`でのパスワード/メール変更、すべて実機で動作確認済み
+- [ ] `/legal/tokushoho`の事業者情報プレースホルダーを実データへ差し替え(公開前に必須、対応保留中)
+- [ ] 画像圧縮ツール(`image-compress`)がJPEGで実質的に圧縮効果を得られていない件を調査。バグではなく`ImageCompressController`の「圧縮後 ≥ 元サイズなら元ファイルを返す」フォールバックが正しく機能した結果と判明(2026-08-31、本番でiPhone撮影の4032×3024 JPEGにて確認: Imagick quality80再エンコードで1,752,520→1,955,714バイトに増加し元ファイルへフォールバック)。ImageMagickの標準JPEGエンコードが、既に最適化済みのカメラ出力JPEGに対して非効率なことが原因と推測。GDドライバーでの挙動比較、`sampling-factor`/`interlace`等のエンコードオプション調整、mozjpeg利用可否の検討が今後の対応候補
 
 ## 今後の実装順序
 

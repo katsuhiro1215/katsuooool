@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import ApplicationLogo from '@/components/ApplicationLogo.vue';
 import Dropdown from '@/components/Dropdown.vue';
 import DropdownLink from '@/components/DropdownLink.vue';
+import ResponsiveNavLink from '@/components/ResponsiveNavLink.vue';
 
 defineProps<{
     user: { name: string } | null;
 }>();
+
+const showingMobileMenu = ref(false);
 </script>
 
 <template>
@@ -22,7 +26,8 @@ defineProps<{
                 >
             </Link>
 
-            <div class="flex items-center gap-4">
+            <!-- Desktop Navigation -->
+            <div class="hidden items-center gap-4 md:flex">
                 <Link
                     href="/premium"
                     class="group relative overflow-hidden rounded-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 px-4 py-1.5 text-sm font-semibold text-amber-950 shadow-sm transition hover:shadow-md hover:shadow-amber-300/50"
@@ -135,6 +140,109 @@ defineProps<{
                         </DropdownLink>
                     </template>
                 </Dropdown>
+            </div>
+
+            <!-- Hamburger -->
+            <button
+                type="button"
+                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none md:hidden"
+                :aria-expanded="showingMobileMenu"
+                aria-label="メニューを開く"
+                @click="showingMobileMenu = !showingMobileMenu"
+            >
+                <svg
+                    class="h-6 w-6"
+                    stroke="currentColor"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        :class="{
+                            hidden: showingMobileMenu,
+                            'inline-flex': !showingMobileMenu,
+                        }"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 6h16M4 12h16M4 18h16"
+                    />
+                    <path
+                        :class="{
+                            hidden: !showingMobileMenu,
+                            'inline-flex': showingMobileMenu,
+                        }"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div
+            :class="{ block: showingMobileMenu, hidden: !showingMobileMenu }"
+            class="border-t border-gray-200 md:hidden"
+        >
+            <div class="space-y-1 py-3">
+                <ResponsiveNavLink href="/premium"> Premium </ResponsiveNavLink>
+
+                <template v-if="user">
+                    <div
+                        class="border-t border-gray-200 pt-2 text-sm font-medium text-gray-800"
+                    >
+                        <div class="px-4 py-1">{{ user.name }}</div>
+                    </div>
+                    <ResponsiveNavLink :href="route('mypage.index')">
+                        マイページ
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink
+                        :href="route('logout')"
+                        method="post"
+                        as="button"
+                    >
+                        ログアウト
+                    </ResponsiveNavLink>
+                </template>
+                <template v-else>
+                    <ResponsiveNavLink :href="route('login')">
+                        ログイン
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink :href="route('register')">
+                        新規登録
+                    </ResponsiveNavLink>
+                </template>
+
+                <div class="border-t border-gray-200 pt-2">
+                    <a
+                        href="https://katsucode.jp/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="block w-full border-l-4 border-transparent px-4 py-2 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
+                    >
+                        かつコード
+                    </a>
+                    <a
+                        href="https://katsu-coach.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="block w-full border-l-4 border-transparent px-4 py-2 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
+                    >
+                        katsulog
+                    </a>
+                    <a
+                        href="https://smartsprouts.jp/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="block w-full border-l-4 border-transparent px-4 py-2 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
+                    >
+                        SmartSprouts
+                    </a>
+                    <ResponsiveNavLink href="/contact">
+                        お問い合わせ
+                    </ResponsiveNavLink>
+                </div>
             </div>
         </div>
     </header>

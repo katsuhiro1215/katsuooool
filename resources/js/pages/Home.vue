@@ -33,23 +33,23 @@ const filteredTools = computed(() =>
                 class="mt-4 w-full max-w-md rounded-md border border-gray-300 px-4 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
             />
 
-            <div class="-mx-6 mt-4 overflow-x-auto px-6">
-                <div class="flex gap-2">
-                    <button
-                        v-for="tab in CATEGORY_TABS"
-                        :key="tab.key"
-                        type="button"
-                        class="shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium transition"
-                        :class="
-                            activeCategory === tab.key
-                                ? 'border-gray-900 bg-gray-900 text-white'
-                                : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400'
-                        "
-                        @click="activeCategory = tab.key"
-                    >
-                        {{ tab.label }}
-                    </button>
-                </div>
+            <div
+                class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 md:flex md:flex-wrap"
+            >
+                <button
+                    v-for="tab in CATEGORY_TABS"
+                    :key="tab.key"
+                    type="button"
+                    class="rounded-full border px-4 py-1.5 text-center text-sm font-medium transition md:shrink-0"
+                    :class="
+                        activeCategory === tab.key
+                            ? 'border-gray-900 bg-gray-900 text-white'
+                            : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400'
+                    "
+                    @click="activeCategory = tab.key"
+                >
+                    {{ tab.label }}
+                </button>
             </div>
 
             <div
