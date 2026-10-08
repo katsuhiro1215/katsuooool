@@ -133,3 +133,15 @@ USER www-data
 EXPOSE 9000
 
 CMD ["php-fpm"]
+
+########################################
+# Stage 5: Web（内側の Caddy。public の配信と php-fpm への fastcgi）
+########################################
+# 本体 Caddy は katsuooool の public/ を読めないため、このコンテナで静的ファイル（public/build）を配信する。
+# app ステージと同じパスに public を置き、SCRIPT_FILENAME を一致させる。
+FROM caddy:2-alpine AS web
+
+WORKDIR /var/www/html
+
+COPY --from=app /var/www/html/public ./public
+COPY Caddyfile.prod /etc/caddy/Caddyfile

@@ -2,8 +2,9 @@
 #
 # 本体（projects/Spra）と同じ Lightsail インスタンスに、別の Compose プロジェクトとして載せる。
 # - app（php-fpm）と scheduler のみ。Redis / MySQL / horizon は持たない（DB は SQLite、キューは database）
-# - リバースプロキシは本体の Caddy を使うため、このファイルには Caddy を含めない
-# - 本体の Compose が作るネットワーク spra_prod に external で参加し、Caddy から app:9000 へ届くようにする
+# - 外向きのリバースプロキシ（HTTPS 終端）は本体の Caddy が担う。このファイルの web は内側の HTTP 専用 Caddy で、
+#   public/ の配信と php-fpm への fastcgi だけを行う（本体 Caddy は reverse_proxy katsuooool-web:80 するだけ）
+# - 本体の Compose が作るネットワーク spra_prod に external で参加し、本体 Caddy から web:80 へ届くようにする
 #
 # 起動:
 #   docker compose -f compose.prod.yaml up -d --build
@@ -35,10 +36,29 @@ services:
         mem_limit: 512m
         networks:
             default:
-            # 本体 Caddy からの接続用。Caddyfile では katsuooool-app:9000 と書く
+            # web からの fastcgi 接続用（同じ名前で解決できるよう spra_prod にも参加）
             spra_prod:
                 aliases:
                     - katsuooool-app
+
+    web:
+        build:
+            context: .
+            dockerfile: Dockerfile.prod
+            target: web
+            args:
+                VITE_APP_NAME: ${APP_NAME:-katsuooool}
+        image: katsuooool-web-prod
+        restart: always
+        mem_limit: 64m
+        depends_on:
+            - app
+        networks:
+            default:
+            # 本体 Caddy からの接続用。本体 Caddyfile では katsuooool-web:80 と書く
+            spra_prod:
+                aliases:
+                    - katsuooool-web
 
     scheduler:
         <<: *app
