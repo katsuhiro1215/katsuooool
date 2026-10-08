@@ -24,7 +24,7 @@
 
 ## インフラ制約(重要)
 
-- **移行先（Lightsail、2026-10-08 に M2 で構成作成・ローカル検証済み）**: 本体（`projects/Spra`）と同じインスタンスに別 Compose プロジェクトとして載せる。`Dockerfile.prod`・`compose.prod.yaml`・`.env.production.example`・`scripts/backup-db.sh` が正。サービスは `app`（php-fpm、`mem_limit: 512m`）・`web`（内側の HTTP 専用 Caddy。`public/` を配信し php-fpm へ fastcgi。`Caddyfile.prod`）・`scheduler`（`schedule:run` の60秒ループ）のみ。DB は SQLite（WAL、`storage/database/` を Docker ボリュームに置く）、セッション・キャッシュ・キューは `database`。ネットワークは本体の `spra_prod`（external）。本体 Caddy は `reverse_proxy katsuooool-web:80` で `web` に渡し、`web` が `katsuooool-app:9000` へ渡す（TLS は本体 Caddy で終端）。
+- **移行先（Lightsail、2026-10-08 に M2 で構成作成・ローカル検証済み）**: 本体（`projects/Spra`）と同じインスタンスに別 Compose プロジェクトとして載せる。`Dockerfile.prod`・`compose.prod.yaml`・`.env.production.example`・`scripts/backup-db.sh` が正。サービスは `app`（php-fpm、`mem_limit: 512m`）・`katsuooool-web`（内側の HTTP 専用 Caddy。`public/` を配信し php-fpm へ fastcgi。`Caddyfile.prod`）・`scheduler`（`schedule:run` の60秒ループ）のみ。DB は SQLite（WAL、`storage/database/` を Docker ボリュームに置く）、セッション・キャッシュ・キューは `database`。ネットワークは本体の `spra_prod`（external）。本体 Caddy は `reverse_proxy katsuooool-web:80` で `katsuooool-web` に渡し、それが `katsuooool-app:9000` へ渡す（TLS は本体 Caddy で終端）。
 - 画像処理は Imagick（AVIF 書き出しは `libheif-aom` が必須）。Caddy 経由なので `bootstrap/app.php` でプライベートアドレスからの `X-Forwarded-*` を信頼する。
 - 現行の本番 **Xserver 共有サーバー**（M7 で停止予定）では、`exec()` やシェルコマンド実行、常駐キューワーカーは使えず、非同期処理は cron の `schedule:run` ベース。画像圧縮は同期処理で、ファイル数・サイズの上限（10MB/枚・10枚まで）で安全性を担保している。コードはどちらの環境でも動くよう、GD フォールバックと同期処理の設計を維持する。
 
@@ -49,3 +49,8 @@
 
 - 大きな設計判断や仕様変更は SPEC.md に反映し、実装タスクの粒度は TASKS.md で管理する。
 - 新しいツールカテゴリやフェーズを追加する際は、既存の SPEC.md を上書きせず、対象範囲を明記した上でセクションを追加する。
+
+## 本体（Spra）と同居する際の注意（2026-10-08 の障害から）
+
+- **`spra_prod` に参加させるのは `katsuooool-web` だけ。** Compose はサービス名をネットワーク上の別名にするため、`app` のような汎用名のサービスを `spra_prod` に参加させると、本体 Caddy の `php_fastcgi app:9000` が katsuooool にも解決され、本体のページが katsuooool の画面になる。
+- `spra_prod` に参加するサービス名は `katsuooool-` 付きにし、本体が使う名前（`app`・`caddy`・`mysql`・`redis`・`horizon`・`scheduler`）と衝突させない。
