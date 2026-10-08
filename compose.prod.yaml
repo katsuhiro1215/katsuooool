@@ -1,0 +1,56 @@
+# katsuooool 本番用 Docker Compose 構成。
+#
+# 本体（projects/Spra）と同じ Lightsail インスタンスに、別の Compose プロジェクトとして載せる。
+# - app（php-fpm）と scheduler のみ。Redis / MySQL / horizon は持たない（DB は SQLite、キューは database）
+# - リバースプロキシは本体の Caddy を使うため、このファイルには Caddy を含めない
+# - 本体の Compose が作るネットワーク spra_prod に external で参加し、Caddy から app:9000 へ届くようにする
+#
+# 起動:
+#   docker compose -f compose.prod.yaml up -d --build
+# 初回はマイグレーションとキャッシュ最適化を別途実行する:
+#   docker compose -f compose.prod.yaml exec app php artisan migrate --force
+#   docker compose -f compose.prod.yaml exec app php artisan optimize
+
+name: katsuooool
+
+x-app: &app
+    build:
+        context: .
+        dockerfile: Dockerfile.prod
+        target: app
+        args:
+            VITE_APP_NAME: ${APP_NAME:-katsuooool}
+    image: katsuooool-app-prod
+    restart: always
+    env_file:
+        - .env.production
+    volumes:
+        # SQLite（storage/database）・アップロード一時ファイル・ログをまとめて永続化する
+        - app-storage:/var/www/html/storage
+
+services:
+    app:
+        <<: *app
+        # 画像処理の暴走が本体（MySQL など）を巻き込まないようにする
+        mem_limit: 512m
+        networks:
+            default:
+            # 本体 Caddy からの接続用。Caddyfile では katsuooool-app:9000 と書く
+            spra_prod:
+                aliases:
+                    - katsuooool-app
+
+    scheduler:
+        <<: *app
+        mem_limit: 256m
+        # 本番イメージ（Alpine）には cron がないため、schedule:run を毎分実行するループで代替する（本体と同方式）
+        entrypoint: ['sh', '-c']
+        command:
+            - 'while true; do php artisan schedule:run --no-interaction; sleep 60; done'
+
+networks:
+    spra_prod:
+        external: true
+
+volumes:
+    app-storage:

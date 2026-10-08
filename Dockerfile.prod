@@ -1,0 +1,135 @@
+# syntax=docker/dockerfile:1
+#
+# katsuooool 本番用ビルド。本体（projects/Spra）と同じく、コードをイメージに焼き込み、
+# php-fpm（9000番）を本体の Caddy から fastcgi で呼ぶ。DB は SQLite、画像処理は Imagick を使う。
+
+########################################
+# Stage 1: PHP 実行環境（拡張入り）。vendor / frontend / app の共通ベース
+########################################
+FROM php:8.4-fpm-alpine AS php-base
+
+# imagemagick-* は Imagick が扱う形式のデリゲート。AVIF は imagemagick-heic（読み込み）に加え、
+# 書き出し用の AV1 エンコーダ libheif-aom が必要（無いと AVIF 出力が失敗する）。
+RUN apk add --no-cache \
+        icu-libs \
+        libzip \
+        libpng \
+        libjpeg-turbo \
+        libwebp \
+        freetype \
+        oniguruma \
+        sqlite \
+        sqlite-libs \
+        imagemagick \
+        imagemagick-heic \
+        libheif-aom \
+        imagemagick-jpeg \
+        imagemagick-webp \
+        imagemagick-jxl \
+    && apk add --no-cache --virtual .build-deps \
+        icu-dev \
+        libzip-dev \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        libwebp-dev \
+        freetype-dev \
+        oniguruma-dev \
+        sqlite-dev \
+        imagemagick-dev \
+        $PHPIZE_DEPS \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j"$(nproc)" \
+        pdo_sqlite \
+        mbstring \
+        bcmath \
+        exif \
+        gd \
+        intl \
+        zip \
+        opcache \
+    && pecl install imagick \
+    && docker-php-ext-enable imagick \
+    && apk del .build-deps \
+    && rm -rf /var/cache/apk/* /tmp/pear
+
+########################################
+# Stage 2: PHP 依存関係のインストール
+########################################
+FROM composer:2.7 AS vendor
+
+WORKDIR /app
+
+COPY composer.json composer.lock ./
+# 依存解決のみを行う段階なので拡張チェックは無視する（実拡張は php-base 側で入れる）
+RUN composer install \
+    --no-dev \
+    --no-scripts \
+    --no-autoloader \
+    --prefer-dist \
+    --no-interaction \
+    --ignore-platform-reqs
+
+COPY . .
+
+RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
+
+########################################
+# Stage 3: フロントエンドビルド（Vite）
+########################################
+# Wayfinder の生成物（resources/js/{actions,routes}）は gitignore 対象で、vue-tsc が vite より先に走るため、
+# ビルド前に `php artisan wayfinder:generate` を実行する。Node だけでなく PHP と vendor が必要。
+FROM php-base AS frontend
+
+RUN apk add --no-cache nodejs npm
+
+WORKDIR /app
+
+ARG VITE_APP_NAME=Laravel
+ENV VITE_APP_NAME=$VITE_APP_NAME
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+COPY --from=vendor /app/vendor ./vendor
+# artisan の起動に必要な最小限の環境変数（ビルド専用。イメージには残らない）
+ENV APP_KEY=base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \
+    APP_ENV=production \
+    DB_CONNECTION=sqlite \
+    DB_DATABASE=:memory:
+RUN php artisan wayfinder:generate --with-form \
+    && npm run build
+
+########################################
+# Stage 4: 実行用イメージ
+########################################
+FROM php-base AS app
+
+RUN { \
+        echo 'opcache.enable=1'; \
+        echo 'opcache.validate_timestamps=0'; \
+        echo 'opcache.memory_consumption=64'; \
+    } > /usr/local/etc/php/conf.d/opcache-prod.ini \
+    && { \
+        echo 'memory_limit=256M'; \
+        echo 'upload_max_filesize=20M'; \
+        echo 'post_max_size=110M'; \
+        echo 'max_file_uploads=20'; \
+    } > /usr/local/etc/php/conf.d/app.ini
+
+WORKDIR /var/www/html
+
+COPY . .
+COPY --from=vendor /app/vendor ./vendor
+COPY --from=frontend /app/public/build ./public/build
+
+# SQLite の置き場。storage ボリューム（compose.prod.yaml）の中に作る
+RUN mkdir -p storage/database storage/framework/cache storage/framework/sessions storage/framework/views storage/logs \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
+USER www-data
+
+EXPOSE 9000
+
+CMD ["php-fpm"]

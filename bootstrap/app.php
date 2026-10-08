@@ -18,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // 本番は Caddy（同一 Docker ネットワーク＝プライベート IP）経由。プライベートアドレスからの
+        // X-Forwarded-* だけを信頼する。設定しないと IP ハッシュ・レート制限のキーが Caddy の内部 IP になる。
+        // 直接接続（開発・Xserver）はクライアント IP がパブリックなので従来どおり影響しない。
+        $middleware->trustProxies(at: ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16']);
+
         $middleware->alias([
             'premium' => EnsurePremium::class,
             'admin.2fa-confirmed' => EnsureAdminTwoFactorConfirmed::class,
