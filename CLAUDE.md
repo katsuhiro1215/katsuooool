@@ -17,16 +17,16 @@
 
 - **バックエンド**: PHP 8.3 / Laravel 13
 - **フロントエンド**: Vue 3 / Inertia.js v2 / TypeScript
-- **DB**: MySQL(ローカルは MAMP、本番は Xserver)
+- **DB**: ローカルは MySQL(MAMP)または SQLite。移行後の本番は **SQLite（WAL）**。現行の Xserver 本番は MySQL（M4 のデータ移行まで）
 - **認証**: Laravel Fortify(User向け、既存の2FA・パスキー機能を継続利用)+ `admins` テーブルによる Admin 専用 guard
 - **決済**: Stripe(Premium機能実装時に導入、現フェーズでは未着手)
-- **画像処理**: Intervention Image(GD/Imagickをランタイム検出して使用。共有サーバーのため CLI バイナリ(cwebp/pngquant等)には依存しない)
+- **画像処理**: Intervention Image(GD/Imagickをランタイム検出して使用。新本番コンテナは Imagick 入り。CLI バイナリ(cwebp/pngquant等)には依存しない方針は維持)
 
 ## インフラ制約(重要)
 
-- 本番は **Xserver 共有サーバー**。`exec()` やシェルコマンド実行、常駐キューワーカー(`queue:work --daemon`)は使用不可という前提で設計する。
-- 非同期処理が必要な場合も、常駐デーモンではなく Xserver の cron による `schedule:run` ベースの仕組みを使う。
-- 画像圧縮などの重い処理は同期処理(リクエスト内で順次処理)とし、ファイル数・サイズの上限で安全性を担保する(現行仕様: 10MB/枚・10枚まで)。
+- **移行先（Lightsail、2026-10-08 に M2 で構成作成・ローカル検証済み）**: 本体（`projects/Spra`）と同じインスタンスに別 Compose プロジェクトとして載せる。`Dockerfile.prod`・`compose.prod.yaml`・`.env.production.example`・`scripts/backup-db.sh` が正。サービスは `app`（php-fpm、`mem_limit: 512m`）と `scheduler`（`schedule:run` の60秒ループ）のみ。DB は SQLite（WAL、`storage/database/` を Docker ボリュームに置く）、セッション・キャッシュ・キューは `database`。ネットワークは本体の `spra_prod`（external）、本体 Caddy からは `katsuooool-app:9000` で届く。
+- 画像処理は Imagick（AVIF 書き出しは `libheif-aom` が必須）。Caddy 経由なので `bootstrap/app.php` でプライベートアドレスからの `X-Forwarded-*` を信頼する。
+- 現行の本番 **Xserver 共有サーバー**（M7 で停止予定）では、`exec()` やシェルコマンド実行、常駐キューワーカーは使えず、非同期処理は cron の `schedule:run` ベース。画像圧縮は同期処理で、ファイル数・サイズの上限（10MB/枚・10枚まで）で安全性を担保している。コードはどちらの環境でも動くよう、GD フォールバックと同期処理の設計を維持する。
 
 ## UI方針
 
