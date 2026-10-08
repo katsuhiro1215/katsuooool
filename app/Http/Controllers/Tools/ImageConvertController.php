@@ -161,6 +161,7 @@ class ImageConvertController extends Controller
 
             $results[] = [
                 'original_name' => $uploadedToolFile->originalName,
+                'download_name' => $downloadName,
                 'status' => 'success',
                 'input_bytes' => $uploadedToolFile->size,
                 'output_bytes' => $outputBytes,

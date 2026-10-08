@@ -58,6 +58,8 @@ test('posting valid images returns converted download links in the requested for
     $response->assertJsonCount(2, 'results');
     $response->assertJsonPath('results.0.status', 'success');
     $response->assertJsonPath('results.1.status', 'success');
+    $response->assertJsonPath('results.0.download_name', 'photo-a.webp');
+    $response->assertJsonPath('results.1.download_name', 'photo-b.webp');
     $response->assertJsonPath('batch_download_url', fn ($url) => is_string($url) && str_contains($url, '/tool-download/'));
 
     expect(ToolEvent::where('tool_slug', 'image-convert')->where('event_type', 'process')->exists())->toBeTrue();

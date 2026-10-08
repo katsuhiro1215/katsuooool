@@ -12,6 +12,7 @@ import { resolveErrorMessage } from '@/lib/toolErrorMessage';
 
 interface SuccessResult {
     original_name: string;
+    download_name: string;
     status: 'success';
     input_bytes: number;
     output_bytes: number;
@@ -282,9 +283,12 @@ function isSuccess(result: ConvertResult): result is SuccessResult {
                         >
                             <template v-if="isSuccess(result)">
                                 <div class="flex items-center justify-between">
-                                    <span class="truncate text-gray-800">{{
-                                        result.original_name
-                                    }}</span>
+                                    <span class="truncate text-gray-800"
+                                        >{{ result.original_name }} →
+                                        <span class="font-medium">{{
+                                            result.download_name
+                                        }}</span></span
+                                    >
                                     <a
                                         :href="result.download_url"
                                         class="text-gray-900 underline hover:text-gray-600"
