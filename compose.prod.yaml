@@ -34,14 +34,16 @@ services:
         <<: *app
         # 画像処理の暴走が本体（MySQL など）を巻き込まないようにする
         mem_limit: 512m
+        # spra_prod には参加させない。Compose はサービス名（app）をネットワークの別名にするため、
+        # 参加すると本体 Caddy の `php_fastcgi app:9000` が katsuooool の app にも解決されてしまう（2026-10-08 障害）
+        # web からは katsuooool-app:9000 で呼ぶ（web は spra_prod にも居るため、素の `app` だと本体と紛れる）
         networks:
             default:
-            # web からの fastcgi 接続用（同じ名前で解決できるよう spra_prod にも参加）
-            spra_prod:
                 aliases:
                     - katsuooool-app
 
-    web:
+    # サービス名も katsuooool- 付きにする（spra_prod 上で本体の名前と衝突させないため）
+    katsuooool-web:
         build:
             context: .
             dockerfile: Dockerfile.prod
@@ -57,8 +59,6 @@ services:
             default:
             # 本体 Caddy からの接続用。本体 Caddyfile では katsuooool-web:80 と書く
             spra_prod:
-                aliases:
-                    - katsuooool-web
 
     scheduler:
         <<: *app
