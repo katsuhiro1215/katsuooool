@@ -1,0 +1,33 @@
+# katsuooool 用の内側 Caddy（web コンテナ）。TLS は本体 Caddy が終端するので、ここは HTTP の :80 のみ。
+# 本体 Caddy（reverse_proxy katsuooool-web:80）→ この Caddy → php-fpm（katsuooool-app:9000）の順に渡る。
+{
+	auto_https off
+	servers {
+		# 本体 Caddy（プライベートアドレス）の X-Forwarded-* を上書きせずそのまま php-fpm に渡す。
+		# 無いと X-Forwarded-For が本体 Caddy の IP に置き換わり、利用者の IP が取れない。
+		trusted_proxies static private_ranges
+	}
+}
+
+:80 {
+	# app コンテナと同じパスにしておく（php_fastcgi の SCRIPT_FILENAME がそのまま解決される）
+	root * /var/www/html/public
+
+	# 画像アップロード（現行 10MB x 10枚）に余裕を持たせた上限。PHP 側の post_max_size=110M と揃える
+	request_body {
+		max_size 110MB
+	}
+
+	# 画像変換（AVIF など）の時間切れを防ぐ
+	php_fastcgi katsuooool-app:9000 {
+		read_timeout 120s
+	}
+
+	file_server
+
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+}
