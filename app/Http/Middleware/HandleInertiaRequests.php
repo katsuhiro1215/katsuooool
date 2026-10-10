@@ -34,6 +34,15 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'toolNav' => fn () => collect(config('tools'))
+                ->map(fn (array $tool) => [
+                    'slug' => $tool['slug'],
+                    'name' => $tool['name'],
+                    'category' => $tool['category'],
+                    'href' => $tool['href'],
+                ])
+                ->values()
+                ->all(),
         ];
     }
 }

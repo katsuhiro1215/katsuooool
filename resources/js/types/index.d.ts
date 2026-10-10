@@ -11,4 +11,10 @@ export type PageProps<
     auth: {
         user: User | null;
     };
+    toolNav: Array<{
+        slug: string;
+        name: string;
+        category: string;
+        href: string;
+    }>;
 };
