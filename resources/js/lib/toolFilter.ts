@@ -23,6 +23,45 @@ export const CATEGORY_TABS: CategoryTab[] = [
     { key: 'ui-pattern', label: 'UI Pattern' },
 ];
 
+export type ToolNavItem = Pick<Tool, 'slug' | 'name' | 'category' | 'href'>;
+
+export function normalizeCategory(key: string | null | undefined): string {
+    return key && CATEGORY_TABS.some((tab) => tab.key === key) ? key : 'all';
+}
+
+export function countByCategory(tools: ToolNavItem[]): Record<string, number> {
+    const counts: Record<string, number> = { all: tools.length };
+
+    for (const tool of tools) {
+        counts[tool.category] = (counts[tool.category] ?? 0) + 1;
+    }
+
+    return counts;
+}
+
+/**
+ * 現在の URL から、サイドバーで強調するカテゴリを求める。
+ * トップは ?category=、ツール画面はそのツールのカテゴリ。どちらでもなければ null。
+ */
+export function resolveActiveCategory(
+    url: string,
+    tools: ToolNavItem[],
+): string | null {
+    const [path, search = ''] = url.split('?');
+
+    if (path === '/') {
+        return normalizeCategory(new URLSearchParams(search).get('category'));
+    }
+
+    return tools.find((tool) => tool.href === path)?.category ?? null;
+}
+
+export function extractQuery(url: string): string {
+    const search = url.split('?')[1] ?? '';
+
+    return new URLSearchParams(search).get('q') ?? '';
+}
+
 export function filterTools(
     tools: Tool[],
     activeCategory: string,
