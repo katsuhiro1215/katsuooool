@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -34,15 +35,15 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
-            'toolNav' => fn () => collect(config('tools'))
-                ->map(fn (array $tool) => [
+            'toolNav' => fn () => array_map(
+                fn (array $tool) => [
                     'slug' => $tool['slug'],
                     'name' => $tool['name'],
                     'category' => $tool['category'],
                     'href' => $tool['href'],
-                ])
-                ->values()
-                ->all(),
+                ],
+                array_values(Config::array('tools')),
+            ),
         ];
     }
 }
