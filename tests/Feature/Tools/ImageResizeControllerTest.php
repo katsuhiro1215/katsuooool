@@ -165,9 +165,9 @@ test('duplicate download names are de-duplicated so the zip does not lose files'
     expect($results[0]['download_url'])->not->toBe($results[1]['download_url']);
 });
 
-test('a free user cannot upload more than 3 files at once', function () {
+test('a free user cannot upload more than 10 files at once', function () {
     $user = User::factory()->create();
-    $files = collect(range(1, 4))
+    $files = collect(range(1, 11))
         ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
         ->all();
 
@@ -177,7 +177,7 @@ test('a free user cannot upload more than 3 files at once', function () {
     $response->assertStatus(422);
 });
 
-test('a premium user can upload up to 10 files at once', function () {
+test('a premium user can upload up to 20 files at once', function () {
     $user = User::factory()->create();
     $user->subscriptions()->create([
         'type' => 'default',

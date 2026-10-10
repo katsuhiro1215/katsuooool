@@ -7,6 +7,7 @@ use App\Services\Tools\ImageCropService;
 use App\Services\Tools\ToolDownloadService;
 use App\Services\Tools\ToolEventLogger;
 use App\Services\Tools\ToolUploadService;
+use App\Support\ImageToolLimits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -17,11 +18,7 @@ use Throwable;
 
 class ImageCropController extends Controller
 {
-    private const MAX_FILE_BYTES = 10 * 1024 * 1024;
-
     private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-
-    private const MAX_PIXELS = 25_000_000;
 
     public function show(): Response
     {
@@ -51,7 +48,7 @@ class ImageCropController extends Controller
         $uploadResult = $uploadService->store(
             uploadedFiles: [$request->file('file')],
             allowedMimeTypes: self::ALLOWED_MIME_TYPES,
-            maxFileBytes: self::MAX_FILE_BYTES,
+            maxFileBytes: ImageToolLimits::maxFileBytes(),
             maxFileCount: 1,
         );
 
@@ -95,7 +92,7 @@ class ImageCropController extends Controller
             ]);
         }
 
-        if ($dimensions[0] * $dimensions[1] > self::MAX_PIXELS) {
+        if (ImageToolLimits::maxPixels() < $dimensions[0] * $dimensions[1]) {
             $eventLogger->log(
                 toolSlug: 'image-crop',
                 eventType: 'failed',

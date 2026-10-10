@@ -23,14 +23,14 @@ test('the image-convert page renders', function () {
     $response->assertInertia(fn ($page) => $page->component('ImageConvert'));
 });
 
-test('a free (unauthenticated) user receives maxFiles of 3', function () {
+test('a free (unauthenticated) user receives maxFiles of 10', function () {
     $response = $this->get(route('image-convert.show'));
 
     $response->assertSuccessful();
-    $response->assertInertia(fn ($page) => $page->component('ImageConvert')->where('maxFiles', 3));
+    $response->assertInertia(fn ($page) => $page->component('ImageConvert')->where('maxFiles', 10));
 });
 
-test('a premium user receives maxFiles of 10', function () {
+test('a premium user receives maxFiles of 20', function () {
     $user = User::factory()->create();
     $user->subscriptions()->create([
         'type' => 'default',
@@ -43,7 +43,7 @@ test('a premium user receives maxFiles of 10', function () {
     $response = $this->actingAs($user)->get(route('image-convert.show'));
 
     $response->assertSuccessful();
-    $response->assertInertia(fn ($page) => $page->component('ImageConvert')->where('maxFiles', 10));
+    $response->assertInertia(fn ($page) => $page->component('ImageConvert')->where('maxFiles', 20));
 });
 
 test('posting valid images returns converted download links in the requested format', function () {
@@ -161,9 +161,9 @@ test('duplicate download names are de-duplicated so the zip does not lose files'
     expect($results[0]['download_url'])->not->toBe($results[1]['download_url']);
 });
 
-test('a free user cannot upload more than 3 files at once', function () {
+test('a free user cannot upload more than 10 files at once', function () {
     $user = User::factory()->create();
-    $files = collect(range(1, 4))
+    $files = collect(range(1, 11))
         ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
         ->all();
 
@@ -173,7 +173,7 @@ test('a free user cannot upload more than 3 files at once', function () {
     $response->assertStatus(422);
 });
 
-test('a premium user can upload up to 10 files at once', function () {
+test('a premium user can upload up to 20 files at once', function () {
     $user = User::factory()->create();
     $user->subscriptions()->create([
         'type' => 'default',
@@ -191,4 +191,22 @@ test('a premium user can upload up to 10 files at once', function () {
 
     $response->assertSuccessful();
     $response->assertJsonCount(4, 'results');
+});
+
+test('a premium user posting 21 files is rejected with a validation error', function () {
+    $user = User::factory()->create();
+    $user->subscriptions()->create([
+        'type' => 'default',
+        'stripe_id' => 'sub_test_convert_21',
+        'stripe_status' => 'active',
+        'stripe_price' => 'price_test_monthly',
+        'quantity' => 1,
+    ]);
+    $files = collect(range(1, 21))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 50, 50))
+        ->all();
+
+    $this->actingAs($user);
+
+    postImageConvert($files, 'webp')->assertStatus(422);
 });

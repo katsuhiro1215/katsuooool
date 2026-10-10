@@ -9,6 +9,7 @@ use App\Services\Tools\OgpImageService;
 use App\Services\Tools\ToolDownloadService;
 use App\Services\Tools\ToolEventLogger;
 use App\Services\Tools\WebsiteStarterService;
+use App\Support\ImageToolLimits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -21,10 +22,6 @@ use Throwable;
 
 class WebsiteStarterController extends Controller
 {
-    private const MAX_FILE_BYTES = 10 * 1024 * 1024;
-
-    private const MAX_PIXELS = 25_000_000;
-
     public function show(): Response
     {
         return Inertia::render('WebsiteStarter', [
@@ -56,7 +53,7 @@ class WebsiteStarterController extends Controller
                 'required',
                 'file',
                 'mimetypes:image/jpeg,image/png,image/webp',
-                'max:'.(self::MAX_FILE_BYTES / 1024),
+                'max:'.(ImageToolLimits::maxFileBytes() / 1024),
             ],
             'meta_description' => ['required', 'string', 'max:500'],
         ]);
@@ -102,7 +99,7 @@ class WebsiteStarterController extends Controller
                 throw new RuntimeException('Failed to read image dimensions.');
             }
 
-            if ($dimensions[0] * $dimensions[1] > self::MAX_PIXELS) {
+            if (ImageToolLimits::maxPixels() < $dimensions[0] * $dimensions[1]) {
                 $eventLogger->log(
                     toolSlug: 'website-starter',
                     eventType: 'failed',

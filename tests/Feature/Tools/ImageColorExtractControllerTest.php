@@ -90,9 +90,9 @@ test('posting more than 10 files is rejected with a validation error', function 
     $response->assertStatus(422);
 });
 
-test('a free user cannot upload more than 3 files at once', function () {
+test('a free user cannot upload more than 10 files at once', function () {
     $user = User::factory()->create();
-    $files = collect(range(1, 4))
+    $files = collect(range(1, 11))
         ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
         ->all();
 
@@ -102,7 +102,7 @@ test('a free user cannot upload more than 3 files at once', function () {
     $response->assertStatus(422);
 });
 
-test('a premium user can upload up to 10 files at once', function () {
+test('a premium user can upload up to 20 files at once', function () {
     $user = User::factory()->create();
     $user->subscriptions()->create([
         'type' => 'default',
