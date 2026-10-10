@@ -17,7 +17,7 @@
 
 - **バックエンド**: PHP 8.3 / Laravel 13
 - **フロントエンド**: Vue 3 / Inertia.js v2 / TypeScript
-- **DB**: ローカルは MySQL(MAMP)または SQLite。移行後の本番は **SQLite（WAL）**。現行の Xserver 本番は MySQL（M4 のデータ移行まで）
+- **DB**: ローカルは MySQL(MAMP)または SQLite。移行後の本番は **SQLite（WAL）**。本番は 2026-10-10 の M4 で Xserver（MySQL）から SQLite へ移行済み（Xserver は M7 の停止までロールバック用に保持）
 - **認証**: Laravel Fortify(User向け、既存の2FA・パスキー機能を継続利用)+ `admins` テーブルによる Admin 専用 guard
 - **決済**: Stripe(Premium機能実装時に導入、現フェーズでは未着手)
 - **画像処理**: Intervention Image(GD/Imagickをランタイム検出して使用。新本番コンテナは Imagick 入り。CLI バイナリ(cwebp/pngquant等)には依存しない方針は維持)
@@ -26,7 +26,7 @@
 
 - **移行先（Lightsail、2026-10-08 に M2 で構成作成・ローカル検証済み）**: 本体（`projects/Spra`）と同じインスタンスに別 Compose プロジェクトとして載せる。`Dockerfile.prod`・`compose.prod.yaml`・`.env.production.example`・`scripts/backup-db.sh` が正。サービスは `app`（php-fpm、`mem_limit: 512m`）・`katsuooool-web`（内側の HTTP 専用 Caddy。`public/` を配信し php-fpm へ fastcgi。`Caddyfile.prod`）・`scheduler`（`schedule:run` の60秒ループ）のみ。DB は SQLite（WAL、`storage/database/` を Docker ボリュームに置く）、セッション・キャッシュ・キューは `database`。ネットワークは本体の `spra_prod`（external）。本体 Caddy は `reverse_proxy katsuooool-web:80` で `katsuooool-web` に渡し、それが `katsuooool-app:9000` へ渡す（TLS は本体 Caddy で終端）。
 - 画像処理は Imagick（AVIF 書き出しは `libheif-aom` が必須）。Caddy 経由なので `bootstrap/app.php` でプライベートアドレスからの `X-Forwarded-*` を信頼する。
-- 現行の本番 **Xserver 共有サーバー**（M7 で停止予定）では、`exec()` やシェルコマンド実行、常駐キューワーカーは使えず、非同期処理は cron の `schedule:run` ベース。画像圧縮は同期処理で、ファイル数・サイズの上限（10MB/枚・10枚まで）で安全性を担保している。コードはどちらの環境でも動くよう、GD フォールバックと同期処理の設計を維持する。
+- 旧本番の **Xserver 共有サーバー**（2026-10-10 に `katsuooool.katsucode.jp` から 301 で新環境へ転送。M7 で停止予定）では、`exec()` やシェルコマンド実行、常駐キューワーカーは使えず、非同期処理は cron の `schedule:run` ベース。画像圧縮は同期処理で、ファイル数・サイズの上限（10MB/枚・10枚まで）で安全性を担保している。コードはどちらの環境でも動くよう、GD フォールバックと同期処理の設計を維持する。
 
 ## UI方針
 
