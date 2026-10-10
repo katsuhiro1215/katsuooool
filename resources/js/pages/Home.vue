@@ -11,6 +11,7 @@ import {
     extractQuery,
     filterTools,
     normalizeCategory,
+    parsePageUrl,
 } from '@/lib/toolFilter';
 import type { Tool } from '@/lib/toolFilter';
 
@@ -19,9 +20,7 @@ const props = defineProps<{ tools: Tool[] }>();
 const page = usePage();
 
 const activeCategory = computed(() =>
-    normalizeCategory(
-        new URLSearchParams(page.url.split('?')[1] ?? '').get('category'),
-    ),
+    normalizeCategory(parsePageUrl(page.url).params.get('category')),
 );
 const query = computed(() => extractQuery(page.url));
 
@@ -40,35 +39,37 @@ const filteredTools = computed(() =>
     <Head title="Web制作ツール集 - katsuooool" />
 
     <PublicLayout>
-        <h1 class="text-2xl font-bold text-gray-900">
-            {{ heading }}
-            <span class="ml-2 text-sm font-normal text-gray-500"
-                >{{ filteredTools.length }}件</span
+        <div class="px-6 py-6 lg:pl-8">
+            <h1 class="text-2xl font-bold text-gray-900">
+                {{ heading }}
+                <span class="ml-2 text-sm font-normal text-gray-500"
+                    >{{ filteredTools.length }}件</span
+                >
+            </h1>
+            <p v-if="query !== ''" class="mt-1 text-sm text-gray-500">
+                「{{ query }}」の検索結果
+            </p>
+
+            <div
+                v-if="filteredTools.length === 0"
+                class="mt-10 text-sm text-gray-500"
             >
-        </h1>
-        <p v-if="query !== ''" class="mt-1 text-sm text-gray-500">
-            「{{ query }}」の検索結果
-        </p>
+                該当するツールが見つかりませんでした。
+            </div>
 
-        <div
-            v-if="filteredTools.length === 0"
-            class="mt-10 text-sm text-gray-500"
-        >
-            該当するツールが見つかりませんでした。
+            <div
+                v-else
+                class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+            >
+                <ToolCard
+                    v-for="tool in filteredTools"
+                    :key="tool.slug"
+                    :tool="tool"
+                />
+            </div>
+
+            <PremiumBanner />
+            <WebsiteStarterBanner />
         </div>
-
-        <div
-            v-else
-            class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
-        >
-            <ToolCard
-                v-for="tool in filteredTools"
-                :key="tool.slug"
-                :tool="tool"
-            />
-        </div>
-
-        <PremiumBanner />
-        <WebsiteStarterBanner />
     </PublicLayout>
 </template>

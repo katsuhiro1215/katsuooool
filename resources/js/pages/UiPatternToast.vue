@@ -230,7 +230,7 @@ watch([variant, message, duration], () => {
                         気に入ったものをそのままコピーして使えます。
                     </p>
                     <div
-                        class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                        class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3"
                     >
                         <PatternCard
                             v-for="pattern in props.patterns"

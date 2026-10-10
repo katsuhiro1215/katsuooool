@@ -145,3 +145,30 @@ describe('extractQuery', () => {
         expect(extractQuery('/')).toBe('');
     });
 });
+
+describe('URL のフラグメント・末尾スラッシュ・空白', () => {
+    test('ignores a #fragment when resolving the category query', () => {
+        expect(resolveActiveCategory('/?category=image#top', tools)).toBe(
+            'image',
+        );
+        expect(resolveActiveCategory('/#foo', tools)).toBe('all');
+    });
+
+    test('ignores a #fragment when matching a tool path', () => {
+        expect(resolveActiveCategory('/image-compress#usage', tools)).toBe(
+            'image',
+        );
+    });
+
+    test('ignores a trailing slash when matching a tool path', () => {
+        expect(resolveActiveCategory('/image-compress/', tools)).toBe('image');
+    });
+
+    test('ignores a #fragment in the search query', () => {
+        expect(extractQuery('/?q=%E8%89%B2#x')).toBe('色');
+    });
+
+    test('treats a whitespace-only query as empty', () => {
+        expect(extractQuery('/?q=%20%20')).toBe('');
+    });
+});

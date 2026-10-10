@@ -40,6 +40,23 @@ export function countByCategory(tools: ToolNavItem[]): Record<string, number> {
 }
 
 /**
+ * Inertia の page.url を、パスとクエリに分解する。
+ * #フラグメント（Inertia が戻る操作などで付ける）と、パス末尾のスラッシュは取り除く。
+ */
+export function parsePageUrl(url: string): {
+    path: string;
+    params: URLSearchParams;
+} {
+    const parsed = new URL(url, 'http://localhost');
+    const path =
+        parsed.pathname.length > 1
+            ? parsed.pathname.replace(/\/+$/, '')
+            : parsed.pathname;
+
+    return { path, params: parsed.searchParams };
+}
+
+/**
  * 現在の URL から、サイドバーで強調するカテゴリを求める。
  * トップは ?category=、ツール画面はそのツールのカテゴリ。どちらでもなければ null。
  */
@@ -47,19 +64,17 @@ export function resolveActiveCategory(
     url: string,
     tools: ToolNavItem[],
 ): string | null {
-    const [path, search = ''] = url.split('?');
+    const { path, params } = parsePageUrl(url);
 
     if (path === '/') {
-        return normalizeCategory(new URLSearchParams(search).get('category'));
+        return normalizeCategory(params.get('category'));
     }
 
     return tools.find((tool) => tool.href === path)?.category ?? null;
 }
 
 export function extractQuery(url: string): string {
-    const search = url.split('?')[1] ?? '';
-
-    return new URLSearchParams(search).get('q') ?? '';
+    return (parsePageUrl(url).params.get('q') ?? '').trim();
 }
 
 export function filterTools(

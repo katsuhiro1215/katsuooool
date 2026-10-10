@@ -21,10 +21,10 @@ const showingSidebar = ref(false);
     <div class="min-h-screen bg-gray-50">
         <PublicHeader :user="user" />
 
-        <div class="mx-auto max-w-7xl px-6 py-6 lg:flex lg:gap-8">
+        <div class="mx-auto max-w-7xl lg:flex">
             <button
                 type="button"
-                class="mb-4 inline-flex w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 lg:hidden"
+                class="mx-6 mb-4 mt-6 inline-flex w-[calc(100%-3rem)] items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 lg:hidden"
                 :aria-expanded="showingSidebar"
                 @click="showingSidebar = !showingSidebar"
             >
@@ -34,7 +34,7 @@ const showingSidebar = ref(false);
 
             <div
                 :class="showingSidebar ? 'block' : 'hidden'"
-                class="mb-6 lg:mb-0 lg:block"
+                class="px-6 pb-6 lg:block lg:pr-4 lg:pt-6"
             >
                 <CategorySidebar
                     :tools="toolNav"
