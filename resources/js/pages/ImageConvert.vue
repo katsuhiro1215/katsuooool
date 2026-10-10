@@ -163,7 +163,7 @@ function isSuccess(result: ConvertResult): result is SuccessResult {
         <div class="min-h-screen w-full">
             <PageHeader
                 title="画像形式変換"
-                :description="`JPEG・PNG・WebP・AVIF画像を、指定した形式に一括変換します。1ファイル10MBまで、最大${MAX_FILES}枚まで一度に処理できます。`"
+                :description="`JPEG・PNG・WebP・AVIF・HEIC（iPhoneの写真）画像を、指定した形式に一括変換します。1ファイル10MBまで、最大${MAX_FILES}枚まで一度に処理できます。`"
             />
 
             <PageMain>
@@ -222,7 +222,7 @@ function isSuccess(result: ConvertResult): result is SuccessResult {
                         <input
                             type="file"
                             class="hidden"
-                            accept="image/jpeg,image/png,image/webp,image/avif"
+                            accept="image/jpeg,image/png,image/webp,image/avif,image/heic,image/heif,.heic,.heif"
                             multiple
                             @change="onFileInputChange"
                         />

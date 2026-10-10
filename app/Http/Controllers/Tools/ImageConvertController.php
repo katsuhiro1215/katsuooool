@@ -20,7 +20,7 @@ use Throwable;
 
 class ImageConvertController extends Controller
 {
-    private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
+    private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/heic', 'image/heif'];
 
     private const TARGET_FORMATS = [
         'jpg' => 'image/jpeg',
@@ -102,9 +102,9 @@ class ImageConvertController extends Controller
             $disk->makeDirectory("tool-tmp/{$uploadResult->batchId}/converted");
 
             try {
-                $dimensions = getimagesize($inputAbsolutePath);
+                $dimensions = $this->readDimensions($inputAbsolutePath);
 
-                if ($dimensions === false) {
+                if ($dimensions === null) {
                     throw new RuntimeException('Failed to read image dimensions.');
                 }
 
@@ -223,5 +223,33 @@ class ImageConvertController extends Controller
             'results' => $results,
             'batch_download_url' => $batchDownloadUrl,
         ]);
+    }
+
+    /**
+     * @return array{0: int, 1: int}|null
+     */
+    private function readDimensions(string $path): ?array
+    {
+        $size = getimagesize($path);
+
+        if ($size !== false) {
+            return [$size[0], $size[1]];
+        }
+
+        // HEIC など getimagesize が読めない形式は、Imagick のヘッダー読み取りで調べる（デコードしない）
+        if (! class_exists(\Imagick::class)) {
+            return null;
+        }
+
+        try {
+            $imagick = new \Imagick;
+            $imagick->pingImage($path);
+            $dimensions = [$imagick->getImageWidth(), $imagick->getImageHeight()];
+            $imagick->clear();
+
+            return $dimensions;
+        } catch (\ImagickException) {
+            return null;
+        }
     }
 }

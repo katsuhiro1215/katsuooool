@@ -254,3 +254,27 @@ test('a premium user can convert 5 files to avif but not 6', function () {
     postImageConvert($make(6), 'avif')->assertStatus(422);
     postImageConvert($make(5), 'avif')->assertSuccessful();
 });
+
+function heicFixture(string $name = 'IMG_0001.heic'): UploadedFile
+{
+    return new UploadedFile(base_path('tests/fixtures/sample.heic'), $name, 'image/heic', null, true);
+}
+
+$heicSupported = class_exists(Imagick::class) && in_array('HEIC', Imagick::queryFormats(), true);
+
+test('a HEIC photo can be converted to jpeg, png and webp', function (string $format) {
+    $response = postImageConvert([heicFixture()], $format);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.status', 'success');
+    $response->assertJsonPath('results.0.download_name', 'IMG_0001.'.$format);
+})->with(['jpg', 'png', 'webp'])->skip(! $heicSupported, 'この環境の Imagick は HEIC に対応していない');
+
+test('a HEIC photo is rejected by tools that do not accept HEIC', function () {
+    $response = test()
+        ->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => [heicFixture()]]);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.status', 'rejected');
+});
