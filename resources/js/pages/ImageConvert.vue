@@ -41,12 +41,16 @@ const FORMAT_OPTIONS: { value: TargetFormat; label: string }[] = [
     { value: 'png', label: 'PNG' },
 ];
 
-const props = defineProps<{ maxFiles: number }>();
+const props = defineProps<{ maxFiles: number; avifMaxFiles: number }>();
 
-const MAX_FILES = computed<number>(() => props.maxFiles);
 
 const selectedFiles = ref<File[]>([]);
 const targetFormat = ref<TargetFormat>('webp');
+
+// AVIF への変換は負荷が高いため、枚数の上限が小さい
+const MAX_FILES = computed<number>(() =>
+    targetFormat.value === 'avif' ? props.avifMaxFiles : props.maxFiles,
+);
 const isDragging = ref(false);
 const isProcessing = ref(false);
 const errorMessage = ref('');
@@ -191,6 +195,12 @@ function isSuccess(result: ConvertResult): result is SuccessResult {
                             {{ option.label }}
                         </label>
                     </div>
+                    <p
+                        v-if="targetFormat === 'avif'"
+                        class="mt-2 text-xs text-gray-500"
+                    >
+                        AVIF は処理が重いため、一度に{{ MAX_FILES }}枚までです。
+                    </p>
                 </fieldset>
 
                 <div

@@ -210,3 +210,47 @@ test('a premium user posting 21 files is rejected with a validation error', func
 
     postImageConvert($files, 'webp')->assertStatus(422);
 });
+
+test('the convert page receives the AVIF limit as a prop', function () {
+    $this->get(route('image-convert.show'))->assertInertia(fn ($page) => $page
+        ->component('ImageConvert')
+        ->where('maxFiles', 10)
+        ->where('avifMaxFiles', 2)
+    );
+});
+
+test('a free user converting 3 files to avif is rejected, but 3 files to webp is accepted', function () {
+    $files = fn () => collect(range(1, 3))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 50, 50))
+        ->all();
+
+    postImageConvert($files(), 'avif')->assertStatus(422);
+    postImageConvert($files(), 'webp')->assertSuccessful();
+});
+
+test('a free user converting 2 files to avif passes the file-count validation', function () {
+    $files = collect(range(1, 2))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 50, 50))
+        ->all();
+
+    postImageConvert($files, 'avif')->assertSuccessful();
+});
+
+test('a premium user can convert 5 files to avif but not 6', function () {
+    $user = User::factory()->create();
+    $user->subscriptions()->create([
+        'type' => 'default',
+        'stripe_id' => 'sub_test_convert_avif',
+        'stripe_status' => 'active',
+        'stripe_price' => 'price_test_monthly',
+        'quantity' => 1,
+    ]);
+    $make = fn (int $n) => collect(range(1, $n))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 50, 50))
+        ->all();
+
+    $this->actingAs($user);
+
+    postImageConvert($make(6), 'avif')->assertStatus(422);
+    postImageConvert($make(5), 'avif')->assertSuccessful();
+});

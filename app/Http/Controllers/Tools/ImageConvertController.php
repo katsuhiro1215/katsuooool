@@ -36,6 +36,7 @@ class ImageConvertController extends Controller
 
         return Inertia::render('ImageConvert', [
             'maxFiles' => ImageToolLimits::maxFiles($isPremium),
+            'avifMaxFiles' => ImageToolLimits::avifMaxFiles($isPremium),
         ]);
     }
 
@@ -48,16 +49,23 @@ class ImageConvertController extends Controller
     ): JsonResponse {
         $user = $request->user();
         $isPremium = $user instanceof User && $user->isPremium();
-        $maxFileCount = ImageToolLimits::maxFiles($isPremium);
 
         $request->validate([
-            'files' => ['required', 'array', 'max:'.$maxFileCount],
-            'files.*' => ['file'],
             'format' => ['required', 'string', 'in:'.implode(',', array_keys(self::TARGET_FORMATS))],
         ]);
 
         $targetExtension = $request->string('format')->toString();
         $targetMimeType = self::TARGET_FORMATS[$targetExtension];
+
+        // AVIF への変換は負荷が高いため、枚数を絞る
+        $maxFileCount = $targetExtension === 'avif'
+            ? ImageToolLimits::avifMaxFiles($isPremium)
+            : ImageToolLimits::maxFiles($isPremium);
+
+        $request->validate([
+            'files' => ['required', 'array', 'max:'.$maxFileCount],
+            'files.*' => ['file'],
+        ]);
 
         $uploadedFiles = $request->file('files');
         $originalNames = array_map(
