@@ -7,6 +7,7 @@ import PageHeader from '@/components/Public/PageHeader.vue';
 import PageMain from '@/components/Public/PageMain.vue';
 import AppButton from '@/components/tools/AppButton.vue';
 import PublicLayout from '@/layouts/Public/PublicLayout.vue';
+import { resolveErrorMessage } from '@/lib/toolErrorMessage';
 
 interface SuccessResult {
     original_name: string;
@@ -120,29 +121,13 @@ async function resize() {
 
         response.value = data;
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status === 422) {
-            if (MAX_FILES.value < 10) {
-                errorMessage.value = `無料プランでは一度に${MAX_FILES.value}枚までです。Premium(¥600/月)なら10枚まで一括処理できます。`;
-                showPremiumUpsell.value = true;
-            } else {
-                errorMessage.value = 'ファイル数が多すぎます。';
-            }
-        } else if (
-            axios.isAxiosError(error) &&
-            error.response?.status === 429
-        ) {
-            if (MAX_FILES.value < 10) {
-                errorMessage.value =
-                    'リクエストが多すぎます。しばらく時間をおいてから再度お試しください。Premiumならレート制限が緩和されます。';
-                showPremiumUpsell.value = true;
-            } else {
-                errorMessage.value =
-                    'リクエストが多すぎます。しばらく時間をおいてから再度お試しください。';
-            }
-        } else {
-            errorMessage.value =
-                'リサイズ処理に失敗しました。時間をおいて再度お試しください。';
-        }
+        const result = resolveErrorMessage(
+            error,
+            MAX_FILES.value,
+            'リサイズ処理に失敗しました。時間をおいて再度お試しください。',
+        );
+        errorMessage.value = result.message;
+        showPremiumUpsell.value = result.showUpsell;
     } finally {
         isProcessing.value = false;
     }

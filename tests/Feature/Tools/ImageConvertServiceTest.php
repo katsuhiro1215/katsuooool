@@ -109,3 +109,23 @@ test('convert rejects an unsupported target mime type', function () {
 
     @unlink($input);
 });
+
+test('a HEIC photo with EXIF orientation 6 is rotated exactly once (portrait output)', function () {
+    // 800x600 の横長ピクセルに「右に90度」の向きが付いた HEIC（iPhone の縦撮り相当）。
+    // 向きが1回だけ適用されれば 600x800、二重に適用されれば 800x600 のままになる。
+    $output = sys_get_temp_dir().'/'.uniqid('heic-orientation-', true).'.jpg';
+
+    (new ImageConvertService)->convert(
+        base_path('tests/fixtures/portrait-orientation6.heic'),
+        $output,
+        'image/jpeg',
+    );
+
+    [$width, $height] = getimagesize($output);
+    expect([$width, $height])->toBe([600, 800]);
+
+    @unlink($output);
+})->skip(
+    ! class_exists(Imagick::class) || ! in_array('HEIC', Imagick::queryFormats(), true),
+    'この環境の Imagick は HEIC に対応していない',
+);

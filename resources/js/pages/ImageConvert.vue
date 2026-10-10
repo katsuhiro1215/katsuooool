@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import axios from 'axios';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import PageHeader from '@/components/Public/PageHeader.vue';
 import PageMain from '@/components/Public/PageMain.vue';
@@ -43,7 +43,6 @@ const FORMAT_OPTIONS: { value: TargetFormat; label: string }[] = [
 
 const props = defineProps<{ maxFiles: number; avifMaxFiles: number }>();
 
-
 const selectedFiles = ref<File[]>([]);
 const targetFormat = ref<TargetFormat>('webp');
 
@@ -58,8 +57,20 @@ const showPremiumUpsell = ref(false);
 const response = ref<ConvertResponse | null>(null);
 
 const canConvert = computed(
-    () => selectedFiles.value.length > 0 && !isProcessing.value,
+    () =>
+        selectedFiles.value.length > 0 &&
+        selectedFiles.value.length <= MAX_FILES.value &&
+        !isProcessing.value,
 );
+
+// AVIF に切り替えたとき、すでに選んだ枚数が AVIF の上限を超えていれば切り詰めて知らせる
+watch(targetFormat, () => {
+    if (selectedFiles.value.length > MAX_FILES.value) {
+        selectedFiles.value = selectedFiles.value.slice(0, MAX_FILES.value);
+        errorMessage.value = `AVIF への変換は一度に${MAX_FILES.value}枚までのため、先頭の${MAX_FILES.value}枚だけを残しました。`;
+        showPremiumUpsell.value = false;
+    }
+});
 
 function formatBytes(bytes: number): string {
     if (bytes < 1024) {
@@ -139,10 +150,14 @@ async function convert() {
 
         response.value = data;
     } catch (error) {
+        // maxFiles には AVIF 以外の上限を渡す（無料か Premium かの判定に使うため）
         const result = resolveErrorMessage(
             error,
-            MAX_FILES.value,
+            props.maxFiles,
             '変換処理に失敗しました。時間をおいて再度お試しください。',
+            targetFormat.value === 'avif'
+                ? { avifLimit: props.avifMaxFiles }
+                : {},
         );
         errorMessage.value = result.message;
         showPremiumUpsell.value = result.showUpsell;

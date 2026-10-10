@@ -182,7 +182,7 @@ test('a premium user can upload up to 20 files at once', function () {
         'stripe_price' => 'price_test_monthly',
         'quantity' => 1,
     ]);
-    $files = collect(range(1, 4))
+    $files = collect(range(1, 20))
         ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
         ->all();
 
@@ -190,7 +190,7 @@ test('a premium user can upload up to 20 files at once', function () {
     $response = postImageConvert($files);
 
     $response->assertSuccessful();
-    $response->assertJsonCount(4, 'results');
+    $response->assertJsonCount(20, 'results');
 });
 
 test('a premium user posting 21 files is rejected with a validation error', function () {
@@ -295,4 +295,15 @@ test('an image above the AVIF pixel ceiling is refused for avif but accepted for
 
     $webp = postImageConvert([$make()], 'webp');
     $webp->assertJsonPath('results.0.status', 'success');
+});
+
+test('a free user can upload exactly 10 files at once', function () {
+    $files = collect(range(1, 10))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 50, 50))
+        ->all();
+
+    $response = postImageConvert($files, 'webp');
+
+    $response->assertSuccessful();
+    $response->assertJsonCount(10, 'results');
 });

@@ -52,6 +52,7 @@ test('an image tool request gets 503 while every slot is busy, and works afterwa
 
     ImageProcessingGate::run(function () use ($post) {
         $post()->assertStatus(503)
+            ->assertHeader('Retry-After', '10')
             ->assertJsonPath('message', '現在アクセスが集中しています。少し待ってから、もう一度お試しください。');
     });
 

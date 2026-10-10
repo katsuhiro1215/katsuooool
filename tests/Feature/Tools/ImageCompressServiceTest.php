@@ -123,7 +123,7 @@ test('compress skips palette encoding for a png above the indexed pixel ceiling'
     $withPalette = sys_get_temp_dir().'/'.uniqid('out-a-', true).'.png';
     $withoutPalette = sys_get_temp_dir().'/'.uniqid('out-b-', true).'.png';
 
-    config()->set('image_tools.png_indexed_max_pixels', 4_000_000);
+    config()->set('image_tools.png_indexed_max_pixels', 2_500_000);
     $paletteBytes = $service->compress($inputPath, $withPalette, 'image/png');
 
     config()->set('image_tools.png_indexed_max_pixels', 1);

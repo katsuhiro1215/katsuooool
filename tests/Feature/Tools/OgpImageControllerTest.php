@@ -149,7 +149,7 @@ test('a premium user can upload up to 20 files at once', function () {
         'stripe_price' => 'price_test_monthly',
         'quantity' => 1,
     ]);
-    $files = collect(range(1, 4))
+    $files = collect(range(1, 20))
         ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
         ->all();
 
@@ -157,5 +157,5 @@ test('a premium user can upload up to 20 files at once', function () {
     $response = postOgpImage($files);
 
     $response->assertSuccessful();
-    $response->assertJsonCount(4, 'results');
+    $response->assertJsonCount(20, 'results');
 });

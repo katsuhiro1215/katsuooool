@@ -86,12 +86,59 @@ describe('resolveErrorMessage', () => {
 
     test('a 503 means the server is busy and shows no upsell', () => {
         const error = makeAxiosError(503, {
-            message: '現在アクセスが集中しています。少し待ってから、もう一度お試しください。',
+            message:
+                '現在アクセスが集中しています。少し待ってから、もう一度お試しください。',
         });
 
         const result = resolveErrorMessage(error, 10, 'fallback');
 
         expect(result.message).toContain('アクセスが集中');
+        expect(result.showUpsell).toBe(false);
+    });
+
+    test('a free user hitting the AVIF batch limit sees the AVIF limit, not the Premium 20', () => {
+        const error = makeAxiosError(422, {
+            errors: {
+                files: ['files の項目数は、2 個以下である必要があります。'],
+            },
+        });
+
+        const result = resolveErrorMessage(error, 10, 'fallback', {
+            avifLimit: 2,
+        });
+
+        expect(result.message).toContain('AVIF');
+        expect(result.message).toContain('2枚');
+        expect(result.message).not.toContain('20枚');
+        expect(result.showUpsell).toBe(true);
+    });
+
+    test('a Premium user hitting the AVIF batch limit gets no upsell', () => {
+        const error = makeAxiosError(422, {
+            errors: {
+                files: ['files の項目数は、5 個以下である必要があります。'],
+            },
+        });
+
+        const result = resolveErrorMessage(error, 20, 'fallback', {
+            avifLimit: 5,
+        });
+
+        expect(result.message).toContain('AVIF');
+        expect(result.message).toContain('5枚');
+        expect(result.showUpsell).toBe(false);
+    });
+
+    test('a 429 for a Premium user during AVIF conversion shows no upsell', () => {
+        const result = resolveErrorMessage(
+            makeAxiosError(429),
+            20,
+            'fallback',
+            {
+                avifLimit: 5,
+            },
+        );
+
         expect(result.showUpsell).toBe(false);
     });
 });

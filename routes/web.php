@@ -159,7 +159,7 @@ Route::get('/website-starter', [WebsiteStarterController::class, 'show'])
     ->name('website-starter.show');
 
 Route::post('/website-starter', [WebsiteStarterController::class, 'process'])
-    ->middleware(['auth', 'throttle:image-tools'])
+    ->middleware(['auth', 'throttle:image-tools', 'image.gate'])
     ->name('website-starter.process');
 
 Route::get('/svg-optimize', [SvgOptimizeController::class, 'show'])->name('svg-optimize.show');

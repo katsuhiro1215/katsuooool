@@ -17,10 +17,16 @@ export const PREMIUM_MAX_FILES = 20;
  * per-index key like `files.0` — only the former is actually about the
  * free/Premium batch limit.
  */
+export interface ResolveErrorOptions {
+    /** AVIF への変換中の、現在の枚数の上限。maxFiles には AVIF 以外の上限（無料か Premium かの判定に使う）を渡す */
+    avifLimit?: number;
+}
+
 export function resolveErrorMessage(
     error: unknown,
     maxFiles: number,
     genericMessage: string,
+    options: ResolveErrorOptions = {},
 ): ResolvedError {
     if (!axios.isAxiosError(error)) {
         return { message: genericMessage, showUpsell: false };
@@ -32,6 +38,17 @@ export function resolveErrorMessage(
                 ?.errors ?? {};
 
         if ('files' in errors) {
+            if (options.avifLimit !== undefined) {
+                const isFree = maxFiles < PREMIUM_MAX_FILES;
+
+                return {
+                    message: isFree
+                        ? `AVIF への変換は一度に${options.avifLimit}枚までです。Premium ならもう少し多く処理できます。`
+                        : `AVIF への変換は一度に${options.avifLimit}枚までです。`,
+                    showUpsell: isFree,
+                };
+            }
+
             if (maxFiles < PREMIUM_MAX_FILES) {
                 return {
                     message: `無料プランでは一度に${maxFiles}枚までです。Premium(¥600/月)なら${PREMIUM_MAX_FILES}枚まで一括処理できます。`,

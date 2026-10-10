@@ -115,8 +115,14 @@ RUN { \
         echo 'upload_max_filesize=20M'; \
         echo 'post_max_size=230M'; \
         echo 'max_file_uploads=25'; \
-        echo 'max_execution_time=300'; \
-    } > /usr/local/etc/php/conf.d/app.ini
+        echo 'max_execution_time=0'; \
+    } > /usr/local/etc/php/conf.d/app.ini \
+    # max_execution_time は Linux では CPU 時間で数える（Imagick のスレッド2で実時間の半分に達しうる）ため 0 にし、
+    # 実時間の上限は php-fpm の request_terminate_timeout で管理する（内側 Caddy の read_timeout 300s より少し長く）
+    && { \
+        echo '[www]'; \
+        echo 'request_terminate_timeout = 330s'; \
+    } > /usr/local/etc/php-fpm.d/zz-timeout.conf
 
 WORKDIR /var/www/html
 
