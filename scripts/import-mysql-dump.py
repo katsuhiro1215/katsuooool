@@ -2,6 +2,7 @@
 """phpMyAdmin の MySQL ダンプから、指定テーブルの INSERT だけを SQLite 向けに変換して取り込む。
 
 構造は Laravel の migrate で作成済みであることが前提（CREATE TABLE は使わない）。
+取り込み先は空であること。ただし tool_events だけは既存行を残して末尾に追加する。
 使い方:
   python3 scripts/import-mysql-dump.py <dump.sql> <sqlite.db> [--dry-run]
 """
@@ -11,6 +12,9 @@ import sys
 
 # 取り込む順序（外部キーの親が先）。migrations / cache / sessions は取り込まない。
 TABLES = ["admins", "posts", "tool_events", "ui_pattern_snippets"]
+
+# 取り込み先に既存行があってもよいテーブル。id は引き継がず自動採番で末尾に追加する。
+APPEND_TABLES = {"tool_events"}
 
 ESCAPES = {"n": "\n", "r": "\r", "t": "\t", "0": "\0", "b": "\b", "Z": "\x1a"}
 
@@ -91,7 +95,12 @@ def main():
         if m and m.group(1) in inserts:
             body = stmt[m.start() :]
             # 逆クォートを外す（識別子のみ。文字列内には出現しない前提で、変換後に処理）
-            inserts[m.group(1)].append(convert_literals(body).replace("`", ""))
+            sql = convert_literals(body).replace("`", "")
+            if m.group(1) in APPEND_TABLES:
+                # 先頭の id 列と値を取り除く（(id, a, b) VALUES(1, 'x', ...) → (a, b) VALUES('x', ...)）
+                sql = re.sub(r"\(id, ", "(", sql, count=1)
+                sql = re.sub(r"VALUES\(\d+, ", "VALUES(", sql, count=1)
+            inserts[m.group(1)].append(sql)
 
     conn = sqlite3.connect(db_path)
     conn.execute("PRAGMA foreign_keys = ON")
@@ -99,13 +108,13 @@ def main():
         conn.execute("BEGIN")
         for table in TABLES:
             before = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
-            if before != 0:
+            if before != 0 and table not in APPEND_TABLES:
                 sys.exit(f"{table} は空ではありません（{before} 件）。中止します。")
             for sql in inserts[table]:
                 conn.execute(sql)
             after = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
-            print(f"{table}: ダンプ {len(inserts[table])} 件 → 取り込み後 {after} 件")
-            if after != len(inserts[table]):
+            print(f"{table}: 既存 {before} 件 + ダンプ {len(inserts[table])} 件 → 取り込み後 {after} 件")
+            if after != before + len(inserts[table]):
                 raise RuntimeError(f"{table} の件数が一致しません")
         if dry_run:
             conn.execute("ROLLBACK")
