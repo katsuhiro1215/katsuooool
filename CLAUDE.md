@@ -54,3 +54,11 @@
 
 - **`spra_prod` に参加させるのは `katsuooool-web` だけ。** Compose はサービス名をネットワーク上の別名にするため、`app` のような汎用名のサービスを `spra_prod` に参加させると、本体 Caddy の `php_fastcgi app:9000` が katsuooool にも解決され、本体のページが katsuooool の画面になる。
 - `spra_prod` に参加するサービス名は `katsuooool-` 付きにし、本体が使う名前（`app`・`caddy`・`mysql`・`redis`・`horizon`・`scheduler`）と衝突させない。
+
+## 本番反映の手順（2026-10-10 に M6 で確認）
+
+1. main にマージして GitHub へ push（サーバーは GitHub から `git pull` する）。
+2. サーバー（`~/katsuooool`）で `git pull --ff-only`。
+3. `docker compose -f compose.prod.yaml build app`、続けて `build katsuooool-web`（空きメモリを `free -h` で確認してから）。
+4. `docker compose -f compose.prod.yaml up -d --force-recreate app scheduler katsuooool-web`。**フロントエンド（`public/build`）が変わるときは `katsuooool-web` も必須**。web のイメージは app の `public/` を焼き込んでおり、再作成しないと新 HTML が存在しないアセットを参照して 404 になる。`.env` だけの変更なら `app`・`scheduler` のみ。
+5. 外から、トップ・ツール画面・アセットが 200 で返ること、本体（smartsprouts.jp）が影響を受けていないことを確認。
