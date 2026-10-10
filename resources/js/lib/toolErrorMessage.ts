@@ -65,5 +65,13 @@ export function resolveErrorMessage(
         };
     }
 
+    if (error.response?.status === 503) {
+        return {
+            message:
+                '現在アクセスが集中しています。少し待ってから、もう一度お試しください。',
+            showUpsell: false,
+        };
+    }
+
     return { message: genericMessage, showUpsell: false };
 }

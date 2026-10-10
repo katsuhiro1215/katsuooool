@@ -83,4 +83,15 @@ describe('resolveErrorMessage', () => {
         expect(result.message).toBe('ファイル数が多すぎます。');
         expect(result.showUpsell).toBe(false);
     });
+
+    test('a 503 means the server is busy and shows no upsell', () => {
+        const error = makeAxiosError(503, {
+            message: '現在アクセスが集中しています。少し待ってから、もう一度お試しください。',
+        });
+
+        const result = resolveErrorMessage(error, 10, 'fallback');
+
+        expect(result.message).toContain('アクセスが集中');
+        expect(result.showUpsell).toBe(false);
+    });
 });

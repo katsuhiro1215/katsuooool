@@ -75,37 +75,37 @@ Route::get('/tool-download/{token}', [ToolDownloadController::class, 'show'])
 Route::get('/image-compress', [ImageCompressController::class, 'show'])->name('image-compress.show');
 
 Route::post('/image-compress', [ImageCompressController::class, 'process'])
-    ->middleware('throttle:image-tools')
+    ->middleware(['throttle:image-tools', 'image.gate'])
     ->name('image-compress.process');
 
 Route::get('/image-convert', [ImageConvertController::class, 'show'])->name('image-convert.show');
 
 Route::post('/image-convert', [ImageConvertController::class, 'process'])
-    ->middleware('throttle:image-tools')
+    ->middleware(['throttle:image-tools', 'image.gate'])
     ->name('image-convert.process');
 
 Route::get('/image-resize', [ImageResizeController::class, 'show'])->name('image-resize.show');
 
 Route::post('/image-resize', [ImageResizeController::class, 'process'])
-    ->middleware('throttle:image-tools')
+    ->middleware(['throttle:image-tools', 'image.gate'])
     ->name('image-resize.process');
 
 Route::get('/image-color-extract', [ImageColorExtractController::class, 'show'])->name('image-color-extract.show');
 
 Route::post('/image-color-extract', [ImageColorExtractController::class, 'process'])
-    ->middleware('throttle:image-tools')
+    ->middleware(['throttle:image-tools', 'image.gate'])
     ->name('image-color-extract.process');
 
 Route::get('/image-rotate', [ImageRotateController::class, 'show'])->name('image-rotate.show');
 
 Route::post('/image-rotate', [ImageRotateController::class, 'process'])
-    ->middleware('throttle:image-tools')
+    ->middleware(['throttle:image-tools', 'image.gate'])
     ->name('image-rotate.process');
 
 Route::get('/image-crop', [ImageCropController::class, 'show'])->name('image-crop.show');
 
 Route::post('/image-crop', [ImageCropController::class, 'process'])
-    ->middleware('throttle:image-tools')
+    ->middleware(['throttle:image-tools', 'image.gate'])
     ->name('image-crop.process');
 
 Route::get('/color-convert', [ColorConvertController::class, 'show'])->name('color-convert.show');
@@ -145,13 +145,13 @@ Route::post('/color-scheme/examples/{colorExample}/copy', [ColorSchemeController
 Route::get('/ogp-image', [OgpImageController::class, 'show'])->name('ogp-image.show');
 
 Route::post('/ogp-image', [OgpImageController::class, 'process'])
-    ->middleware('throttle:image-tools')
+    ->middleware(['throttle:image-tools', 'image.gate'])
     ->name('ogp-image.process');
 
 Route::get('/favicon-generate', [FaviconGenerateController::class, 'show'])->name('favicon-generate.show');
 
 Route::post('/favicon-generate', [FaviconGenerateController::class, 'process'])
-    ->middleware('throttle:image-tools')
+    ->middleware(['throttle:image-tools', 'image.gate'])
     ->name('favicon-generate.process');
 
 Route::get('/website-starter', [WebsiteStarterController::class, 'show'])
