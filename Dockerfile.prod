@@ -113,8 +113,9 @@ RUN { \
     && { \
         echo 'memory_limit=256M'; \
         echo 'upload_max_filesize=20M'; \
-        echo 'post_max_size=110M'; \
-        echo 'max_file_uploads=20'; \
+        echo 'post_max_size=230M'; \
+        echo 'max_file_uploads=25'; \
+        echo 'max_execution_time=300'; \
     } > /usr/local/etc/php/conf.d/app.ini
 
 WORKDIR /var/www/html

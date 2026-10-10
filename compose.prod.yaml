@@ -32,8 +32,9 @@ x-app: &app
 services:
     app:
         <<: *app
-        # 画像処理の暴走が本体（MySQL など）を巻き込まないようにする
-        mem_limit: 512m
+        # 画像処理の暴走が本体（MySQL など）を巻き込まないようにする。
+        # 重い処理（AVIF 800万画素で約316MB）が同時に2件走っても収まる値（M5-1 で 512m から引き上げ）
+        mem_limit: 768m
         # spra_prod には参加させない。Compose はサービス名（app）をネットワークの別名にするため、
         # 参加すると本体 Caddy の `php_fastcgi app:9000` が katsuooool の app にも解決されてしまう（2026-10-08 障害）
         # web からは katsuooool-app:9000 で呼ぶ（web は spra_prod にも居るため、素の `app` だと本体と紛れる）
