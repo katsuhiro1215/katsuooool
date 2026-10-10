@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Tools\FaviconGenerateService;
 use App\Services\Tools\ToolDownloadService;
 use App\Services\Tools\ToolEventLogger;
+use App\Support\ImageToolLimits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -17,10 +18,6 @@ use Throwable;
 
 class FaviconGenerateController extends Controller
 {
-    private const MAX_FILE_BYTES = 10 * 1024 * 1024;
-
-    private const MAX_PIXELS = 25_000_000;
-
     public function show(): Response
     {
         return Inertia::render('FaviconGenerate');
@@ -37,7 +34,7 @@ class FaviconGenerateController extends Controller
                 'required',
                 'file',
                 'mimetypes:image/jpeg,image/png,image/webp',
-                'max:'.(self::MAX_FILE_BYTES / 1024),
+                'max:'.(ImageToolLimits::maxFileBytes() / 1024),
             ],
         ]);
 
@@ -70,7 +67,7 @@ class FaviconGenerateController extends Controller
                 throw new RuntimeException('Failed to read image dimensions.');
             }
 
-            if ($dimensions[0] * $dimensions[1] > self::MAX_PIXELS) {
+            if (ImageToolLimits::maxPixels() < $dimensions[0] * $dimensions[1]) {
                 $eventLogger->log(
                     toolSlug: 'favicon-generate',
                     eventType: 'failed',

@@ -2,6 +2,7 @@
 
 namespace App\Services\Tools;
 
+use App\Support\ImageToolLimits;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\EncodedImageInterface;
 use Intervention\Image\Interfaces\ImageInterface;
@@ -38,8 +39,14 @@ class ImageCompressService
      */
     private function encodeSmallestPng(ImageInterface $image): EncodedImageInterface
     {
-        $indexed = $image->toPng(indexed: true);
         $truecolor = $image->toPng();
+
+        // 256色化は画素数に比例して遅くなる（2,500万画素で約265秒）ため、大きい画像では省く
+        if ($image->width() * $image->height() > ImageToolLimits::pngIndexedMaxPixels()) {
+            return $truecolor;
+        }
+
+        $indexed = $image->toPng(indexed: true);
 
         return $indexed->size() <= $truecolor->size() ? $indexed : $truecolor;
     }

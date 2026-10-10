@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\Tools\ImageColorExtractService;
 use App\Services\Tools\ToolEventLogger;
 use App\Services\Tools\ToolUploadService;
+use App\Support\ImageToolLimits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -17,15 +18,7 @@ use Throwable;
 
 class ImageColorExtractController extends Controller
 {
-    private const MAX_FILE_BYTES = 10 * 1024 * 1024;
-
-    private const MAX_FILE_COUNT = 10;
-
-    private const FREE_MAX_FILE_COUNT = 3;
-
     private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
-
-    private const MAX_PIXELS = 25_000_000;
 
     public function show(Request $request): Response
     {
@@ -33,7 +26,7 @@ class ImageColorExtractController extends Controller
         $isPremium = $user instanceof User && $user->isPremium();
 
         return Inertia::render('ImageColorExtract', [
-            'maxFiles' => $isPremium ? self::MAX_FILE_COUNT : self::FREE_MAX_FILE_COUNT,
+            'maxFiles' => ImageToolLimits::maxFiles($isPremium),
         ]);
     }
 
@@ -45,7 +38,7 @@ class ImageColorExtractController extends Controller
     ): JsonResponse {
         $user = $request->user();
         $isPremium = $user instanceof User && $user->isPremium();
-        $maxFileCount = $isPremium ? self::MAX_FILE_COUNT : self::FREE_MAX_FILE_COUNT;
+        $maxFileCount = ImageToolLimits::maxFiles($isPremium);
 
         $request->validate([
             'files' => ['required', 'array', 'max:'.$maxFileCount],
@@ -61,7 +54,7 @@ class ImageColorExtractController extends Controller
         $uploadResult = $uploadService->store(
             uploadedFiles: $uploadedFiles,
             allowedMimeTypes: self::ALLOWED_MIME_TYPES,
-            maxFileBytes: self::MAX_FILE_BYTES,
+            maxFileBytes: ImageToolLimits::maxFileBytes(),
             maxFileCount: $maxFileCount,
         );
 
@@ -89,7 +82,7 @@ class ImageColorExtractController extends Controller
                     throw new RuntimeException('Failed to read image dimensions.');
                 }
 
-                if ($dimensions[0] * $dimensions[1] > self::MAX_PIXELS) {
+                if (ImageToolLimits::maxPixels() < $dimensions[0] * $dimensions[1]) {
                     $results[] = [
                         'original_name' => $uploadedToolFile->originalName,
                         'status' => 'failed',

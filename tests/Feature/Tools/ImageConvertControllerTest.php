@@ -23,14 +23,14 @@ test('the image-convert page renders', function () {
     $response->assertInertia(fn ($page) => $page->component('ImageConvert'));
 });
 
-test('a free (unauthenticated) user receives maxFiles of 3', function () {
+test('a free (unauthenticated) user receives maxFiles of 10', function () {
     $response = $this->get(route('image-convert.show'));
 
     $response->assertSuccessful();
-    $response->assertInertia(fn ($page) => $page->component('ImageConvert')->where('maxFiles', 3));
+    $response->assertInertia(fn ($page) => $page->component('ImageConvert')->where('maxFiles', 10));
 });
 
-test('a premium user receives maxFiles of 10', function () {
+test('a premium user receives maxFiles of 20', function () {
     $user = User::factory()->create();
     $user->subscriptions()->create([
         'type' => 'default',
@@ -43,7 +43,7 @@ test('a premium user receives maxFiles of 10', function () {
     $response = $this->actingAs($user)->get(route('image-convert.show'));
 
     $response->assertSuccessful();
-    $response->assertInertia(fn ($page) => $page->component('ImageConvert')->where('maxFiles', 10));
+    $response->assertInertia(fn ($page) => $page->component('ImageConvert')->where('maxFiles', 20));
 });
 
 test('posting valid images returns converted download links in the requested format', function () {
@@ -161,9 +161,9 @@ test('duplicate download names are de-duplicated so the zip does not lose files'
     expect($results[0]['download_url'])->not->toBe($results[1]['download_url']);
 });
 
-test('a free user cannot upload more than 3 files at once', function () {
+test('a free user cannot upload more than 10 files at once', function () {
     $user = User::factory()->create();
-    $files = collect(range(1, 4))
+    $files = collect(range(1, 11))
         ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
         ->all();
 
@@ -173,7 +173,7 @@ test('a free user cannot upload more than 3 files at once', function () {
     $response->assertStatus(422);
 });
 
-test('a premium user can upload up to 10 files at once', function () {
+test('a premium user can upload up to 20 files at once', function () {
     $user = User::factory()->create();
     $user->subscriptions()->create([
         'type' => 'default',
@@ -182,7 +182,7 @@ test('a premium user can upload up to 10 files at once', function () {
         'stripe_price' => 'price_test_monthly',
         'quantity' => 1,
     ]);
-    $files = collect(range(1, 4))
+    $files = collect(range(1, 20))
         ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
         ->all();
 
@@ -190,5 +190,120 @@ test('a premium user can upload up to 10 files at once', function () {
     $response = postImageConvert($files);
 
     $response->assertSuccessful();
-    $response->assertJsonCount(4, 'results');
+    $response->assertJsonCount(20, 'results');
+});
+
+test('a premium user posting 21 files is rejected with a validation error', function () {
+    $user = User::factory()->create();
+    $user->subscriptions()->create([
+        'type' => 'default',
+        'stripe_id' => 'sub_test_convert_21',
+        'stripe_status' => 'active',
+        'stripe_price' => 'price_test_monthly',
+        'quantity' => 1,
+    ]);
+    $files = collect(range(1, 21))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 50, 50))
+        ->all();
+
+    $this->actingAs($user);
+
+    postImageConvert($files, 'webp')->assertStatus(422);
+});
+
+test('the convert page receives the AVIF limit as a prop', function () {
+    $this->get(route('image-convert.show'))->assertInertia(fn ($page) => $page
+        ->component('ImageConvert')
+        ->where('maxFiles', 10)
+        ->where('avifMaxFiles', 2)
+    );
+});
+
+test('a free user converting 3 files to avif is rejected, but 3 files to webp is accepted', function () {
+    $files = fn () => collect(range(1, 3))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 50, 50))
+        ->all();
+
+    postImageConvert($files(), 'avif')->assertStatus(422);
+    postImageConvert($files(), 'webp')->assertSuccessful();
+});
+
+test('a free user converting 2 files to avif passes the file-count validation', function () {
+    $files = collect(range(1, 2))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 50, 50))
+        ->all();
+
+    postImageConvert($files, 'avif')->assertSuccessful();
+});
+
+test('a premium user can convert 5 files to avif but not 6', function () {
+    $user = User::factory()->create();
+    $user->subscriptions()->create([
+        'type' => 'default',
+        'stripe_id' => 'sub_test_convert_avif',
+        'stripe_status' => 'active',
+        'stripe_price' => 'price_test_monthly',
+        'quantity' => 1,
+    ]);
+    $make = fn (int $n) => collect(range(1, $n))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 50, 50))
+        ->all();
+
+    $this->actingAs($user);
+
+    postImageConvert($make(6), 'avif')->assertStatus(422);
+    postImageConvert($make(5), 'avif')->assertSuccessful();
+});
+
+function heicFixture(string $name = 'IMG_0001.heic'): UploadedFile
+{
+    return new UploadedFile(base_path('tests/fixtures/sample.heic'), $name, 'image/heic', null, true);
+}
+
+$heicSupported = class_exists(Imagick::class) && in_array('HEIC', Imagick::queryFormats(), true);
+
+test('a HEIC photo can be converted to jpeg, png and webp', function (string $format) {
+    $response = postImageConvert([heicFixture()], $format);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.status', 'success');
+    $response->assertJsonPath('results.0.download_name', 'IMG_0001.'.$format);
+})->with(['jpg', 'png', 'webp'])->skip(! $heicSupported, 'この環境の Imagick は HEIC に対応していない');
+
+test('a HEIC photo is rejected by tools that do not accept HEIC', function () {
+    $response = test()
+        ->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => [heicFixture()]]);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.status', 'rejected');
+});
+
+test('an image above the AVIF pixel ceiling is refused for avif but accepted for webp', function () {
+    // 3200x2600 = 8.32M 画素。AVIF は画素数に比例してメモリを使うため 800 万画素まで。
+    $path = sys_get_temp_dir().'/'.uniqid('image-convert-avif-ceiling-', true).'.jpg';
+    $gdImage = imagecreatetruecolor(3200, 2600);
+    imagejpeg($gdImage, $path, 90);
+    imagedestroy($gdImage);
+
+    $make = fn () => new UploadedFile($path, 'wide.jpg', 'image/jpeg', null, true);
+
+    $avif = postImageConvert([$make()], 'avif');
+    $avif->assertSuccessful();
+    $avif->assertJsonPath('results.0.status', 'failed');
+    $avif->assertJsonPath('results.0.reason', '画像の解像度が大きすぎます。AVIF への変換は800万画素までです。');
+
+    $webp = postImageConvert([$make()], 'webp');
+    $webp->assertJsonPath('results.0.status', 'success');
+});
+
+test('a free user can upload exactly 10 files at once', function () {
+    $files = collect(range(1, 10))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 50, 50))
+        ->all();
+
+    $response = postImageConvert($files, 'webp');
+
+    $response->assertSuccessful();
+    $response->assertJsonCount(10, 'results');
 });

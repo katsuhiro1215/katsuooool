@@ -8,6 +8,7 @@ use App\Services\Tools\ImageConvertService;
 use App\Services\Tools\ToolDownloadService;
 use App\Services\Tools\ToolEventLogger;
 use App\Services\Tools\ToolUploadService;
+use App\Support\ImageToolLimits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -19,15 +20,7 @@ use Throwable;
 
 class ImageConvertController extends Controller
 {
-    private const MAX_FILE_BYTES = 10 * 1024 * 1024;
-
-    private const MAX_FILE_COUNT = 10;
-
-    private const FREE_MAX_FILE_COUNT = 3;
-
-    private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
-
-    private const MAX_PIXELS = 25_000_000;
+    private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/heic', 'image/heif'];
 
     private const TARGET_FORMATS = [
         'jpg' => 'image/jpeg',
@@ -42,7 +35,8 @@ class ImageConvertController extends Controller
         $isPremium = $user instanceof User && $user->isPremium();
 
         return Inertia::render('ImageConvert', [
-            'maxFiles' => $isPremium ? self::MAX_FILE_COUNT : self::FREE_MAX_FILE_COUNT,
+            'maxFiles' => ImageToolLimits::maxFiles($isPremium),
+            'avifMaxFiles' => ImageToolLimits::avifMaxFiles($isPremium),
         ]);
     }
 
@@ -55,16 +49,23 @@ class ImageConvertController extends Controller
     ): JsonResponse {
         $user = $request->user();
         $isPremium = $user instanceof User && $user->isPremium();
-        $maxFileCount = $isPremium ? self::MAX_FILE_COUNT : self::FREE_MAX_FILE_COUNT;
 
         $request->validate([
-            'files' => ['required', 'array', 'max:'.$maxFileCount],
-            'files.*' => ['file'],
             'format' => ['required', 'string', 'in:'.implode(',', array_keys(self::TARGET_FORMATS))],
         ]);
 
         $targetExtension = $request->string('format')->toString();
         $targetMimeType = self::TARGET_FORMATS[$targetExtension];
+
+        // AVIF への変換は負荷が高いため、枚数を絞る
+        $maxFileCount = $targetExtension === 'avif'
+            ? ImageToolLimits::avifMaxFiles($isPremium)
+            : ImageToolLimits::maxFiles($isPremium);
+
+        $request->validate([
+            'files' => ['required', 'array', 'max:'.$maxFileCount],
+            'files.*' => ['file'],
+        ]);
 
         $uploadedFiles = $request->file('files');
         $originalNames = array_map(
@@ -75,7 +76,7 @@ class ImageConvertController extends Controller
         $uploadResult = $uploadService->store(
             uploadedFiles: $uploadedFiles,
             allowedMimeTypes: self::ALLOWED_MIME_TYPES,
-            maxFileBytes: self::MAX_FILE_BYTES,
+            maxFileBytes: ImageToolLimits::maxFileBytes(),
             maxFileCount: $maxFileCount,
         );
 
@@ -101,17 +102,28 @@ class ImageConvertController extends Controller
             $disk->makeDirectory("tool-tmp/{$uploadResult->batchId}/converted");
 
             try {
-                $dimensions = getimagesize($inputAbsolutePath);
+                $dimensions = $this->readDimensions($inputAbsolutePath);
 
-                if ($dimensions === false) {
+                if ($dimensions === null) {
                     throw new RuntimeException('Failed to read image dimensions.');
                 }
 
-                if ($dimensions[0] * $dimensions[1] > self::MAX_PIXELS) {
+                if (ImageToolLimits::maxPixels() < $dimensions[0] * $dimensions[1]) {
                     $results[] = [
                         'original_name' => $uploadedToolFile->originalName,
                         'status' => 'failed',
                         'reason' => '画像の解像度が大きすぎます。',
+                    ];
+
+                    continue;
+                }
+
+                // AVIF はメモリが画素数にほぼ比例して増えるため、専用の上限を設ける
+                if ($targetExtension === 'avif' && ImageToolLimits::avifMaxPixels() < $dimensions[0] * $dimensions[1]) {
+                    $results[] = [
+                        'original_name' => $uploadedToolFile->originalName,
+                        'status' => 'failed',
+                        'reason' => '画像の解像度が大きすぎます。AVIF への変換は'.intdiv(ImageToolLimits::avifMaxPixels(), 10_000).'万画素までです。',
                     ];
 
                     continue;
@@ -222,5 +234,33 @@ class ImageConvertController extends Controller
             'results' => $results,
             'batch_download_url' => $batchDownloadUrl,
         ]);
+    }
+
+    /**
+     * @return array{0: int, 1: int}|null
+     */
+    private function readDimensions(string $path): ?array
+    {
+        $size = getimagesize($path);
+
+        if ($size !== false) {
+            return [$size[0], $size[1]];
+        }
+
+        // HEIC など getimagesize が読めない形式は、Imagick のヘッダー読み取りで調べる（デコードしない）
+        if (! class_exists(\Imagick::class)) {
+            return null;
+        }
+
+        try {
+            $imagick = new \Imagick;
+            $imagick->pingImage($path);
+            $dimensions = [$imagick->getImageWidth(), $imagick->getImageHeight()];
+            $imagick->clear();
+
+            return $dimensions;
+        } catch (\ImagickException) {
+            return null;
+        }
     }
 }

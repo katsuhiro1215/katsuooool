@@ -24,8 +24,8 @@
 
 ## インフラ制約(重要)
 
-- **移行先（Lightsail、2026-10-08 に M2 で構成作成・ローカル検証済み）**: 本体（`projects/Spra`）と同じインスタンスに別 Compose プロジェクトとして載せる。`Dockerfile.prod`・`compose.prod.yaml`・`.env.production.example`・`scripts/backup-db.sh` が正。サービスは `app`（php-fpm、`mem_limit: 512m`）・`katsuooool-web`（内側の HTTP 専用 Caddy。`public/` を配信し php-fpm へ fastcgi。`Caddyfile.prod`）・`scheduler`（`schedule:run` の60秒ループ）のみ。DB は SQLite（WAL、`storage/database/` を Docker ボリュームに置く）、セッション・キャッシュ・キューは `database`。ネットワークは本体の `spra_prod`（external）。本体 Caddy は `reverse_proxy katsuooool-web:80` で `katsuooool-web` に渡し、それが `katsuooool-app:9000` へ渡す（TLS は本体 Caddy で終端）。
-- 画像処理は Imagick（AVIF 書き出しは `libheif-aom` が必須）。Caddy 経由なので `bootstrap/app.php` でプライベートアドレスからの `X-Forwarded-*` を信頼する。
+- **移行先（Lightsail、2026-10-08 に M2 で構成作成・ローカル検証済み）**: 本体（`projects/Spra`）と同じインスタンスに別 Compose プロジェクトとして載せる。`Dockerfile.prod`・`compose.prod.yaml`・`.env.production.example`・`scripts/backup-db.sh` が正。サービスは `app`（php-fpm、`mem_limit: 768m`）・`katsuooool-web`（内側の HTTP 専用 Caddy。`public/` を配信し php-fpm へ fastcgi。`Caddyfile.prod`）・`scheduler`（`schedule:run` の60秒ループ）のみ。DB は SQLite（WAL、`storage/database/` を Docker ボリュームに置く）、セッション・キャッシュ・キューは `database`。ネットワークは本体の `spra_prod`（external）。本体 Caddy は `reverse_proxy katsuooool-web:80` で `katsuooool-web` に渡し、それが `katsuooool-app:9000` へ渡す（TLS は本体 Caddy で終端）。
+- 画像処理は Imagick（AVIF 書き出しは `libheif-aom` が必須。HEIC の読み込みは libheif・libde265）。上限は `config/image_tools.php` に集約（無料10枚・Premium20枚、AVIF は無料2・Premium5、800万画素まで）。Imagick のリソース制限（メモリ128MB・マップ256MB・ディスク2GiB）で大きな画像のメモリ不足を防ぎ、重い処理は同時2件まで。`app` の `mem_limit` は 768m、PHP は `post_max_size=230M`・内側 Caddy は `request_body 230MB`・`read_timeout 300s`、php-fpm は `request_terminate_timeout=330s`（`max_execution_time` は CPU 時間で数えるため 0）。Caddy 経由なので `bootstrap/app.php` でプライベートアドレスからの `X-Forwarded-*` を信頼する。
 - 旧本番の **Xserver 共有サーバー**（2026-10-10 に `katsuooool.katsucode.jp` から 301 で新環境へ転送。M7 で停止予定）では、`exec()` やシェルコマンド実行、常駐キューワーカーは使えず、非同期処理は cron の `schedule:run` ベース。画像圧縮は同期処理で、ファイル数・サイズの上限（10MB/枚・10枚まで）で安全性を担保している。コードはどちらの環境でも動くよう、GD フォールバックと同期処理の設計を維持する。
 
 ## UI方針
@@ -54,3 +54,11 @@
 
 - **`spra_prod` に参加させるのは `katsuooool-web` だけ。** Compose はサービス名をネットワーク上の別名にするため、`app` のような汎用名のサービスを `spra_prod` に参加させると、本体 Caddy の `php_fastcgi app:9000` が katsuooool にも解決され、本体のページが katsuooool の画面になる。
 - `spra_prod` に参加するサービス名は `katsuooool-` 付きにし、本体が使う名前（`app`・`caddy`・`mysql`・`redis`・`horizon`・`scheduler`）と衝突させない。
+
+## 本番反映の手順（2026-10-10 に M6 で確認）
+
+1. main にマージして GitHub へ push（サーバーは GitHub から `git pull` する）。
+2. サーバー（`~/katsuooool`）で `git pull --ff-only`。
+3. `docker compose -f compose.prod.yaml build app`、続けて `build katsuooool-web`（空きメモリを `free -h` で確認してから）。
+4. `docker compose -f compose.prod.yaml up -d --force-recreate app scheduler katsuooool-web`。**フロントエンド（`public/build`）が変わるときは `katsuooool-web` も必須**。web のイメージは app の `public/` を焼き込んでおり、再作成しないと新 HTML が存在しないアセットを参照して 404 になる。`.env` だけの変更なら `app`・`scheduler` のみ。
+5. 外から、トップ・ツール画面・アセットが 200 で返ること、本体（smartsprouts.jp）が影響を受けていないことを確認。

@@ -16,14 +16,14 @@ test('the image-compress page renders', function () {
     $response->assertInertia(fn ($page) => $page->component('ImageCompress'));
 });
 
-test('a free (unauthenticated) user receives maxFiles of 3', function () {
+test('a free (unauthenticated) user receives maxFiles of 10', function () {
     $response = $this->get(route('image-compress.show'));
 
     $response->assertSuccessful();
-    $response->assertInertia(fn ($page) => $page->component('ImageCompress')->where('maxFiles', 3));
+    $response->assertInertia(fn ($page) => $page->component('ImageCompress')->where('maxFiles', 10));
 });
 
-test('a premium user receives maxFiles of 10', function () {
+test('a premium user receives maxFiles of 20', function () {
     $user = User::factory()->create();
     $user->subscriptions()->create([
         'type' => 'default',
@@ -36,7 +36,7 @@ test('a premium user receives maxFiles of 10', function () {
     $response = $this->actingAs($user)->get(route('image-compress.show'));
 
     $response->assertSuccessful();
-    $response->assertInertia(fn ($page) => $page->component('ImageCompress')->where('maxFiles', 10));
+    $response->assertInertia(fn ($page) => $page->component('ImageCompress')->where('maxFiles', 20));
 });
 
 test('posting valid images returns compressed download links', function () {
@@ -228,9 +228,9 @@ test('posting more than 10 files is rejected with a validation error', function 
     $response->assertStatus(422);
 });
 
-test('a free user cannot upload more than 3 files at once', function () {
+test('a free user cannot upload more than 10 files at once', function () {
     $user = User::factory()->create();
-    $files = collect(range(1, 4))
+    $files = collect(range(1, 11))
         ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
         ->all();
 
@@ -241,7 +241,7 @@ test('a free user cannot upload more than 3 files at once', function () {
     $response->assertStatus(422);
 });
 
-test('a premium user can upload up to 10 files at once', function () {
+test('a premium user can upload up to 20 files at once', function () {
     $user = User::factory()->create();
     $user->subscriptions()->create([
         'type' => 'default',
@@ -250,7 +250,7 @@ test('a premium user can upload up to 10 files at once', function () {
         'stripe_price' => 'price_test_monthly',
         'quantity' => 1,
     ]);
-    $files = collect(range(1, 4))
+    $files = collect(range(1, 20))
         ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 100, 100))
         ->all();
 
@@ -259,5 +259,17 @@ test('a premium user can upload up to 10 files at once', function () {
         ->post(route('image-compress.process'), ['files' => $files]);
 
     $response->assertSuccessful();
-    $response->assertJsonCount(4, 'results');
+    $response->assertJsonCount(20, 'results');
+});
+
+test('a free user can upload exactly 10 files at once', function () {
+    $files = collect(range(1, 10))
+        ->map(fn ($i) => UploadedFile::fake()->image("photo-{$i}.jpg", 50, 50))
+        ->all();
+
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => $files]);
+
+    $response->assertSuccessful();
+    $response->assertJsonCount(10, 'results');
 });

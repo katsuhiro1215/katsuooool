@@ -8,6 +8,7 @@ use App\Services\Tools\ImageCompressService;
 use App\Services\Tools\ToolDownloadService;
 use App\Services\Tools\ToolEventLogger;
 use App\Services\Tools\ToolUploadService;
+use App\Support\ImageToolLimits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -20,15 +21,7 @@ use Throwable;
 
 class ImageCompressController extends Controller
 {
-    private const MAX_FILE_BYTES = 10 * 1024 * 1024;
-
-    private const MAX_FILE_COUNT = 10;
-
-    private const FREE_MAX_FILE_COUNT = 3;
-
     private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-
-    private const MAX_PIXELS = 25_000_000;
 
     public function show(Request $request): Response
     {
@@ -36,7 +29,7 @@ class ImageCompressController extends Controller
         $isPremium = $user instanceof User && $user->isPremium();
 
         return Inertia::render('ImageCompress', [
-            'maxFiles' => $isPremium ? self::MAX_FILE_COUNT : self::FREE_MAX_FILE_COUNT,
+            'maxFiles' => ImageToolLimits::maxFiles($isPremium),
         ]);
     }
 
@@ -49,7 +42,7 @@ class ImageCompressController extends Controller
     ): JsonResponse {
         $user = $request->user();
         $isPremium = $user instanceof User && $user->isPremium();
-        $maxFileCount = $isPremium ? self::MAX_FILE_COUNT : self::FREE_MAX_FILE_COUNT;
+        $maxFileCount = ImageToolLimits::maxFiles($isPremium);
 
         $request->validate([
             'files' => ['required', 'array', 'max:'.$maxFileCount],
@@ -65,7 +58,7 @@ class ImageCompressController extends Controller
         $uploadResult = $uploadService->store(
             uploadedFiles: $uploadedFiles,
             allowedMimeTypes: self::ALLOWED_MIME_TYPES,
-            maxFileBytes: self::MAX_FILE_BYTES,
+            maxFileBytes: ImageToolLimits::maxFileBytes(),
             maxFileCount: $maxFileCount,
         );
 
@@ -111,7 +104,7 @@ class ImageCompressController extends Controller
                     throw new RuntimeException('Failed to read image dimensions.');
                 }
 
-                if ($dimensions[0] * $dimensions[1] > self::MAX_PIXELS) {
+                if (ImageToolLimits::maxPixels() < $dimensions[0] * $dimensions[1]) {
                     $results[] = [
                         'original_name' => $uploadedToolFile->originalName,
                         'status' => 'failed',

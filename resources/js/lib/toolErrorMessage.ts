@@ -5,6 +5,9 @@ interface ResolvedError {
     showUpsell: boolean;
 }
 
+// Premium の一度に処理できる枚数（config/image_tools.php の max_files.premium と同じ値）
+export const PREMIUM_MAX_FILES = 20;
+
 /**
  * A 422 from these tools' `files` array validation can mean two very
  * different things: too many files (batch-count limit) or a single file
@@ -14,10 +17,16 @@ interface ResolvedError {
  * per-index key like `files.0` — only the former is actually about the
  * free/Premium batch limit.
  */
+export interface ResolveErrorOptions {
+    /** AVIF への変換中の、現在の枚数の上限。maxFiles には AVIF 以外の上限（無料か Premium かの判定に使う）を渡す */
+    avifLimit?: number;
+}
+
 export function resolveErrorMessage(
     error: unknown,
     maxFiles: number,
     genericMessage: string,
+    options: ResolveErrorOptions = {},
 ): ResolvedError {
     if (!axios.isAxiosError(error)) {
         return { message: genericMessage, showUpsell: false };
@@ -29,9 +38,20 @@ export function resolveErrorMessage(
                 ?.errors ?? {};
 
         if ('files' in errors) {
-            if (maxFiles < 10) {
+            if (options.avifLimit !== undefined) {
+                const isFree = maxFiles < PREMIUM_MAX_FILES;
+
                 return {
-                    message: `無料プランでは一度に${maxFiles}枚までです。Premium(¥600/月)なら10枚まで一括処理できます。`,
+                    message: isFree
+                        ? `AVIF への変換は一度に${options.avifLimit}枚までです。Premium ならもう少し多く処理できます。`
+                        : `AVIF への変換は一度に${options.avifLimit}枚までです。`,
+                    showUpsell: isFree,
+                };
+            }
+
+            if (maxFiles < PREMIUM_MAX_FILES) {
+                return {
+                    message: `無料プランでは一度に${maxFiles}枚までです。Premium(¥600/月)なら${PREMIUM_MAX_FILES}枚まで一括処理できます。`,
                     showUpsell: true,
                 };
             }
@@ -47,7 +67,7 @@ export function resolveErrorMessage(
     }
 
     if (error.response?.status === 429) {
-        if (maxFiles < 10) {
+        if (maxFiles < PREMIUM_MAX_FILES) {
             return {
                 message:
                     'リクエストが多すぎます。しばらく時間をおいてから再度お試しください。Premiumならレート制限が緩和されます。',
@@ -58,6 +78,14 @@ export function resolveErrorMessage(
         return {
             message:
                 'リクエストが多すぎます。しばらく時間をおいてから再度お試しください。',
+            showUpsell: false,
+        };
+    }
+
+    if (error.response?.status === 503) {
+        return {
+            message:
+                '現在アクセスが集中しています。少し待ってから、もう一度お試しください。',
             showUpsell: false,
         };
     }

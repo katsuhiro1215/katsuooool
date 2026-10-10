@@ -13,14 +13,14 @@
 	# app コンテナと同じパスにしておく（php_fastcgi の SCRIPT_FILENAME がそのまま解決される）
 	root * /var/www/html/public
 
-	# 画像アップロード（現行 10MB x 10枚）に余裕を持たせた上限。PHP 側の post_max_size=110M と揃える
+	# 画像アップロード（Premium 20枚 x 10MB = 200MB）に余裕を持たせた上限。PHP 側の post_max_size=230M と揃える
 	request_body {
-		max_size 110MB
+		max_size 230MB
 	}
 
 	# 画像変換（AVIF など）の時間切れを防ぐ
 	php_fastcgi katsuooool-app:9000 {
-		read_timeout 120s
+		read_timeout 300s
 	}
 
 	file_server
