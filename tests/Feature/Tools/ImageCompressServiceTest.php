@@ -108,3 +108,30 @@ test('compress rejects an unsupported mime type', function () {
 
     @unlink($input);
 });
+
+test('compress skips palette encoding for a png above the indexed pixel ceiling', function () {
+    // 256色化は画素数に比例して遅くなる（2,500万画素で約265秒）ため、上限を超える画像では省く。
+    // 上限を 1 画素にして、パレット化で縮むはずの画像が縮まないこと（= 省かれたこと）を確かめる。
+    $gdImage = imagecreatetruecolor(1200, 800);
+    imagefilledrectangle($gdImage, 0, 0, 1200, 800, imagecolorallocate($gdImage, 245, 245, 245));
+    imagefilledrectangle($gdImage, 0, 0, 1200, 80, imagecolorallocate($gdImage, 30, 64, 175));
+    $inputPath = sys_get_temp_dir().'/'.uniqid('image-compress-indexed-ceiling-', true).'.png';
+    imagepng($gdImage, $inputPath);
+    imagedestroy($gdImage);
+
+    $service = new ImageCompressService;
+    $withPalette = sys_get_temp_dir().'/'.uniqid('out-a-', true).'.png';
+    $withoutPalette = sys_get_temp_dir().'/'.uniqid('out-b-', true).'.png';
+
+    config()->set('image_tools.png_indexed_max_pixels', 4_000_000);
+    $paletteBytes = $service->compress($inputPath, $withPalette, 'image/png');
+
+    config()->set('image_tools.png_indexed_max_pixels', 1);
+    $truecolorBytes = $service->compress($inputPath, $withoutPalette, 'image/png');
+
+    expect($truecolorBytes)->toBeGreaterThan($paletteBytes);
+
+    @unlink($inputPath);
+    @unlink($withPalette);
+    @unlink($withoutPalette);
+});

@@ -118,6 +118,17 @@ class ImageConvertController extends Controller
                     continue;
                 }
 
+                // AVIF はメモリが画素数にほぼ比例して増えるため、専用の上限を設ける
+                if ($targetExtension === 'avif' && ImageToolLimits::avifMaxPixels() < $dimensions[0] * $dimensions[1]) {
+                    $results[] = [
+                        'original_name' => $uploadedToolFile->originalName,
+                        'status' => 'failed',
+                        'reason' => '画像の解像度が大きすぎます。AVIF への変換は'.intdiv(ImageToolLimits::avifMaxPixels(), 10_000).'万画素までです。',
+                    ];
+
+                    continue;
+                }
+
                 $outputRelativePath = "tool-tmp/{$uploadResult->batchId}/converted/".basename($uploadedToolFile->path, '.'.pathinfo($uploadedToolFile->path, PATHINFO_EXTENSION)).'.'.$targetExtension;
 
                 $outputBytes = $convertService->convert(

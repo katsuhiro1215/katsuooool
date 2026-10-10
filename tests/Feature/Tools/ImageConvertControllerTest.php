@@ -278,3 +278,21 @@ test('a HEIC photo is rejected by tools that do not accept HEIC', function () {
     $response->assertSuccessful();
     $response->assertJsonPath('results.0.status', 'rejected');
 });
+
+test('an image above the AVIF pixel ceiling is refused for avif but accepted for webp', function () {
+    // 3200x2600 = 8.32M 画素。AVIF は画素数に比例してメモリを使うため 800 万画素まで。
+    $path = sys_get_temp_dir().'/'.uniqid('image-convert-avif-ceiling-', true).'.jpg';
+    $gdImage = imagecreatetruecolor(3200, 2600);
+    imagejpeg($gdImage, $path, 90);
+    imagedestroy($gdImage);
+
+    $make = fn () => new UploadedFile($path, 'wide.jpg', 'image/jpeg', null, true);
+
+    $avif = postImageConvert([$make()], 'avif');
+    $avif->assertSuccessful();
+    $avif->assertJsonPath('results.0.status', 'failed');
+    $avif->assertJsonPath('results.0.reason', '画像の解像度が大きすぎます。AVIF への変換は800万画素までです。');
+
+    $webp = postImageConvert([$make()], 'webp');
+    $webp->assertJsonPath('results.0.status', 'success');
+});

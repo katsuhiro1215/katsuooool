@@ -23,4 +23,14 @@ class ImageToolLimits
     {
         return (int) config('image_tools.max_pixels');
     }
+
+    public static function avifMaxPixels(): int
+    {
+        return (int) config('image_tools.avif_max_pixels');
+    }
+
+    public static function pngIndexedMaxPixels(): int
+    {
+        return (int) config('image_tools.png_indexed_max_pixels');
+    }
 }
