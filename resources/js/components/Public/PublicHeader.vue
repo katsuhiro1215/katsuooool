@@ -16,7 +16,7 @@ const showingMobileMenu = ref(false);
 <template>
     <header class="border-b border-gray-200 bg-white">
         <div
-            class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4"
+            class="mx-auto flex items-center justify-between px-6 py-4"
         >
             <Link href="/" class="flex items-center gap-3">
                 <ApplicationLogo class="h-8 w-auto" />

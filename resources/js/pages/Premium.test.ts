@@ -8,7 +8,11 @@ vi.mock('@inertiajs/vue3', () => ({
         props: ['href'],
         template: '<a :href="href"><slot /></a>',
     },
-    usePage: () => ({ props: { auth: { user: null } } }),
+    usePage: () => ({
+        url: '/',
+        props: { auth: { user: null }, toolNav: [] },
+    }),
+    router: { get: () => {} },
 }));
 
 import Premium from './Premium.vue';

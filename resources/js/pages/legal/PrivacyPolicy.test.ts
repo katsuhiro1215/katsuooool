@@ -5,7 +5,11 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 vi.mock('@inertiajs/vue3', () => ({
     Head: { template: '<div />' },
     Link: { template: '<a><slot /></a>' },
-    usePage: () => ({ props: { auth: { user: null } } }),
+    usePage: () => ({
+        url: '/',
+        props: { auth: { user: null }, toolNav: [] },
+    }),
+    router: { get: () => {} },
 }));
 
 import PrivacyPolicy from './PrivacyPolicy.vue';
