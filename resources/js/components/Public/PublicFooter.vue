@@ -80,7 +80,7 @@ const NAV_GROUPS: NavGroup[] = [
 
 <template>
     <footer class="border-t border-gray-200 bg-white">
-        <div class="mx-auto max-w-7xl px-6 py-10">
+        <div class="mx-auto px-6 py-10">
             <div class="grid grid-cols-2 gap-8 sm:grid-cols-4">
                 <div v-for="group in NAV_GROUPS" :key="group.heading">
                     <p

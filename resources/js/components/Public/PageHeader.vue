@@ -20,7 +20,7 @@ withDefaults(
 <template>
     <div class="border-b border-gray-200 bg-white">
         <div
-            :class="['mx-auto px-6 py-10', narrow ? 'max-w-3xl' : 'max-w-7xl']"
+            :class="['mx-auto px-6 py-10', narrow ? 'max-w-3xl' : '']"
         >
             <Link
                 :href="backHref"

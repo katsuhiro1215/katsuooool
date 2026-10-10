@@ -21,7 +21,7 @@ const showingSidebar = ref(false);
     <div class="min-h-screen bg-gray-50">
         <PublicHeader :user="user" />
 
-        <div class="mx-auto max-w-7xl lg:flex">
+        <div class="lg:flex">
             <button
                 type="button"
                 class="mx-6 mb-4 mt-6 inline-flex w-[calc(100%-3rem)] items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 lg:hidden"
