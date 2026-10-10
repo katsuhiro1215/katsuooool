@@ -25,14 +25,14 @@
 
 - `PublicLayout.vue` に左サイドバーを組み込む。ヘッダーとフッターはそのまま。各ツール画面のファイルは変更しない。
 - lg（1024px）以上: 幅 240px の固定サイドバー。メインは残りの幅。
-- lg 未満: サイドバーはヘッダーのボタンで開くドロワー。開いたあと項目を選ぶと閉じる。
+- lg 未満: ヘッダー下の「カテゴリ・検索」ボタンで開閉するパネル（オーバーレイにはしない）。
 - 管理画面（`AdminLayout`）、認証画面、設定画面は対象外。
 
 ### 4.2 サイドバーの中身（新規 `components/Public/CategorySidebar.vue`）
 
 - 上から、ツール検索窓、「すべて」、各カテゴリ（件数バッジ付き）。
 - 現在のカテゴリを強調表示する。トップでは URL の `category`、ツール画面では、現在のパスと一致するツールの `category`。
-- 検索窓に入力して Enter すると `/?q=…` に移動し、メインに結果を出す。入力途中の絞り込みはトップのみ（ツール画面ではサイドバー内で結果を出さない）。
+- 検索窓に入力して Enter すると `/?q=…` に移動し、メインに結果を出す。入力中のライブ絞り込みはしない（URL で共有でき、実装が一本になる）。
 
 ### 4.3 メイン（トップ `Home.vue`）
 
@@ -49,7 +49,7 @@
 
 ### 4.5 コードの整理
 
-- カテゴリ定義は `toolFilter.ts` の `CATEGORY_TABS` を流用し、名前を `CATEGORIES` に改める（用途がタブでなくなるため）。参照箇所は全置換する。
+- カテゴリ定義は `toolFilter.ts` の `CATEGORY_TABS` を流用し、名前は変えない（参照3箇所で、改名の利益が小さい）。
 - `filterTools` は維持する。
 
 ## 5. やらないこと
@@ -67,7 +67,7 @@
 
 ## 7. テスト
 
-- Vitest: `CategorySidebar`（件数、現在カテゴリの強調、ドロワーの開閉）、`toolFilter`。既存の `PublicHeader`・`PublicFooter` のテストを壊さない。
+- Vitest: `CategorySidebar`（件数、現在カテゴリの強調、検索の遷移）、`toolFilter`。既存の `PublicHeader`・`PublicFooter` のテストを壊さない。
 - Pest: `toolNav` が全ページの共有プロパティに入ること、`/?category=image` が画像ツールだけを返す表示になること。
 - `composer test`（Pint・PHPStan・Pest）と `npm run lint`、Vitest を通す。
 - ブラウザ確認（Playwright）: デスクトップ幅とモバイル幅で、トップ、画像ツール、問い合わせページ。
