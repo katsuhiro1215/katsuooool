@@ -29,7 +29,10 @@ class FakeCli extends CliRunner
         $code = $this->exitCodes[$command[0]] ?? 0;
 
         if ($code === 0) {
-            foreach (['--output', '--out', '-o'] as $flag) {
+            // -o は cwebp では出力先だが、oxipng では最適化レベル（-o 2）なので、cwebp のときだけ出力先として扱う
+            $flags = $command[0] === 'cwebp' ? ['-o'] : ['--output', '--out'];
+
+            foreach ($flags as $flag) {
                 $position = array_search($flag, $command, true);
 
                 if ($position !== false && isset($command[$position + 1])) {
