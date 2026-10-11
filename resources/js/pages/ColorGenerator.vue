@@ -130,8 +130,8 @@ watch(() => [state.mode, state.mood, state.base], track);
                     />
 
                     <div v-if="selected" ref="detail" class="space-y-8">
-                        <PaletteDetail :palette="selected" />
                         <SitePreview :colors="selected.colors" />
+                        <PaletteDetail :palette="selected" />
                     </div>
                 </div>
             </PageMain>

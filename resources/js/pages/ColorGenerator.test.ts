@@ -121,3 +121,13 @@ test('画面が広いときはスクロールしない', async () => {
     await wrapper.findAll('button[aria-label^="パレット"]')[1].trigger('click');
     expect(scrollIntoView).not.toHaveBeenCalled();
 });
+
+test('Web ページのひな形が、役割・読みやすさより上に出る', () => {
+    const wrapper = mount(ColorGenerator);
+    const html = wrapper.html();
+
+    expect(html.indexOf('data-preview="root"')).toBeGreaterThan(-1);
+    expect(html.indexOf('data-preview="root"')).toBeLessThan(
+        html.indexOf('役割と割合の目安'),
+    );
+});
