@@ -273,3 +273,22 @@ test('a free user can upload exactly 10 files at once', function () {
     $response->assertSuccessful();
     $response->assertJsonCount(10, 'results');
 });
+
+test('an invalid compression level is rejected with a validation error', function () {
+    $files = [UploadedFile::fake()->image('photo.jpg', 100, 100)];
+
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => $files, 'level' => 'extreme']);
+
+    $response->assertStatus(422);
+});
+
+test('each valid compression level is accepted', function (string $level) {
+    $files = [UploadedFile::fake()->image('photo.jpg', 100, 100)];
+
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => $files, 'level' => $level]);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.status', 'success');
+})->with(['light', 'recommended', 'strong']);

@@ -46,6 +46,7 @@ class ImageCompressController extends Controller
 
         $request->validate([
             'files' => ['required', 'array', 'max:'.$maxFileCount],
+            'level' => ['sometimes', 'in:light,recommended,strong'],
             'files.*' => ['file'],
         ]);
 
@@ -120,6 +121,7 @@ class ImageCompressController extends Controller
                     inputPath: $inputAbsolutePath,
                     outputPath: $disk->path($outputRelativePath),
                     mimeType: $uploadedToolFile->mimeType,
+                    level: $request->string('level', config('image_tools.compression.default_level'))->toString(),
                 );
 
                 if ($outputBytes >= $uploadedToolFile->size) {
