@@ -63,7 +63,7 @@ describe('matchResults', () => {
         expect(matched[1]?.status).toBe('failed');
     });
 
-    test('files with the same name each get their own result', () => {
+    test('files with the same name each get their own result (no index: in order)', () => {
         const matched = matchResults(
             ['photo.jpg', 'photo.jpg'],
             [ok('photo.jpg', 1000, 100), failed('photo.jpg')],
@@ -71,6 +71,20 @@ describe('matchResults', () => {
 
         expect(isSuccess(matched[0])).toBe(true);
         expect(matched[1]?.status).toBe('failed');
+    });
+
+    test('the server index wins: a rejected first file with the same name is not swapped with the second', () => {
+        // サーバーは成功を先に、拒否を最後に返す。1枚目(拒否)・2枚目(成功)が同名でも入れ替わらない
+        const matched = matchResults(
+            ['x.jpg', 'x.jpg'],
+            [
+                { ...ok('x.jpg'), index: 1 },
+                { ...failed('x.jpg'), index: 0 },
+            ],
+        );
+
+        expect(matched[0]?.status).toBe('failed');
+        expect(isSuccess(matched[1])).toBe(true);
     });
 
     test('a file without a result is null', () => {

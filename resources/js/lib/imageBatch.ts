@@ -1,4 +1,6 @@
 export interface SuccessResult {
+    /** アップロードしたファイルの順番（0 始まり）。結果は成功→拒否の順で返るため、これで対応づける */
+    index?: number;
     original_name: string;
     status: 'success';
     input_bytes: number;
@@ -9,9 +11,12 @@ export interface SuccessResult {
     height?: number;
     clamped?: boolean;
     has_gps?: boolean;
+    /** HEIC から JPEG に変換した場合は 'heic'（元の HEIC より大きくなることがある） */
+    converted_from?: 'heic' | null;
 }
 
 export interface FailedResult {
+    index?: number;
     original_name: string;
     status: 'rejected' | 'failed';
     reason: string;
@@ -69,8 +74,8 @@ export function formatBytes(bytes: number): string {
 }
 
 /**
- * 結果は「成功→拒否」の順で返るため、ファイル名で元のファイルに対応づける。
- * 同じ名前が複数あっても、先頭から1つずつ使う。
+ * 結果は「成功→拒否」の順で返るため、サーバーが付ける index（アップロード順）で元のファイルに対応づける。
+ * index が無い結果は、ファイル名で、先頭から1つずつ対応づける。
  */
 export function matchResults(
     names: string[],
@@ -78,18 +83,27 @@ export function matchResults(
 ): Array<BatchResult | null> {
     const used = new Set<number>();
 
-    return names.map((name) => {
-        const index = results.findIndex(
-            (result, i) => !used.has(i) && result.original_name === name,
+    return names.map((name, fileIndex) => {
+        let found = results.findIndex(
+            (result, i) => !used.has(i) && result.index === fileIndex,
         );
 
-        if (index === -1) {
+        if (found === -1) {
+            found = results.findIndex(
+                (result, i) =>
+                    !used.has(i) &&
+                    result.index === undefined &&
+                    result.original_name === name,
+            );
+        }
+
+        if (found === -1) {
             return null;
         }
 
-        used.add(index);
+        used.add(found);
 
-        return results[index];
+        return results[found];
     });
 }
 

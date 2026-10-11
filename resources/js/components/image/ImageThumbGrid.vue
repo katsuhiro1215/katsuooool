@@ -47,7 +47,7 @@ function onAdd(event: Event): void {
                 <button
                     v-if="item.state === 'ready'"
                     type="button"
-                    aria-label="削除"
+                    :aria-label="`${item.name} を削除`"
                     class="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-gray-900/70 text-sm text-white hover:bg-red-600"
                     @click="emit('remove', item.id)"
                 >
@@ -93,10 +93,16 @@ function onAdd(event: Event): void {
                         {{ formatBytes(item.result.input_bytes) }} →
                         {{ formatBytes(item.result.output_bytes) }}
                         <span
-                            v-if="item.result.reduction_percent > 0"
+                            v-if="
+                                item.result.reduction_percent > 0 &&
+                                !item.result.converted_from
+                            "
                             class="font-medium text-green-700"
                             >({{ item.result.reduction_percent }}%削減)</span
                         >
+                    </p>
+                    <p v-if="item.result.converted_from" class="text-gray-500">
+                        HEICをJPEGに変換しました（元より大きくなることがあります）
                     </p>
                     <p
                         v-if="item.result.width && item.result.height"

@@ -38,7 +38,10 @@ test('an item without a preview (HEIC) shows a fallback with the file name', () 
 test('the remove button emits the item id', async () => {
     const wrapper = mountGrid([item()]);
 
-    await wrapper.find('button[aria-label="削除"]').trigger('click');
+    const button = wrapper.find('button[aria-label="photo.jpg を削除"]');
+    expect(button.exists()).toBe(true);
+
+    await button.trigger('click');
 
     expect(wrapper.emitted('remove')?.[0]).toEqual(['f1']);
 });
@@ -49,7 +52,7 @@ test('a processing item shows the overlay and no remove button', () => {
     expect(wrapper.find('[data-testid="thumb-processing"]').exists()).toBe(
         true,
     );
-    expect(wrapper.find('button[aria-label="削除"]').exists()).toBe(false);
+    expect(wrapper.find('button[aria-label$="を削除"]').exists()).toBe(false);
 });
 
 test('a successful item shows before and after sizes, the download link and notes', () => {
@@ -99,4 +102,26 @@ test('the add card appears only when more files can be added', () => {
     expect(mountGrid([item()], false).find('input[type="file"]').exists()).toBe(
         false,
     );
+});
+
+test('a result converted from HEIC says so', () => {
+    const wrapper = mountGrid([
+        item({
+            name: 'IMG_1.heic',
+            previewUrl: null,
+            state: 'success',
+            result: {
+                original_name: 'IMG_1.heic',
+                status: 'success',
+                input_bytes: 715,
+                output_bytes: 2024,
+                reduction_percent: -183,
+                download_url: '/d/img',
+                converted_from: 'heic',
+            },
+        }),
+    ]);
+
+    expect(wrapper.text()).toContain('JPEGに変換');
+    expect(wrapper.text()).not.toContain('削減');
 });
