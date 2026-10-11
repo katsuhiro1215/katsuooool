@@ -63,6 +63,22 @@ const items = computed<ThumbItem[]>(() =>
     }),
 );
 
+const MAX_PIXELS = 8000;
+
+function isValidPixel(value: string): boolean {
+    const number = Number(value);
+
+    return Number.isInteger(number) && number >= 1 && number <= MAX_PIXELS;
+}
+
+// 入力があって、範囲（1〜8000）を外れているか
+const pixelOutOfRange = computed(
+    () =>
+        mode.value === 'pixel' &&
+        ((width.value !== '' && !isValidPixel(width.value)) ||
+            (height.value !== '' && !isValidPixel(height.value))),
+);
+
 const canSubmit = computed(() => {
     if (files.value.length === 0) {
         return false;
@@ -74,7 +90,9 @@ const canSubmit = computed(() => {
         return Number.isInteger(value) && value >= 1 && value <= 100;
     }
 
-    return width.value !== '' || height.value !== '';
+    return (
+        (width.value !== '' || height.value !== '') && !pixelOutOfRange.value
+    );
 });
 
 function submitFields(): Record<string, string> {
@@ -202,6 +220,12 @@ const summary = computed(() =>
                                             class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
                                         />
                                     </label>
+                                    <p
+                                        v-if="pixelOutOfRange"
+                                        class="text-xs text-red-600"
+                                    >
+                                        幅・高さは1〜8000pxの整数で指定してください。
+                                    </p>
                                     <p class="text-xs text-gray-500">
                                         どちらか一方だけでも指定できます。縦横比は保たれます。拡大はできません（元より大きい値は、元のサイズに収めます）。
                                     </p>

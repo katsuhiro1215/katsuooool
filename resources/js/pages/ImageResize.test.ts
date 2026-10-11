@@ -72,7 +72,9 @@ describe('ImageResize', () => {
 
     test('percent mode posts the percentage (default 50) and no pixel sizes', async () => {
         const wrapper = await withFile();
-        await wrapper.find('input[type="radio"][value="percent"]').setValue(true);
+        await wrapper
+            .find('input[type="radio"][value="percent"]')
+            .setValue(true);
 
         expect(submitButton(wrapper).attributes('disabled')).toBeUndefined();
         await submitButton(wrapper).trigger('click');
@@ -86,7 +88,9 @@ describe('ImageResize', () => {
 
     test('a percentage outside 1 to 100 disables the submit button', async () => {
         const wrapper = await withFile();
-        await wrapper.find('input[type="radio"][value="percent"]').setValue(true);
+        await wrapper
+            .find('input[type="radio"][value="percent"]')
+            .setValue(true);
 
         await wrapper.find('input[name="percent"]').setValue('150');
         expect(submitButton(wrapper).attributes('disabled')).toBeDefined();
@@ -99,5 +103,20 @@ describe('ImageResize', () => {
         const wrapper = await withFile();
 
         expect(wrapper.text()).toContain('拡大はできません');
+    });
+
+    test('a width or height outside 1 to 8000 disables the submit button and explains the range', async () => {
+        const wrapper = await withFile();
+
+        await wrapper.find('input[name="width"]').setValue('9000');
+        expect(submitButton(wrapper).attributes('disabled')).toBeDefined();
+        expect(wrapper.text()).toContain('1〜8000');
+
+        await wrapper.find('input[name="width"]').setValue('');
+        await wrapper.find('input[name="height"]').setValue('0');
+        expect(submitButton(wrapper).attributes('disabled')).toBeDefined();
+
+        await wrapper.find('input[name="height"]').setValue('8000');
+        expect(submitButton(wrapper).attributes('disabled')).toBeUndefined();
     });
 });
