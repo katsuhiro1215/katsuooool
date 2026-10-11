@@ -134,3 +134,17 @@ test('resize with a larger target keeps the original size', function () {
     @unlink($input);
     @unlink($output);
 });
+
+test('resizeWithPlan uses the orientation-corrected size, so a portrait photo is not reported as clamped', function () {
+    // 300x200 の画素に EXIF の向き=6 が付いた JPEG は、見た目は 200x300（縦長）。
+    // height=250 は縮小（250/300）であり、元のサイズに収めたわけではない。
+    $output = sys_get_temp_dir().'/'.uniqid('resize-orient-', true).'.jpg';
+
+    $plan = (new ImageResizeService)->resizeWithPlan(base_path('tests/fixtures/orient6.jpg'), $output, 'image/jpeg', null, 250);
+
+    expect($plan['clamped'])->toBeFalse()
+        ->and([$plan['width'], $plan['height']])->toBe([getimagesize($output)[0], getimagesize($output)[1]])
+        ->and($plan['height'])->toBe(250);
+
+    @unlink($output);
+})->skip(! function_exists('exif_read_data'), 'exif 拡張が無い環境');

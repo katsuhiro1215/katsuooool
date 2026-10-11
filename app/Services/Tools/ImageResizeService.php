@@ -12,6 +12,16 @@ class ImageResizeService
 
     public function resize(string $inputPath, string $outputPath, string $mimeType, ?int $width, ?int $height, ?int $percent = null): int
     {
+        return $this->resizeWithPlan($inputPath, $outputPath, $mimeType, $width, $height, $percent)['bytes'];
+    }
+
+    /**
+     * リサイズして、実際にデコードした画像（EXIF の向きを補正したあと）の寸法から立てた計画を返す。
+     *
+     * @return array{bytes: int, width: int, height: int, clamped: bool}
+     */
+    public function resizeWithPlan(string $inputPath, string $outputPath, string $mimeType, ?int $width, ?int $height, ?int $percent = null): array
+    {
         if ($width === null && $height === null && $percent === null) {
             throw new InvalidArgumentException('Either width, height or percent must be given.');
         }
@@ -35,7 +45,12 @@ class ImageResizeService
 
         $encoded->save($outputPath);
 
-        return $encoded->size();
+        return [
+            'bytes' => $encoded->size(),
+            'width' => $target['width'],
+            'height' => $target['height'],
+            'clamped' => $target['clamped'],
+        ];
     }
 
     /**

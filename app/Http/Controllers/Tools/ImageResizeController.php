@@ -56,8 +56,13 @@ class ImageResizeController extends Controller
             'files.*' => ['file'],
             'mode' => ['sometimes', 'in:pixel,percent'],
             'percent' => ['required_if:mode,percent', 'nullable', 'integer', 'min:1', 'max:100'],
-            'width' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_DIMENSION, Rule::requiredIf(fn () => $mode === 'pixel' && ! $request->filled('height'))],
-            'height' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_DIMENSION, Rule::requiredIf(fn () => $mode === 'pixel' && ! $request->filled('width'))],
+            // percent モードでは、幅・高さは使わないので検証しない
+            'width' => $mode === 'pixel'
+                ? ['nullable', 'integer', 'min:1', 'max:'.self::MAX_DIMENSION, Rule::requiredIf(fn () => ! $request->filled('height'))]
+                : ['nullable'],
+            'height' => $mode === 'pixel'
+                ? ['nullable', 'integer', 'min:1', 'max:'.self::MAX_DIMENSION, Rule::requiredIf(fn () => ! $request->filled('width'))]
+                : ['nullable'],
         ]);
 
         $percent = $mode === 'percent' ? (int) $request->input('percent') : null;
@@ -93,7 +98,12 @@ class ImageResizeController extends Controller
         $totalInputBytes = 0;
         $totalOutputBytes = 0;
 
+        // 受け付けたファイルの元の添字（拒否されたものを除いた順）。結果をアップロード順に対応づけるために使う
+        $acceptedIndices = array_values(array_diff(array_keys($uploadedFiles), array_keys($uploadResult->rejected)));
+        $position = 0;
+
         foreach ($uploadResult->files as $uploadedToolFile) {
+            $originalIndex = $acceptedIndices[$position++] ?? null;
             $inputAbsolutePath = $disk->path($uploadedToolFile->path);
 
             $disk->makeDirectory("tool-tmp/{$uploadResult->batchId}/resized");
@@ -118,6 +128,7 @@ class ImageResizeController extends Controller
                 if (ImageToolLimits::maxPixels() < $dimensions[0] * $dimensions[1]) {
                     $results[] = [
                         'original_name' => $uploadedToolFile->originalName,
+                        'index' => $originalIndex,
                         'status' => 'failed',
                         'reason' => '画像の解像度が大きすぎます。',
                     ];
@@ -134,7 +145,7 @@ class ImageResizeController extends Controller
 
                 $outputRelativePath = "tool-tmp/{$uploadResult->batchId}/resized/".basename($uploadedToolFile->path, '.'.pathinfo($uploadedToolFile->path, PATHINFO_EXTENSION)).'.'.$extension;
 
-                $resizeService->resize(
+                $plan = $resizeService->resizeWithPlan(
                     inputPath: $inputAbsolutePath,
                     outputPath: $disk->path($outputRelativePath),
                     mimeType: $mimeType,
@@ -143,7 +154,6 @@ class ImageResizeController extends Controller
                     percent: $percent,
                 );
 
-                $target = $resizeService->targetSize($dimensions[0], $dimensions[1], $width, $height, $percent);
                 $outputDimensions = ImageDimensions::read($disk->path($outputRelativePath));
 
                 if ($outputDimensions === null) {
@@ -154,6 +164,7 @@ class ImageResizeController extends Controller
             } catch (Throwable) {
                 $results[] = [
                     'original_name' => $uploadedToolFile->originalName,
+                    'index' => $originalIndex,
                     'status' => 'failed',
                     'reason' => '画像のリサイズに失敗しました。',
                 ];
@@ -182,6 +193,7 @@ class ImageResizeController extends Controller
 
             $results[] = [
                 'original_name' => $uploadedToolFile->originalName,
+                'index' => $originalIndex,
                 'status' => 'success',
                 'width' => $outputDimensions[0],
                 'height' => $outputDimensions[1],
@@ -190,7 +202,8 @@ class ImageResizeController extends Controller
                 'reduction_percent' => $uploadedToolFile->size > 0
                     ? (int) round((1 - ($outputBytes / $uploadedToolFile->size)) * 100)
                     : 0,
-                'clamped' => $target['clamped'],
+                'clamped' => $plan['clamped'],
+                'converted_from' => $isHeic ? 'heic' : null,
                 'download_url' => $downloadService->signedUrl($outputRelativePath, $downloadName),
             ];
         }
@@ -200,6 +213,7 @@ class ImageResizeController extends Controller
 
         foreach ($rejected as $index => $reason) {
             $results[] = [
+                'index' => $index,
                 'original_name' => $originalNames[$index] ?? '不明なファイル',
                 'status' => 'rejected',
                 'reason' => $reason,

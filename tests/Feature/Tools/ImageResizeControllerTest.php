@@ -251,3 +251,30 @@ test('a HEIC photo is resized and returned as a jpeg', function () {
     $response->assertJsonPath('results.0.width', 200);
     expect($response->json('results.0.download_url'))->toContain('IMG_0001.jpg');
 })->skip(! class_exists(Imagick::class) || ! in_array('HEIC', Imagick::queryFormats(), true), 'Imagick が HEIC に対応していない環境');
+
+test('every result carries the original upload index, even when a rejected file comes first', function () {
+    $bad = UploadedFile::fake()->create('x.jpg', 10, 'text/plain');
+    $good = UploadedFile::fake()->image('x.jpg', 400, 300);
+
+    $response = postResize(['files' => [$bad, $good], 'width' => 100]);
+
+    $response->assertSuccessful();
+    $byStatus = collect($response->json('results'))->keyBy('status');
+    expect($byStatus['rejected']['index'])->toBe(0)
+        ->and($byStatus['success']['index'])->toBe(1);
+});
+
+test('percent mode ignores width and height values', function () {
+    $response = postResize(['files' => [UploadedFile::fake()->image('a.jpg', 400, 300)], 'mode' => 'percent', 'percent' => 50, 'width' => 'abc']);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.width', 200);
+});
+
+test('a HEIC result is marked as converted from heic', function () {
+    $heic = new UploadedFile(base_path('tests/fixtures/sample.heic'), 'IMG_0001.heic', 'image/heic', null, true);
+
+    $response = postResize(['files' => [$heic], 'mode' => 'percent', 'percent' => 50]);
+
+    $response->assertJsonPath('results.0.converted_from', 'heic');
+})->skip(! class_exists(Imagick::class) || ! in_array('HEIC', Imagick::queryFormats(), true), 'Imagick が HEIC に対応していない環境');

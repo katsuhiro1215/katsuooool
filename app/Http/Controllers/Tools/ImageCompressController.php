@@ -93,7 +93,12 @@ class ImageCompressController extends Controller
         // never be mixed into the same $results array via array-key
         // assignment; append with $results[] instead, in each loop's own
         // natural order (successes first, then rejects).
+        // 受け付けたファイルの元の添字（拒否されたものを除いた順）。結果をアップロード順に対応づけるために使う
+        $acceptedIndices = array_values(array_diff(array_keys($uploadedFiles), array_keys($uploadResult->rejected)));
+        $position = 0;
+
         foreach ($uploadResult->files as $uploadedToolFile) {
+            $originalIndex = $acceptedIndices[$position++] ?? null;
             $inputAbsolutePath = $disk->path($uploadedToolFile->path);
 
             $disk->makeDirectory("tool-tmp/{$uploadResult->batchId}/compressed");
@@ -118,6 +123,7 @@ class ImageCompressController extends Controller
                 if (ImageToolLimits::maxPixels() < $dimensions[0] * $dimensions[1]) {
                     $results[] = [
                         'original_name' => $uploadedToolFile->originalName,
+                        'index' => $originalIndex,
                         'status' => 'failed',
                         'reason' => '画像の解像度が大きすぎます。',
                     ];
@@ -158,6 +164,7 @@ class ImageCompressController extends Controller
 
                 $results[] = [
                     'original_name' => $uploadedToolFile->originalName,
+                    'index' => $originalIndex,
                     'status' => 'failed',
                     'reason' => '画像の処理に失敗しました。',
                 ];
@@ -186,9 +193,11 @@ class ImageCompressController extends Controller
 
             $results[] = [
                 'original_name' => $uploadedToolFile->originalName,
+                'index' => $originalIndex,
                 'status' => 'success',
                 'input_bytes' => $uploadedToolFile->size,
                 'output_bytes' => $outputBytes,
+                'converted_from' => $isHeic ? 'heic' : null,
                 'has_gps' => $extension === 'jpg' && ImageMetadata::hasGps($disk->path($outputRelativePath)),
                 'reduction_percent' => $uploadedToolFile->size > 0
                     ? (int) round((1 - ($outputBytes / $uploadedToolFile->size)) * 100)
@@ -202,6 +211,7 @@ class ImageCompressController extends Controller
 
         foreach ($rejected as $index => $reason) {
             $results[] = [
+                'index' => $index,
                 'original_name' => $originalNames[$index] ?? '不明なファイル',
                 'status' => 'rejected',
                 'reason' => $reason,
