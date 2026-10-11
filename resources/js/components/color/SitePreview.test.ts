@@ -107,3 +107,31 @@ test('淡いメイン色でも、見出しとリンクの文字色は背景に�
         contrastRatio(colorOf('[data-preview="card-title"]'), sub),
     ).toBeGreaterThanOrEqual(3);
 });
+
+test('見出し・リンクの色を補正したときだけ、その旨の注記を出す', () => {
+    const PASTEL: PaletteColors = [
+        '#f9f1f0',
+        '#f1dbda',
+        '#d89a97',
+        '#85d3d6',
+        '#2a1d1d',
+    ];
+    const STRONG: PaletteColors = [
+        '#f5f5f5',
+        '#e6e6e6',
+        '#1a3a8a',
+        '#0a4a2a',
+        '#111111',
+    ];
+
+    expect(
+        mount(SitePreview, { props: { colors: PASTEL } })
+            .find('[data-preview="note"]')
+            .exists(),
+    ).toBe(true);
+    expect(
+        mount(SitePreview, { props: { colors: STRONG } })
+            .find('[data-preview="note"]')
+            .exists(),
+    ).toBe(false);
+});

@@ -132,17 +132,36 @@ describe('toTheme', () => {
 });
 
 describe('contrastChecks', () => {
-    test('文字×ベース、文字×サブ背景、メイン・アクセント上のボタン文字を返す', () => {
+    test('文字×ベース、文字×サブ背景、ボタン文字、見出し・リンクに使ったときの判定を返す', () => {
         const checks = contrastChecks(LIGHT);
         expect(checks.map((c) => c.label)).toEqual([
             '文字 × ベース',
             '文字 × サブ背景',
             'ボタン文字 × メイン',
             'ボタン文字 × アクセント',
+            'メイン × ベース（見出し・大きい文字）',
+            'アクセント × サブ背景（リンク）',
         ]);
 
-        for (const check of checks) {
+        for (const check of checks.slice(0, 4)) {
             expect(check.ratio).toBeGreaterThanOrEqual(4.5);
         }
+    });
+
+    test('大きい文字は 3:1 で AA、4.5:1 で AAA。リンクは通常の文字の基準', () => {
+        const checks = contrastChecks(LIGHT);
+        const heading = checks[4];
+        const link = checks[5];
+
+        expect(heading.grade).toBe(
+            heading.ratio >= 4.5 ? 'AAA' : heading.ratio >= 3 ? 'AA' : '不適合',
+        );
+        expect(link.grade).toBe(contrastGrade(link.ratio));
+    });
+});
+
+describe('ensureReadable（すでに読める場合）', () => {
+    test('足りているなら値を変えずに返す', () => {
+        expect(ensureReadable('#1a3a8a', '#f5f5f5')).toBe('#1a3a8a');
     });
 });

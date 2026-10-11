@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
-import { computed, reactive, watch } from 'vue';
+import { computed, nextTick, reactive, ref, watch } from 'vue';
 
 import MoodSelector from '@/components/color/MoodSelector.vue';
 import PaletteDetail from '@/components/color/PaletteDetail.vue';
@@ -44,6 +44,22 @@ const selected = computed<Palette | undefined>(
         allPalettes.value.find((palette) => palette.id === state.selected) ??
         allPalettes.value[0],
 );
+
+const detail = ref<HTMLElement | null>(null);
+
+/** 1 列に積まれる幅（xl 未満）では、選んだ結果が画面の外になるので、詳細まで動かす。 */
+function selectPalette(id: string) {
+    state.selected = id;
+
+    if (window.innerWidth < 1280) {
+        nextTick(() =>
+            detail.value?.scrollIntoView?.({
+                behavior: 'smooth',
+                block: 'start',
+            }),
+        );
+    }
+}
 
 function selectMood(id: MoodId) {
     state.mode = 'mood';
@@ -110,10 +126,10 @@ watch(() => [state.mode, state.mood, state.base], track);
                     <PaletteFamilyList
                         :groups="groups"
                         :selected-id="selected?.id ?? null"
-                        @select="state.selected = $event"
+                        @select="selectPalette"
                     />
 
-                    <div v-if="selected" class="space-y-8">
+                    <div v-if="selected" ref="detail" class="space-y-8">
                         <PaletteDetail :palette="selected" />
                         <SitePreview :colors="selected.colors" />
                     </div>

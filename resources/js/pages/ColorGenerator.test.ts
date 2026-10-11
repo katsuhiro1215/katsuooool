@@ -101,3 +101,23 @@ test('基準色モードでは 5 つのパターンが並ぶ', () => {
         expect(wrapper.text()).toContain(label);
     }
 });
+
+test('画面が狭いとき、パレットを選ぶと詳細までスクロールする', async () => {
+    const scrollIntoView = vi.fn();
+    Object.assign(Element.prototype, { scrollIntoView });
+    vi.stubGlobal('innerWidth', 390);
+    const wrapper = mount(ColorGenerator);
+
+    await wrapper.findAll('button[aria-label^="パレット"]')[1].trigger('click');
+    expect(scrollIntoView).toHaveBeenCalled();
+});
+
+test('画面が広いときはスクロールしない', async () => {
+    const scrollIntoView = vi.fn();
+    Object.assign(Element.prototype, { scrollIntoView });
+    vi.stubGlobal('innerWidth', 1440);
+    const wrapper = mount(ColorGenerator);
+
+    await wrapper.findAll('button[aria-label^="パレット"]')[1].trigger('click');
+    expect(scrollIntoView).not.toHaveBeenCalled();
+});

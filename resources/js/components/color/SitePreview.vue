@@ -35,6 +35,12 @@ const cardTitle = computed(() =>
 const link = computed(() =>
     ensureReadable(theme.value.accent, theme.value.sub, 4.5),
 );
+const adjusted = computed(
+    () =>
+        heading.value !== theme.value.main ||
+        cardTitle.value !== theme.value.main ||
+        link.value !== theme.value.accent,
+);
 </script>
 
 <template>
@@ -175,5 +181,12 @@ const link = computed(() =>
                 >
             </section>
         </div>
+        <p
+            v-if="adjusted"
+            data-preview="note"
+            class="mt-2 text-xs text-gray-500"
+        >
+            淡い色は文字に使うと読みにくいため、プレビューでは見出し・リンクの文字色だけ濃く（暗い背景では明るく）補正しています。書き出す色はそのままなので、文字に使うときは上の判定を確認してください。
+        </p>
     </div>
 </template>

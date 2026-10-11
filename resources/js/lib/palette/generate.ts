@@ -74,21 +74,28 @@ export function generateAll(
 
 const BASE_SPEC = { s: 30, l: 96 } as const;
 
+/** 彩度がこれ未満の基準色は無彩色（黒・白・灰）として扱い、色相を回しても変わらないのを補う。 */
+const ACHROMATIC_SATURATION = 10;
+
 function accentFor(
     hue: number,
     s: number,
     l: number,
     pattern: BasePatternId,
 ): { h: number; s: number; l: number } {
+    const chromatic = s >= ACHROMATIC_SATURATION;
+    const accentS = chromatic ? s : 60;
+    const accentL = chromatic ? l : 50;
+
     switch (pattern) {
         case 'analogous':
-            return { h: normalize(hue + 30), s, l };
+            return { h: normalize(hue + 30), s: accentS, l: accentL };
         case 'complement':
-            return { h: normalize(hue + 180), s, l };
+            return { h: normalize(hue + 180), s: accentS, l: accentL };
         case 'split':
-            return { h: normalize(hue + 150), s, l };
+            return { h: normalize(hue + 150), s: accentS, l: accentL };
         case 'triad':
-            return { h: normalize(hue + 120), s, l };
+            return { h: normalize(hue + 120), s: accentS, l: accentL };
         case 'mono':
             return { h: hue, s, l: l > 50 ? l - 25 : l + 25 };
     }
@@ -105,8 +112,10 @@ export function fromBase(hex: string, pattern: BasePatternId): Palette | null {
 
     const main = rgbToHex(rgb);
     const accent = hslToHex(accentFor(hsl.h, hsl.s, hsl.l, pattern));
-    const base = hslToHex({ h: hsl.h, ...BASE_SPEC });
-    const sub = hslToHex({ h: hsl.h, s: BASE_SPEC.s, l: BASE_SPEC.l - 6 });
+    // 灰色の基準色では、背景も無彩色のままにする。
+    const baseS = Math.min(BASE_SPEC.s, hsl.s);
+    const base = hslToHex({ h: hsl.h, s: baseS, l: BASE_SPEC.l });
+    const sub = hslToHex({ h: hsl.h, s: baseS, l: BASE_SPEC.l - 6 });
     const text = ensureReadable(hslToHex({ h: hsl.h, s: 20, l: 14 }), sub);
     const label = BASE_PATTERNS.find((p) => p.id === pattern)?.label;
 

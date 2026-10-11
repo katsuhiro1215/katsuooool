@@ -35,6 +35,13 @@ export function ensureReadable(fg: string, bg: string, min = 4.5): string {
         return fg;
     }
 
+    const fgRgb = parseHex(fg);
+
+    // すでに足りているなら、HSL の丸めで値がずれないよう、そのまま返す。
+    if (fgRgb && contrastRatio(fgRgb, bgRgb) >= min) {
+        return fg;
+    }
+
     const lighten = relativeLuminance(bgRgb) < DARK_LUMINANCE;
     let l = hsl.l;
 
@@ -57,13 +64,14 @@ export function readableOn(bg: string): string {
     const rgb = parseHex(bg);
 
     if (!rgb) {
-        return '#111111';
+        return '#000000';
     }
 
     const white = contrastRatio({ r: 255, g: 255, b: 255 }, rgb);
-    const black = contrastRatio({ r: 17, g: 17, b: 17 }, rgb);
+    const black = contrastRatio({ r: 0, g: 0, b: 0 }, rgb);
 
-    return white >= black ? '#ffffff' : '#111111';
+    // 純粋な白か黒なら、どの背景でも必ず片方が 4.5:1 以上になる（最小でも約 4.58:1）。
+    return white >= black ? '#ffffff' : '#000000';
 }
 
 export function contrastGrade(ratio: number): 'AAA' | 'AA' | '不適合' {
@@ -140,12 +148,30 @@ export interface ContrastCheck {
     grade: 'AAA' | 'AA' | '不適合';
 }
 
-function check(label: string, a: string, b: string): ContrastCheck {
+/** 大きい文字（見出しなど）は WCAG の基準が緩く、AA は 3:1、AAA は 4.5:1。 */
+function largeTextGrade(ratio: number): 'AAA' | 'AA' | '不適合' {
+    if (ratio >= 4.5) {
+        return 'AAA';
+    }
+
+    return ratio >= 3 ? 'AA' : '不適合';
+}
+
+function check(
+    label: string,
+    a: string,
+    b: string,
+    large = false,
+): ContrastCheck {
     const ra = parseHex(a);
     const rb = parseHex(b);
     const ratio = ra && rb ? contrastRatio(ra, rb) : 1;
 
-    return { label, ratio, grade: contrastGrade(ratio) };
+    return {
+        label,
+        ratio,
+        grade: large ? largeTextGrade(ratio) : contrastGrade(ratio),
+    };
 }
 
 export function contrastChecks(colors: PaletteColors): ContrastCheck[] {
@@ -156,5 +182,8 @@ export function contrastChecks(colors: PaletteColors): ContrastCheck[] {
         check('文字 × サブ背景', text, sub),
         check('ボタン文字 × メイン', readableOn(main), main),
         check('ボタン文字 × アクセント', readableOn(accent), accent),
+        // メイン・アクセントをそのまま文字色に使うと読めるか（書き出す色の判定）。
+        check('メイン × ベース（見出し・大きい文字）', main, base, true),
+        check('アクセント × サブ背景（リンク）', accent, sub),
     ];
 }
