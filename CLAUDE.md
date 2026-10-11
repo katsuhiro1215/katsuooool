@@ -20,7 +20,7 @@
 - **DB**: ローカルは MySQL(MAMP)または SQLite。移行後の本番は **SQLite（WAL）**。本番は 2026-10-10 の M4 で Xserver（MySQL）から SQLite へ移行済み（Xserver は M7 の停止までロールバック用に保持）
 - **認証**: Laravel Fortify(User向け、既存の2FA・パスキー機能を継続利用)+ `admins` テーブルによる Admin 専用 guard
 - **決済**: Stripe(Premium機能実装時に導入、現フェーズでは未着手)
-- **画像処理**: Intervention Image(GD/Imagickをランタイム検出して使用。新本番コンテナは Imagick 入り。CLI バイナリ(cwebp/pngquant等)には依存しない方針は維持)
+- **画像処理**: Intervention Image(GD/Imagickをランタイム検出して使用。新本番コンテナは Imagick 入り。**圧縮は CLI（pngquant・oxipng・jpegoptim・cwebp）を使い、無い環境は Imagick/GD にフォールバックする**〈2026-10-11、M5-2〉。JPEG は向きのため EXIF を残す。AVIF は Imagick のまま `heic:speed=8`)
 
 ## インフラ制約(重要)
 

@@ -133,6 +133,13 @@ Admin専用の `admin` guard で認証する。ユーザー登録画面は作ら
   - アップロード時点の上限超過・非対応形式 → バリデーションエラーとしてInertiaのフラッシュメッセージで表示
   - 処理中に個別ファイルが失敗(破損画像等) → そのファイルはスキップし、成功分のみ結果に含める。失敗理由を一覧に表示する
 - レート制限: IP単位でアップロードAPIにthrottleミドルウェアを適用
+**M5-2 での変更（2026-10-11）**
+
+- 圧縮は CLI で行う: PNG は pngquant（品質の範囲を満たせなければ oxipng の無劣化）、JPEG は jpegoptim、WebP は cwebp。CLI が無い・失敗した・時間切れ（120秒）のときは、従来の Intervention（Imagick/GD）の方式に戻る。比較の根拠は `docs/superpowers/specs/2026-10-11-m5-2-compression-design.md`。
+- 圧縮レベル `level`（`light`＝無劣化／`recommended`＝既定／`strong`）を受け取る。数値は `config/image_tools.php` の `compression.levels`。画面での選択は M5-3。
+- JPEG は EXIF（向き）と ICC プロファイルを残す（`jpegoptim` に `--strip-exif`・`--strip-all` は使わない）。そのため位置情報（GPS）も残る。
+- 実測（recommended）: UI のスクリーンショット約28%（従来はほぼ縮まない）、AI イラスト約33%、iPhone の写真約74%。
+
 
 ## 8. Admin仕様(Phase 2)
 
