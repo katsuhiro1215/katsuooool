@@ -129,3 +129,17 @@ test('a HEIC photo with EXIF orientation 6 is rotated exactly once (portrait out
     ! class_exists(Imagick::class) || ! in_array('HEIC', Imagick::queryFormats(), true),
     'この環境の Imagick は HEIC に対応していない',
 );
+
+test('avif conversion sets the configured heic:speed on the Imagick image', function () {
+    config()->set('image_tools.avif_speed', 8);
+    $input = makeConvertTestInputFile('jpg');
+    $output = sys_get_temp_dir().'/'.uniqid('avif-speed-', true).'.avif';
+
+    (new ImageConvertService)->convert($input, $output, 'image/avif');
+
+    expect(ImageConvertService::lastAvifSpeed())->toBe('8')
+        ->and(filesize($output))->toBeGreaterThan(0);
+
+    @unlink($input);
+    @unlink($output);
+})->skip(! class_exists(Imagick::class), 'Imagick 拡張が無い環境');
