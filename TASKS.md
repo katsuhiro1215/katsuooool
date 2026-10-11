@@ -858,3 +858,7 @@ Phase 28で積み残していたサブプロジェクトBとして、`Blog/Index
 - [ ] `npm run lint:check` / `npm run format:check` / `npm run types:check` がグリーン
 - [ ] SPEC.mdに記載の上限値・エラーハンドリングがすべて実装・確認済み
 - [ ] 本番相当環境(Xserver共有サーバーの制限値)を想定した動作確認メモが残っている
+
+## M8: 配色ジェネレーター(2026-10-12)
+
+- [x] 旧「カラーパレット生成」「色の組み合わせ」を「配色ジェネレーター」(`/color-generator`)に統合(気分10個×色相8系統の自動生成、役割・コントラスト・Webページのひな形・CSS変数/Tailwind/HEXのコピー、URL状態)。旧URLは301転送。詳細は SPEC §17.6、設計書・計画は `docs/superpowers/{specs,plans}/2026-10-12-m8-color-generator*.md`。

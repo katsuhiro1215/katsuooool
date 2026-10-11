@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 
-import { isDarkColors, readableOn, toTheme } from '@/lib/palette/roles';
+import {
+    ensureReadable,
+    isDarkColors,
+    readableOn,
+    toTheme,
+} from '@/lib/palette/roles';
 import type { PaletteColors } from '@/lib/palette/types';
 
 const props = defineProps<{ colors: PaletteColors }>();
@@ -20,6 +25,16 @@ watch(
 const theme = computed(() => toTheme(props.colors, mode.value));
 const onMain = computed(() => readableOn(theme.value.main));
 const onAccent = computed(() => readableOn(theme.value.accent));
+// 淡いメイン・アクセントでも文字として読めるよう、見出し（大きい文字は 3:1）とリンク（4.5:1）の色だけ寄せる。
+const heading = computed(() =>
+    ensureReadable(theme.value.main, theme.value.base, 3),
+);
+const cardTitle = computed(() =>
+    ensureReadable(theme.value.main, theme.value.sub, 3),
+);
+const link = computed(() =>
+    ensureReadable(theme.value.accent, theme.value.sub, 4.5),
+);
 </script>
 
 <template>
@@ -72,18 +87,24 @@ const onAccent = computed(() => readableOn(theme.value.accent));
                 class="flex items-center justify-between px-5 py-3"
                 :style="{ backgroundColor: theme.sub }"
             >
-                <span class="font-bold" :style="{ color: theme.main }"
+                <span class="font-bold" :style="{ color: cardTitle }"
                     >Sample</span
                 >
                 <nav class="flex gap-4 text-sm">
                     <span>機能</span>
                     <span>料金</span>
-                    <span :style="{ color: theme.accent }">お問い合わせ</span>
+                    <span data-preview="link" :style="{ color: link }"
+                        >お問い合わせ</span
+                    >
                 </nav>
             </header>
 
             <section data-preview="hero" class="px-5 py-10 text-center">
-                <h3 class="text-2xl font-bold" :style="{ color: theme.main }">
+                <h3
+                    data-preview="heading"
+                    class="text-2xl font-bold"
+                    :style="{ color: heading }"
+                >
                     伝わるデザインを、すぐに
                 </h3>
                 <p class="mx-auto mt-3 max-w-md text-sm">
@@ -114,7 +135,11 @@ const onAccent = computed(() => readableOn(theme.value.accent));
                     class="rounded-lg p-4"
                     :style="{ backgroundColor: theme.sub }"
                 >
-                    <p class="text-sm font-bold" :style="{ color: theme.main }">
+                    <p
+                        data-preview="card-title"
+                        class="text-sm font-bold"
+                        :style="{ color: cardTitle }"
+                    >
                         特長 {{ n }}
                     </p>
                     <p class="mt-1 text-xs">

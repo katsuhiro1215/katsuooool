@@ -2,6 +2,7 @@
 import { mount } from '@vue/test-utils';
 import { expect, test } from 'vitest';
 
+import { contrastRatio, parseHex } from '@/lib/color';
 import type { PaletteColors } from '@/lib/palette/types';
 
 import SitePreview from './SitePreview.vue';
@@ -75,4 +76,34 @@ test('パレットが変わると、そのパレットの向きに戻る', async
     expect(wrapper.find('[data-mode="light"]').attributes('aria-pressed')).toBe(
         'true',
     );
+});
+
+test('淡いメイン色でも、見出しとリンクの文字色は背景に対して読める', () => {
+    const PASTEL: PaletteColors = [
+        '#f9f1f0',
+        '#f1dbda',
+        '#d89a97',
+        '#85d3d6',
+        '#2a1d1d',
+    ];
+    const wrapper = mount(SitePreview, { props: { colors: PASTEL } });
+    const toRgb = (css: string) => {
+        const m = /rgb\((\d+), (\d+), (\d+)\)/.exec(css)!;
+
+        return { r: +m[1], g: +m[2], b: +m[3] };
+    };
+    const colorOf = (selector: string) =>
+        toRgb((wrapper.find(selector).element as HTMLElement).style.color);
+    const bg = parseHex('#f9f1f0')!;
+    const sub = parseHex('#f1dbda')!;
+
+    expect(
+        contrastRatio(colorOf('[data-preview="heading"]'), bg),
+    ).toBeGreaterThanOrEqual(3);
+    expect(
+        contrastRatio(colorOf('[data-preview="link"]'), sub),
+    ).toBeGreaterThanOrEqual(4.5);
+    expect(
+        contrastRatio(colorOf('[data-preview="card-title"]'), sub),
+    ).toBeGreaterThanOrEqual(3);
 });

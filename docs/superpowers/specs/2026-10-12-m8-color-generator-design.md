@@ -1,6 +1,6 @@
 # M8: 配色ジェネレーター 設計書
 
-ステータス: 設計（オーナーのレビュー待ち）
+ステータス: 実装済み（`docs/superpowers/plans/2026-10-12-m8-color-generator.md`）。本番反映は未実施。
 
 作成日: 2026-10-12 / ブランチ: `feature/m8-color-generator` / 対象: ロードマップ M8（色ツール強化）
 
@@ -50,7 +50,7 @@
   - `PaletteDetail`：役割・割合・コントラスト判定（AA/AAA）・コピー（HEX 個別、CSS 変数、Tailwind、HEX 一覧）。
   - `SitePreview`：Web ページのひな形（ヘッダー、ヒーロー、カード、ボタン、フォーム）。ライト／ダークの切り替え。選んだパレットの役割を CSS 変数で当てる。
 - PC は気分とパレット一覧を上に、詳細とプレビューを下に置く（または右の列）。モバイルは縦に積む。
-- 状態は URL に入れる：`?mood=gentle&hue=blue&p=2`、基準色モードは `?base=2f6f8f&pattern=analogous`。入力に応じて `history.replaceState` で更新する（履歴を積み過ぎない）。不正な値は既定の気分（やさしい）に戻す。
+- 状態は URL に入れる：`?mood=gentle&p=blue-2`（系統-番号）、基準色モードは `?base=2f6f8f&p=analogous`（パターン id）。入力に応じて `history.replaceState` で更新する（履歴を積み過ぎない）。不正な値は既定の気分（やさしい）に戻す。
 - 計測：気分または基準色を選んだとき、`POST /color-generator/track` を 1 回送る（デバウンス。失敗は無視）。既存の `TrackedToolController` を使う。
 
 ### 4.3 バックエンド・ルーティング

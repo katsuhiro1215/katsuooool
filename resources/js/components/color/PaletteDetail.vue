@@ -3,8 +3,8 @@ import { computed, ref } from 'vue';
 
 import { toCssVariables, toHexList, toTailwind } from '@/lib/palette/export';
 import { ROLE_INFO, contrastChecks } from '@/lib/palette/roles';
-import { ROLE_KEYS  } from '@/lib/palette/types';
-import type {Palette} from '@/lib/palette/types';
+import { ROLE_KEYS } from '@/lib/palette/types';
+import type { Palette } from '@/lib/palette/types';
 
 const props = defineProps<{ palette: Palette }>();
 
