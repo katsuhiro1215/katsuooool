@@ -11,9 +11,8 @@ use App\Http\Controllers\PremiumController;
 use App\Http\Controllers\Tools\Base64EncodeController;
 use App\Http\Controllers\Tools\ColorContrastController;
 use App\Http\Controllers\Tools\ColorConvertController;
+use App\Http\Controllers\Tools\ColorGeneratorController;
 use App\Http\Controllers\Tools\ColorGradientController;
-use App\Http\Controllers\Tools\ColorPaletteController;
-use App\Http\Controllers\Tools\ColorSchemeController;
 use App\Http\Controllers\Tools\CssBorderRadiusController;
 use App\Http\Controllers\Tools\CssBoxShadowController;
 use App\Http\Controllers\Tools\CssFlexboxController;
@@ -118,13 +117,14 @@ Route::post('/color-contrast/track', [ColorContrastController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('color-contrast.track');
 
-Route::get('/color-palette', [ColorPaletteController::class, 'show'])->name('color-palette.show');
-Route::post('/color-palette/track', [ColorPaletteController::class, 'track'])
+Route::get('/color-generator', [ColorGeneratorController::class, 'show'])->name('color-generator.show');
+Route::post('/color-generator/track', [ColorGeneratorController::class, 'track'])
     ->middleware('throttle:30,1')
-    ->name('color-palette.track');
-Route::post('/color-palette/examples/{colorExample}/copy', [ColorPaletteController::class, 'copyExample'])
-    ->middleware('throttle:30,1')
-    ->name('color-palette.examples.copy');
+    ->name('color-generator.track');
+
+// M8: 旧「カラーパレット生成」「色の組み合わせ」は配色ジェネレーターに統合した。
+Route::redirect('/color-palette', '/color-generator', 301);
+Route::redirect('/color-scheme', '/color-generator', 301);
 
 Route::get('/color-gradient', [ColorGradientController::class, 'show'])->name('color-gradient.show');
 Route::post('/color-gradient/track', [ColorGradientController::class, 'track'])
@@ -133,14 +133,6 @@ Route::post('/color-gradient/track', [ColorGradientController::class, 'track'])
 Route::post('/color-gradient/examples/{colorExample}/copy', [ColorGradientController::class, 'copyExample'])
     ->middleware('throttle:30,1')
     ->name('color-gradient.examples.copy');
-
-Route::get('/color-scheme', [ColorSchemeController::class, 'show'])->name('color-scheme.show');
-Route::post('/color-scheme/track', [ColorSchemeController::class, 'track'])
-    ->middleware('throttle:30,1')
-    ->name('color-scheme.track');
-Route::post('/color-scheme/examples/{colorExample}/copy', [ColorSchemeController::class, 'copyExample'])
-    ->middleware('throttle:30,1')
-    ->name('color-scheme.examples.copy');
 
 Route::get('/ogp-image', [OgpImageController::class, 'show'])->name('ogp-image.show');
 
