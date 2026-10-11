@@ -98,3 +98,39 @@ test('resize rejects an unsupported mime type', function () {
 
     @unlink($input);
 });
+
+test('targetSize never enlarges and reports clamping', function () {
+    $service = new ImageResizeService;
+
+    expect($service->targetSize(1000, 500, 400, null))->toBe(['width' => 400, 'height' => 200, 'clamped' => false])
+        ->and($service->targetSize(1000, 500, 4000, null))->toBe(['width' => 1000, 'height' => 500, 'clamped' => true])
+        ->and($service->targetSize(1000, 500, null, 2000))->toBe(['width' => 1000, 'height' => 500, 'clamped' => true])
+        ->and($service->targetSize(1000, 500, 400, 100))->toBe(['width' => 200, 'height' => 100, 'clamped' => false])
+        ->and($service->targetSize(1000, 500, null, null, 50))->toBe(['width' => 500, 'height' => 250, 'clamped' => false])
+        ->and($service->targetSize(1000, 500, null, null, 100))->toBe(['width' => 1000, 'height' => 500, 'clamped' => false]);
+});
+
+test('resize by percent produces the scaled dimensions', function () {
+    $input = makeResizeTestInputFile('jpg', 800, 600);
+    $output = sys_get_temp_dir().'/'.uniqid('resize-percent-', true).'.jpg';
+
+    (new ImageResizeService)->resize($input, $output, 'image/jpeg', null, null, 25);
+
+    expect(getimagesize($output)[0])->toBe(200)
+        ->and(getimagesize($output)[1])->toBe(150);
+
+    @unlink($input);
+    @unlink($output);
+});
+
+test('resize with a larger target keeps the original size', function () {
+    $input = makeResizeTestInputFile('jpg', 300, 200);
+    $output = sys_get_temp_dir().'/'.uniqid('resize-noenlarge-', true).'.jpg';
+
+    (new ImageResizeService)->resize($input, $output, 'image/jpeg', 3000, null);
+
+    expect([getimagesize($output)[0], getimagesize($output)[1]])->toBe([300, 200]);
+
+    @unlink($input);
+    @unlink($output);
+});

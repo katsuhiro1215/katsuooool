@@ -112,11 +112,9 @@ test('an image exceeding the pixel-dimension ceiling is reported as failed', fun
     @unlink($bigPath);
 });
 
-test('an output resolution that would exceed the pixel ceiling is reported as failed', function () {
-    // A tiny 10x2500 input (25,000 px, well under every input-side ceiling)
-    // requested at width=8000 with height auto-calculated proportionally
-    // projects to 8000x2,000,000 — 16B output pixels — which must be
-    // rejected before the expensive resize is even attempted.
+test('a request that would have enlarged a tall image is kept at the original size instead of failing', function () {
+    // 10x2500 を width=8000 で指定すると、以前は 8000x2,000,000 の巨大な出力になるため失敗にしていた。
+    // 拡大はしない仕様になったので、元のサイズ（10x2500）に収まり、clamped で知らせる。
     $tallPath = sys_get_temp_dir().'/'.uniqid('image-resize-tall-', true).'.jpg';
     $gdImage = imagecreatetruecolor(10, 2500);
     imagejpeg($gdImage, $tallPath, 90);
@@ -127,8 +125,10 @@ test('an output resolution that would exceed the pixel ceiling is reported as fa
     $response = postImageResize([$tallFile], width: 8000);
 
     $response->assertSuccessful();
-    $response->assertJsonPath('results.0.status', 'failed');
-    $response->assertJsonPath('results.0.reason', '画像のリサイズに失敗しました。');
+    $response->assertJsonPath('results.0.status', 'success');
+    $response->assertJsonPath('results.0.width', 10);
+    $response->assertJsonPath('results.0.height', 2500);
+    $response->assertJsonPath('results.0.clamped', true);
 
     @unlink($tallPath);
 });
@@ -196,3 +196,58 @@ test('a premium user can upload up to 20 files at once', function () {
     $response->assertSuccessful();
     $response->assertJsonCount(20, 'results');
 });
+
+function postResize(array $fields)
+{
+    return test()
+        ->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-resize.process'), $fields);
+}
+
+test('percent mode resizes by the given percentage', function () {
+    $response = postResize(['files' => [UploadedFile::fake()->image('a.jpg', 400, 300)], 'mode' => 'percent', 'percent' => 50]);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.status', 'success');
+    $response->assertJsonPath('results.0.width', 200);
+    $response->assertJsonPath('results.0.height', 150);
+    $response->assertJsonPath('results.0.clamped', false);
+});
+
+test('percent outside 1 to 100 is rejected', function (int $percent) {
+    postResize(['files' => [UploadedFile::fake()->image('a.jpg', 100, 100)], 'mode' => 'percent', 'percent' => $percent])
+        ->assertStatus(422);
+})->with([0, 101]);
+
+test('percent mode requires the percent field', function () {
+    postResize(['files' => [UploadedFile::fake()->image('a.jpg', 100, 100)], 'mode' => 'percent'])->assertStatus(422);
+});
+
+test('a pixel size larger than the original is clamped to the original and reported', function () {
+    $response = postResize(['files' => [UploadedFile::fake()->image('a.jpg', 300, 200)], 'width' => 3000]);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.width', 300);
+    $response->assertJsonPath('results.0.height', 200);
+    $response->assertJsonPath('results.0.clamped', true);
+});
+
+test('the resize result reports input and output sizes', function () {
+    $response = postResize(['files' => [UploadedFile::fake()->image('a.jpg', 800, 600)], 'width' => 100]);
+
+    $response->assertJsonPath('results.0.status', 'success');
+    expect($response->json('results.0.input_bytes'))->toBeGreaterThan(0)
+        ->and($response->json('results.0.output_bytes'))->toBeGreaterThan(0)
+        ->and($response->json('results.0'))->toHaveKey('reduction_percent');
+});
+
+test('a HEIC photo is resized and returned as a jpeg', function () {
+    $heic = new UploadedFile(base_path('tests/fixtures/sample.heic'), 'IMG_0001.heic', 'image/heic', null, true);
+
+    $response = postResize(['files' => [$heic], 'mode' => 'percent', 'percent' => 50]);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.status', 'success');
+    $response->assertJsonPath('results.0.width', 200);
+    expect($response->json('results.0.download_url'))->toContain('IMG_0001.jpg');
+})->skip(! class_exists(Imagick::class) || ! in_array('HEIC', Imagick::queryFormats(), true), 'Imagick が HEIC に対応していない環境');

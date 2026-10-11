@@ -4,14 +4,17 @@ namespace App\Http\Controllers\Tools;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\Tools\ImageConvertService;
 use App\Services\Tools\ImageResizeService;
 use App\Services\Tools\ToolDownloadService;
 use App\Services\Tools\ToolEventLogger;
 use App\Services\Tools\ToolUploadService;
+use App\Support\ImageDimensions;
 use App\Support\ImageToolLimits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -20,7 +23,7 @@ use Throwable;
 
 class ImageResizeController extends Controller
 {
-    private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+    private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
 
     private const MAX_DIMENSION = 8000;
 
@@ -38,6 +41,7 @@ class ImageResizeController extends Controller
         Request $request,
         ToolUploadService $uploadService,
         ImageResizeService $resizeService,
+        ImageConvertService $convertService,
         ToolDownloadService $downloadService,
         ToolEventLogger $eventLogger,
     ): JsonResponse {
@@ -45,15 +49,20 @@ class ImageResizeController extends Controller
         $isPremium = $user instanceof User && $user->isPremium();
         $maxFileCount = ImageToolLimits::maxFiles($isPremium);
 
+        $mode = $request->input('mode', 'pixel') === 'percent' ? 'percent' : 'pixel';
+
         $request->validate([
             'files' => ['required', 'array', 'max:'.$maxFileCount],
             'files.*' => ['file'],
-            'width' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_DIMENSION, Rule::requiredIf(fn () => ! $request->filled('height'))],
-            'height' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_DIMENSION, Rule::requiredIf(fn () => ! $request->filled('width'))],
+            'mode' => ['sometimes', 'in:pixel,percent'],
+            'percent' => ['required_if:mode,percent', 'nullable', 'integer', 'min:1', 'max:100'],
+            'width' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_DIMENSION, Rule::requiredIf(fn () => $mode === 'pixel' && ! $request->filled('height'))],
+            'height' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_DIMENSION, Rule::requiredIf(fn () => $mode === 'pixel' && ! $request->filled('width'))],
         ]);
 
-        $width = $request->filled('width') ? (int) $request->input('width') : null;
-        $height = $request->filled('height') ? (int) $request->input('height') : null;
+        $percent = $mode === 'percent' ? (int) $request->input('percent') : null;
+        $width = $mode === 'pixel' && $request->filled('width') ? (int) $request->input('width') : null;
+        $height = $mode === 'pixel' && $request->filled('height') ? (int) $request->input('height') : null;
 
         $uploadedFiles = $request->file('files');
         $originalNames = array_map(
@@ -90,16 +99,19 @@ class ImageResizeController extends Controller
             $disk->makeDirectory("tool-tmp/{$uploadResult->batchId}/resized");
 
             try {
-                $extension = match ($uploadedToolFile->mimeType) {
+                $isHeic = in_array($uploadedToolFile->mimeType, ['image/heic', 'image/heif'], true);
+                $mimeType = $isHeic ? 'image/jpeg' : $uploadedToolFile->mimeType;
+
+                $extension = match ($mimeType) {
                     'image/jpeg' => 'jpg',
                     'image/png' => 'png',
                     'image/webp' => 'webp',
                     default => throw new RuntimeException("Unsupported mime type: {$uploadedToolFile->mimeType}"),
                 };
 
-                $dimensions = getimagesize($inputAbsolutePath);
+                $dimensions = ImageDimensions::read($inputAbsolutePath);
 
-                if ($dimensions === false) {
+                if ($dimensions === null) {
                     throw new RuntimeException('Failed to read image dimensions.');
                 }
 
@@ -113,19 +125,28 @@ class ImageResizeController extends Controller
                     continue;
                 }
 
+                // HEIC は JPEG に変換してから扱う（HEIC は書き出せないため）
+                if ($isHeic) {
+                    $heicJpegRelativePath = "tool-tmp/{$uploadResult->batchId}/".Str::uuid().'.jpg';
+                    $convertService->convert($inputAbsolutePath, $disk->path($heicJpegRelativePath), 'image/jpeg');
+                    $inputAbsolutePath = $disk->path($heicJpegRelativePath);
+                }
+
                 $outputRelativePath = "tool-tmp/{$uploadResult->batchId}/resized/".basename($uploadedToolFile->path, '.'.pathinfo($uploadedToolFile->path, PATHINFO_EXTENSION)).'.'.$extension;
 
                 $resizeService->resize(
                     inputPath: $inputAbsolutePath,
                     outputPath: $disk->path($outputRelativePath),
-                    mimeType: $uploadedToolFile->mimeType,
+                    mimeType: $mimeType,
                     width: $width,
                     height: $height,
+                    percent: $percent,
                 );
 
-                $outputDimensions = getimagesize($disk->path($outputRelativePath));
+                $target = $resizeService->targetSize($dimensions[0], $dimensions[1], $width, $height, $percent);
+                $outputDimensions = ImageDimensions::read($disk->path($outputRelativePath));
 
-                if ($outputDimensions === false) {
+                if ($outputDimensions === null) {
                     throw new RuntimeException('Failed to read resized image dimensions.');
                 }
 
@@ -164,6 +185,12 @@ class ImageResizeController extends Controller
                 'status' => 'success',
                 'width' => $outputDimensions[0],
                 'height' => $outputDimensions[1],
+                'input_bytes' => $uploadedToolFile->size,
+                'output_bytes' => $outputBytes,
+                'reduction_percent' => $uploadedToolFile->size > 0
+                    ? (int) round((1 - ($outputBytes / $uploadedToolFile->size)) * 100)
+                    : 0,
+                'clamped' => $target['clamped'],
                 'download_url' => $downloadService->signedUrl($outputRelativePath, $downloadName),
             ];
         }
