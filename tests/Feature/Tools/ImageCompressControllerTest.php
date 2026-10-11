@@ -296,3 +296,32 @@ test('each valid compression level is accepted', function (string $level) {
     $response->assertSuccessful();
     $response->assertJsonPath('results.0.status', 'success');
 })->with(['light', 'recommended', 'strong']);
+
+test('a compressed jpeg with GPS coordinates is flagged with has_gps', function () {
+    $file = new UploadedFile(base_path('tests/fixtures/gps.jpg'), 'gps.jpg', 'image/jpeg', null, true);
+
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => [$file]]);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.status', 'success');
+    $response->assertJsonPath('results.0.has_gps', true);
+})->skip(! function_exists('exif_read_data') || ! (new CliRunner)->has('jpegoptim'), 'exif 拡張か jpegoptim が無い環境（jpegoptim が EXIF を残すため、GPS が残る）');
+
+test('a result without GPS has has_gps false', function () {
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => [UploadedFile::fake()->image('photo.jpg', 100, 100)]]);
+
+    $response->assertJsonPath('results.0.has_gps', false);
+});
+
+test('a HEIC photo is compressed and returned as a jpeg, not as the raw HEIC file', function () {
+    $heic = new UploadedFile(base_path('tests/fixtures/sample.heic'), 'IMG_0001.heic', 'image/heic', null, true);
+
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => [$heic]]);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.status', 'success');
+    expect($response->json('results.0.download_url'))->toContain('IMG_0001.jpg');
+})->skip(! class_exists(Imagick::class) || ! in_array('HEIC', Imagick::queryFormats(), true), 'Imagick が HEIC に対応していない環境');

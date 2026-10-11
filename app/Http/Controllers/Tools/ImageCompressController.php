@@ -5,14 +5,18 @@ namespace App\Http\Controllers\Tools;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Tools\ImageCompressService;
+use App\Services\Tools\ImageConvertService;
 use App\Services\Tools\ToolDownloadService;
 use App\Services\Tools\ToolEventLogger;
 use App\Services\Tools\ToolUploadService;
+use App\Support\ImageDimensions;
+use App\Support\ImageMetadata;
 use App\Support\ImageToolLimits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use InvalidArgumentException;
@@ -21,7 +25,7 @@ use Throwable;
 
 class ImageCompressController extends Controller
 {
-    private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+    private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
 
     public function show(Request $request): Response
     {
@@ -37,6 +41,7 @@ class ImageCompressController extends Controller
         Request $request,
         ToolUploadService $uploadService,
         ImageCompressService $compressService,
+        ImageConvertService $convertService,
         ToolDownloadService $downloadService,
         ToolEventLogger $eventLogger,
     ): JsonResponse {
@@ -94,16 +99,19 @@ class ImageCompressController extends Controller
             $disk->makeDirectory("tool-tmp/{$uploadResult->batchId}/compressed");
 
             try {
-                $extension = match ($uploadedToolFile->mimeType) {
+                $isHeic = in_array($uploadedToolFile->mimeType, ['image/heic', 'image/heif'], true);
+                $mimeType = $isHeic ? 'image/jpeg' : $uploadedToolFile->mimeType;
+
+                $extension = match ($mimeType) {
                     'image/jpeg' => 'jpg',
                     'image/png' => 'png',
                     'image/webp' => 'webp',
                     default => throw new InvalidArgumentException("Unsupported mime type: {$uploadedToolFile->mimeType}"),
                 };
 
-                $dimensions = getimagesize($inputAbsolutePath);
+                $dimensions = ImageDimensions::read($inputAbsolutePath);
 
-                if ($dimensions === false) {
+                if ($dimensions === null) {
                     throw new RuntimeException('Failed to read image dimensions.');
                 }
 
@@ -117,18 +125,29 @@ class ImageCompressController extends Controller
                     continue;
                 }
 
+                // 「元より大きければ元を返す」のコピー元。HEIC は JPEG に変換したものを元として扱う（HEIC のファイルをそのまま返さない）
+                $sourceRelativePath = $uploadedToolFile->path;
+
+                if ($isHeic) {
+                    $sourceRelativePath = "tool-tmp/{$uploadResult->batchId}/".Str::uuid().'.jpg';
+                    $convertService->convert($inputAbsolutePath, $disk->path($sourceRelativePath), 'image/jpeg');
+                    $inputAbsolutePath = $disk->path($sourceRelativePath);
+                }
+
                 $outputRelativePath = "tool-tmp/{$uploadResult->batchId}/compressed/".basename($uploadedToolFile->path, '.'.pathinfo($uploadedToolFile->path, PATHINFO_EXTENSION)).'.'.$extension;
 
                 $outputBytes = $compressService->compress(
                     inputPath: $inputAbsolutePath,
                     outputPath: $disk->path($outputRelativePath),
-                    mimeType: $uploadedToolFile->mimeType,
+                    mimeType: $mimeType,
                     level: $request->string('level', config('image_tools.compression.default_level'))->toString(),
                 );
 
-                if ($outputBytes >= $uploadedToolFile->size) {
-                    $disk->copy($uploadedToolFile->path, $outputRelativePath);
-                    $outputBytes = $uploadedToolFile->size;
+                $sourceBytes = $disk->size($sourceRelativePath);
+
+                if ($outputBytes >= $sourceBytes) {
+                    $disk->copy($sourceRelativePath, $outputRelativePath);
+                    $outputBytes = $sourceBytes;
                 }
             } catch (Throwable $exception) {
                 Log::warning('Image compression failed', [
@@ -170,6 +189,7 @@ class ImageCompressController extends Controller
                 'status' => 'success',
                 'input_bytes' => $uploadedToolFile->size,
                 'output_bytes' => $outputBytes,
+                'has_gps' => $extension === 'jpg' && ImageMetadata::hasGps($disk->path($outputRelativePath)),
                 'reduction_percent' => $uploadedToolFile->size > 0
                     ? (int) round((1 - ($outputBytes / $uploadedToolFile->size)) * 100)
                     : 0,
