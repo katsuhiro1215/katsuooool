@@ -34,4 +34,25 @@ return [
 
     // 重い画像処理（変換・圧縮）を同時に走らせる件数
     'concurrency' => 2,
+
+    // AVIF のエンコード速度（0〜10。大きいほど速く、画質はわずかに下がる）。
+    // 8 で約3倍速くなる（12MP: 9.3秒→3.3秒）。メモリは変わらない（2026-10-11 実測）
+    'avif_speed' => 8,
+
+    // 画像圧縮（M5-2）。CLI（pngquant・oxipng・jpegoptim・cwebp）で行う。
+    // jpeg_max: jpegoptim の品質の上限（null は無劣化）／png_quality: pngquant の品質範囲（null は oxipng の無劣化）／webp_quality: cwebp の品質
+    'compression' => [
+        'default_level' => 'recommended',
+        'cli_timeout' => 120,
+        // 1リクエスト全体の締め切り（秒）。Caddy の 300秒と fpm の 330秒より手前で切り上げる（M5-2 レビューの実測から）
+        'request_budget' => 270,
+        // 大きな PNG は pngquant・oxipng のメモリと時間が急に増える（12MP で pngquant 366MB、oxipng 30秒超）。
+        // large_pixels を超えたら pngquant は --speed 10、oxipng は -o 1。oxipng_max_pixels を超えて pngquant が品質を満たせないときは、元のまま返す
+        'png' => ['large_pixels' => 4_000_000, 'oxipng_max_pixels' => 12_000_000],
+        'levels' => [
+            'light' => ['jpeg_max' => null, 'png_quality' => null, 'webp_quality' => 90],
+            'recommended' => ['jpeg_max' => 85, 'png_quality' => '80-95', 'webp_quality' => 80],
+            'strong' => ['jpeg_max' => 75, 'png_quality' => '65-80', 'webp_quality' => 75],
+        ],
+    ],
 ];

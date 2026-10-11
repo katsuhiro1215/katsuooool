@@ -2,8 +2,10 @@
 
 use App\Models\ToolEvent;
 use App\Models\User;
+use App\Services\Tools\CliRunner;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Tests\Support\FakeCli;
 
 beforeEach(function () {
     Storage::fake('local');
@@ -121,6 +123,8 @@ test('when recompression would be larger than the original, the original is retu
     // A 1x1 PNG is already minimal; re-encoding it through GD produces a
     // slightly larger file (extra header bytes), reproducing the "negative
     // reduction" scenario deterministically.
+    // CLI（pngquant・oxipng）があると縮んでしまうため、CLI の無い経路（Intervention）に固定する。
+    $this->app->instance(CliRunner::class, new FakeCli);
     $tinyPath = sys_get_temp_dir().'/'.uniqid('image-compress-tiny-', true).'.png';
     $gdImage = imagecreatetruecolor(1, 1);
     imagepng($gdImage, $tinyPath);
@@ -273,3 +277,22 @@ test('a free user can upload exactly 10 files at once', function () {
     $response->assertSuccessful();
     $response->assertJsonCount(10, 'results');
 });
+
+test('an invalid compression level is rejected with a validation error', function () {
+    $files = [UploadedFile::fake()->image('photo.jpg', 100, 100)];
+
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => $files, 'level' => 'extreme']);
+
+    $response->assertStatus(422);
+});
+
+test('each valid compression level is accepted', function (string $level) {
+    $files = [UploadedFile::fake()->image('photo.jpg', 100, 100)];
+
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => $files, 'level' => $level]);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.status', 'success');
+})->with(['light', 'recommended', 'strong']);

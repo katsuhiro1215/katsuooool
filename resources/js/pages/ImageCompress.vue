@@ -147,7 +147,7 @@ function isSuccess(result: CompressResult): result is SuccessResult {
         <div class="min-h-screen w-full">
             <PageHeader
                 title="画像圧縮"
-                :description="`JPEG・PNG・WebP画像を自動で最適化します。1ファイル10MBまで、最大${MAX_FILES}枚まで一度に処理できます。`"
+                :description="`JPEG・PNG・WebP画像を自動で最適化します。1ファイル10MBまで、最大${MAX_FILES}枚まで一度に処理できます。写真の向きや色情報とともに、位置情報(GPS)も残ります。`"
             />
 
             <PageMain>

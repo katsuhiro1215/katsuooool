@@ -8,6 +8,7 @@
 ########################################
 FROM php:8.4-fpm-alpine AS php-base
 
+# pngquant・oxipng・jpegoptim・libwebp-tools（cwebp）は画像圧縮用の CLI（M5-2）。
 # imagemagick-* は Imagick が扱う形式のデリゲート。AVIF は imagemagick-heic（読み込み）に加え、
 # 書き出し用の AV1 エンコーダ libheif-aom が必要（無いと AVIF 出力が失敗する）。
 RUN apk add --no-cache \
@@ -26,6 +27,10 @@ RUN apk add --no-cache \
         imagemagick-jpeg \
         imagemagick-webp \
         imagemagick-jxl \
+        pngquant \
+        oxipng \
+        jpegoptim \
+        libwebp-tools \
     && apk add --no-cache --virtual .build-deps \
         icu-dev \
         libzip-dev \
