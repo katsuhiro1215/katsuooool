@@ -58,11 +58,11 @@ return [
         'href' => '/color-contrast',
     ],
     [
-        'slug' => 'color-palette',
-        'name' => 'カラーパレット生成',
+        'slug' => 'color-generator',
+        'name' => '配色ジェネレーター',
         'category' => 'color',
-        'description' => 'ランダムな5色のカラーパレットを生成します。色ごとにロックして再生成できます。',
-        'href' => '/color-palette',
+        'description' => '気分を選ぶとパレットが並び、ベース・メイン・アクセントの役割とコントラストを確認して、Webページに当てはめ、CSS変数でコピーできます。',
+        'href' => '/color-generator',
     ],
     [
         'slug' => 'color-gradient',
@@ -70,13 +70,6 @@ return [
         'category' => 'color',
         'description' => '2色と角度からCSSの線形グラデーションを生成します。',
         'href' => '/color-gradient',
-    ],
-    [
-        'slug' => 'color-scheme',
-        'name' => '色の組み合わせ',
-        'category' => 'color',
-        'description' => '基準色から補色・類似色・三色配色などの組み合わせを提案します。',
-        'href' => '/color-scheme',
     ],
     [
         'slug' => 'css-box-shadow',
