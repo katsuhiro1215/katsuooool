@@ -296,3 +296,57 @@ test('each valid compression level is accepted', function (string $level) {
     $response->assertSuccessful();
     $response->assertJsonPath('results.0.status', 'success');
 })->with(['light', 'recommended', 'strong']);
+
+test('a compressed jpeg with GPS coordinates is flagged with has_gps', function () {
+    $file = new UploadedFile(base_path('tests/fixtures/gps.jpg'), 'gps.jpg', 'image/jpeg', null, true);
+
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => [$file]]);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.status', 'success');
+    $response->assertJsonPath('results.0.has_gps', true);
+})->skip(! function_exists('exif_read_data') || ! (new CliRunner)->has('jpegoptim'), 'exif 拡張か jpegoptim が無い環境（jpegoptim が EXIF を残すため、GPS が残る）');
+
+test('a result without GPS has has_gps false', function () {
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => [UploadedFile::fake()->image('photo.jpg', 100, 100)]]);
+
+    $response->assertJsonPath('results.0.has_gps', false);
+});
+
+test('a HEIC photo is compressed and returned as a jpeg, not as the raw HEIC file', function () {
+    $heic = new UploadedFile(base_path('tests/fixtures/sample.heic'), 'IMG_0001.heic', 'image/heic', null, true);
+
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => [$heic]]);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('results.0.status', 'success');
+    expect($response->json('results.0.download_url'))->toContain('IMG_0001.jpg');
+})->skip(! class_exists(Imagick::class) || ! in_array('HEIC', Imagick::queryFormats(), true), 'Imagick が HEIC に対応していない環境');
+
+test('every compress result carries the original upload index, even when a rejected file comes first', function () {
+    $bad = UploadedFile::fake()->create('x.jpg', 10, 'text/plain');
+    $good = UploadedFile::fake()->image('x.jpg', 200, 150);
+
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => [$bad, $good]]);
+
+    $response->assertSuccessful();
+    $byStatus = collect($response->json('results'))->keyBy('status');
+    expect($byStatus['rejected']['index'])->toBe(0)
+        ->and($byStatus['success']['index'])->toBe(1);
+});
+
+test('a compressed HEIC result is marked as converted from heic and is a real JPEG', function () {
+    $heic = new UploadedFile(base_path('tests/fixtures/sample.heic'), 'IMG_0001.heic', 'image/heic', null, true);
+
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
+        ->post(route('image-compress.process'), ['files' => [$heic]]);
+
+    $response->assertJsonPath('results.0.converted_from', 'heic');
+
+    $stored = collect(Storage::disk('local')->allFiles('tool-tmp'))->first(fn ($path) => str_contains($path, '/compressed/'));
+    expect(bin2hex(substr(Storage::disk('local')->get($stored), 0, 2)))->toBe('ffd8');
+})->skip(! class_exists(Imagick::class) || ! in_array('HEIC', Imagick::queryFormats(), true), 'Imagick が HEIC に対応していない環境');

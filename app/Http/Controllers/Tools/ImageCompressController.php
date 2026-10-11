@@ -5,14 +5,18 @@ namespace App\Http\Controllers\Tools;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Tools\ImageCompressService;
+use App\Services\Tools\ImageConvertService;
 use App\Services\Tools\ToolDownloadService;
 use App\Services\Tools\ToolEventLogger;
 use App\Services\Tools\ToolUploadService;
+use App\Support\ImageDimensions;
+use App\Support\ImageMetadata;
 use App\Support\ImageToolLimits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use InvalidArgumentException;
@@ -21,7 +25,7 @@ use Throwable;
 
 class ImageCompressController extends Controller
 {
-    private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+    private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
 
     public function show(Request $request): Response
     {
@@ -37,6 +41,7 @@ class ImageCompressController extends Controller
         Request $request,
         ToolUploadService $uploadService,
         ImageCompressService $compressService,
+        ImageConvertService $convertService,
         ToolDownloadService $downloadService,
         ToolEventLogger $eventLogger,
     ): JsonResponse {
@@ -88,28 +93,37 @@ class ImageCompressController extends Controller
         // never be mixed into the same $results array via array-key
         // assignment; append with $results[] instead, in each loop's own
         // natural order (successes first, then rejects).
+        // 受け付けたファイルの元の添字（拒否されたものを除いた順）。結果をアップロード順に対応づけるために使う
+        $acceptedIndices = array_values(array_diff(array_keys($uploadedFiles), array_keys($uploadResult->rejected)));
+        $position = 0;
+
         foreach ($uploadResult->files as $uploadedToolFile) {
+            $originalIndex = $acceptedIndices[$position++] ?? null;
             $inputAbsolutePath = $disk->path($uploadedToolFile->path);
 
             $disk->makeDirectory("tool-tmp/{$uploadResult->batchId}/compressed");
 
             try {
-                $extension = match ($uploadedToolFile->mimeType) {
+                $isHeic = in_array($uploadedToolFile->mimeType, ['image/heic', 'image/heif'], true);
+                $mimeType = $isHeic ? 'image/jpeg' : $uploadedToolFile->mimeType;
+
+                $extension = match ($mimeType) {
                     'image/jpeg' => 'jpg',
                     'image/png' => 'png',
                     'image/webp' => 'webp',
                     default => throw new InvalidArgumentException("Unsupported mime type: {$uploadedToolFile->mimeType}"),
                 };
 
-                $dimensions = getimagesize($inputAbsolutePath);
+                $dimensions = ImageDimensions::read($inputAbsolutePath);
 
-                if ($dimensions === false) {
+                if ($dimensions === null) {
                     throw new RuntimeException('Failed to read image dimensions.');
                 }
 
                 if (ImageToolLimits::maxPixels() < $dimensions[0] * $dimensions[1]) {
                     $results[] = [
                         'original_name' => $uploadedToolFile->originalName,
+                        'index' => $originalIndex,
                         'status' => 'failed',
                         'reason' => '画像の解像度が大きすぎます。',
                     ];
@@ -117,18 +131,29 @@ class ImageCompressController extends Controller
                     continue;
                 }
 
+                // 「元より大きければ元を返す」のコピー元。HEIC は JPEG に変換したものを元として扱う（HEIC のファイルをそのまま返さない）
+                $sourceRelativePath = $uploadedToolFile->path;
+
+                if ($isHeic) {
+                    $sourceRelativePath = "tool-tmp/{$uploadResult->batchId}/".Str::uuid().'.jpg';
+                    $convertService->convert($inputAbsolutePath, $disk->path($sourceRelativePath), 'image/jpeg');
+                    $inputAbsolutePath = $disk->path($sourceRelativePath);
+                }
+
                 $outputRelativePath = "tool-tmp/{$uploadResult->batchId}/compressed/".basename($uploadedToolFile->path, '.'.pathinfo($uploadedToolFile->path, PATHINFO_EXTENSION)).'.'.$extension;
 
                 $outputBytes = $compressService->compress(
                     inputPath: $inputAbsolutePath,
                     outputPath: $disk->path($outputRelativePath),
-                    mimeType: $uploadedToolFile->mimeType,
+                    mimeType: $mimeType,
                     level: $request->string('level', config('image_tools.compression.default_level'))->toString(),
                 );
 
-                if ($outputBytes >= $uploadedToolFile->size) {
-                    $disk->copy($uploadedToolFile->path, $outputRelativePath);
-                    $outputBytes = $uploadedToolFile->size;
+                $sourceBytes = $disk->size($sourceRelativePath);
+
+                if ($outputBytes >= $sourceBytes) {
+                    $disk->copy($sourceRelativePath, $outputRelativePath);
+                    $outputBytes = $sourceBytes;
                 }
             } catch (Throwable $exception) {
                 Log::warning('Image compression failed', [
@@ -139,6 +164,7 @@ class ImageCompressController extends Controller
 
                 $results[] = [
                     'original_name' => $uploadedToolFile->originalName,
+                    'index' => $originalIndex,
                     'status' => 'failed',
                     'reason' => '画像の処理に失敗しました。',
                 ];
@@ -167,9 +193,12 @@ class ImageCompressController extends Controller
 
             $results[] = [
                 'original_name' => $uploadedToolFile->originalName,
+                'index' => $originalIndex,
                 'status' => 'success',
                 'input_bytes' => $uploadedToolFile->size,
                 'output_bytes' => $outputBytes,
+                'converted_from' => $isHeic ? 'heic' : null,
+                'has_gps' => $extension === 'jpg' && ImageMetadata::hasGps($disk->path($outputRelativePath)),
                 'reduction_percent' => $uploadedToolFile->size > 0
                     ? (int) round((1 - ($outputBytes / $uploadedToolFile->size)) * 100)
                     : 0,
@@ -182,6 +211,7 @@ class ImageCompressController extends Controller
 
         foreach ($rejected as $index => $reason) {
             $results[] = [
+                'index' => $index,
                 'original_name' => $originalNames[$index] ?? '不明なファイル',
                 'status' => 'rejected',
                 'reason' => $reason,

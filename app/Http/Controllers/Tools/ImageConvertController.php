@@ -8,6 +8,7 @@ use App\Services\Tools\ImageConvertService;
 use App\Services\Tools\ToolDownloadService;
 use App\Services\Tools\ToolEventLogger;
 use App\Services\Tools\ToolUploadService;
+use App\Support\ImageDimensions;
 use App\Support\ImageToolLimits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -102,7 +103,7 @@ class ImageConvertController extends Controller
             $disk->makeDirectory("tool-tmp/{$uploadResult->batchId}/converted");
 
             try {
-                $dimensions = $this->readDimensions($inputAbsolutePath);
+                $dimensions = ImageDimensions::read($inputAbsolutePath);
 
                 if ($dimensions === null) {
                     throw new RuntimeException('Failed to read image dimensions.');
@@ -234,33 +235,5 @@ class ImageConvertController extends Controller
             'results' => $results,
             'batch_download_url' => $batchDownloadUrl,
         ]);
-    }
-
-    /**
-     * @return array{0: int, 1: int}|null
-     */
-    private function readDimensions(string $path): ?array
-    {
-        $size = getimagesize($path);
-
-        if ($size !== false) {
-            return [$size[0], $size[1]];
-        }
-
-        // HEIC など getimagesize が読めない形式は、Imagick のヘッダー読み取りで調べる（デコードしない）
-        if (! class_exists(\Imagick::class)) {
-            return null;
-        }
-
-        try {
-            $imagick = new \Imagick;
-            $imagick->pingImage($path);
-            $dimensions = [$imagick->getImageWidth(), $imagick->getImageHeight()];
-            $imagick->clear();
-
-            return $dimensions;
-        } catch (\ImagickException) {
-            return null;
-        }
     }
 }

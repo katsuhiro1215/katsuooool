@@ -270,10 +270,11 @@ test('a HEIC photo can be converted to jpeg, png and webp', function (string $fo
     $response->assertJsonPath('results.0.download_name', 'IMG_0001.'.$format);
 })->with(['jpg', 'png', 'webp'])->skip(! $heicSupported, 'この環境の Imagick は HEIC に対応していない');
 
-test('a HEIC photo is rejected by tools that do not accept HEIC', function () {
+test('a HEIC photo is rejected by tools that do not accept HEIC (rotate)', function () {
+    // 圧縮・リサイズ（M5-3）と形式変換は HEIC を受け付ける。回転・切り抜きなどは、まだ受け付けない。
     $response = test()
         ->withHeaders(['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'])
-        ->post(route('image-compress.process'), ['files' => [heicFixture()]]);
+        ->post(route('image-rotate.process'), ['files' => [heicFixture()], 'direction' => 'left']);
 
     $response->assertSuccessful();
     $response->assertJsonPath('results.0.status', 'rejected');
