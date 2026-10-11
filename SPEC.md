@@ -27,7 +27,7 @@
 - PHP 8.3 / Laravel 13 / Inertia.js v2 / Vue 3 / TypeScript
 - DB: MySQL(ローカル: MAMP、本番: Xserver 共有サーバー)
 - 認証: Laravel Fortify(既存の2FA・パスキー機能を継続利用。Breezeへの置き換えは行わない)
-- 画像処理: Intervention Image(GD/Imagickをランタイム検出、CLIバイナリ非依存)
+- 画像処理: Intervention Image(GD/Imagickをランタイム検出)。圧縮のみ CLI(pngquant・oxipng・jpegoptim・cwebp)を使い、無ければ Intervention に戻る(M5-2)
 - **インフラ制約**: Xserver共有サーバーのため `exec()`・シェルコマンド実行・常駐キューワーカーは前提にしない。バッチ処理も含め同期処理(リクエスト内順次処理)で完結させる。
 - **ロケール・タイムゾーン**: `APP_LOCALE=ja`(`APP_FALLBACK_LOCALE=en`)、`config('app.timezone')`は`Asia/Tokyo`に統一。バリデーションエラー等Laravelが自動生成するメッセージは`lang/ja/*`(`laravel-lang/lang`パッケージで生成)経由で日本語化する。日時はアプリ全体でJST基準(DB保存・`now()`・Admin入力すべて)で一貫させ、UTC/JSTの変換をコントローラー個別に行わない。
 
@@ -126,18 +126,20 @@ Admin専用の `admin` guard で認証する。ユーザー登録画面は作ら
 
 - URL: `/image-compress`
 - 操作: ドラッグ&ドロップ or ファイル選択で複数画像(無料10枚・Premium20枚)をアップロード → 「圧縮する」ボタン1つで自動最適化(品質スライダー等のユーザー調整UIは持たない)
-- 圧縮パラメータ: JPEG品質80相当など、ツール内に固定値として実装(将来調整可能にする場合は別途仕様化)
+- 圧縮パラメータ: `level`（light／recommended／strong）ごとの値を `config/image_tools.php` に持つ（下の「M5-2 での変更」参照）。画面での選択は M5-3
 - 結果表示: ファイルごとに 圧縮前サイズ → 圧縮後サイズ・削減率(%)を一覧表示
 - ダウンロード: 1枚なら単体ダウンロード、複数枚ならZIPで一括ダウンロード
 - エラーハンドリング:
   - アップロード時点の上限超過・非対応形式 → バリデーションエラーとしてInertiaのフラッシュメッセージで表示
   - 処理中に個別ファイルが失敗(破損画像等) → そのファイルはスキップし、成功分のみ結果に含める。失敗理由を一覧に表示する
 - レート制限: IP単位でアップロードAPIにthrottleミドルウェアを適用
+
 **M5-2 での変更（2026-10-11）**
 
 - 圧縮は CLI で行う: PNG は pngquant（品質の範囲を満たせなければ oxipng の無劣化）、JPEG は jpegoptim、WebP は cwebp。CLI が無い・失敗した・時間切れ（120秒）のときは、従来の Intervention（Imagick/GD）の方式に戻る。比較の根拠は `docs/superpowers/specs/2026-10-11-m5-2-compression-design.md`。
-- 圧縮レベル `level`（`light`＝無劣化／`recommended`＝既定／`strong`）を受け取る。数値は `config/image_tools.php` の `compression.levels`。画面での選択は M5-3。
+- 圧縮レベル `level`（`light`＝JPEG・PNG は無劣化、WebP は q90／`recommended`＝既定／`strong`）を受け取る。数値は `config/image_tools.php` の `compression.levels`。画面での選択は M5-3。
 - JPEG は EXIF（向き）と ICC プロファイルを残す（`jpegoptim` に `--strip-exif`・`--strip-all` は使わない）。そのため位置情報（GPS）も残る。
+- 大きな PNG（400万画素超）は pngquant を `--speed 10`、oxipng を `-o 1` にする。1,200万画素を超え、pngquant が品質を満たせないときは、元のまま返す（oxipng は 25MP で 70〜98 秒かかるため）。1リクエスト全体の締め切りは 270 秒で、過ぎたファイルは失敗として扱う。WebP は cwebp の `-metadata icc,exif` で ICC と EXIF を残す。
 - 実測（recommended）: UI のスクリーンショット約28%（従来はほぼ縮まない）、AI イラスト約33%、iPhone の写真約74%。
 
 
@@ -176,7 +178,7 @@ Phase 1で実装した画像圧縮ツールと同じ共通基盤(`ToolUploadServ
 - **AVIF への変換は負荷が高い**ため、枚数は無料2枚・Premium5枚、画素数は800万画素までとする（メモリが画素数にほぼ比例し、800万画素で約316MB、1,600万画素以上は収まらない）。
 - 上限値は `config/image_tools.php` に集約している（枚数・サイズ・画素数・AVIF・PNG のインデックス化・Imagick のリソース制限・同時実行数）。
 - 重い画像処理は同時に2件まで（`image.gate` ミドルウェア）。枠が埋まっているときは 503 を返し、画面に「現在アクセスが集中しています」と表示する。
-- PNG の圧縮は、250万画素以下（1080p まで）の画像でのみ 256 色化を試す（それ以上は処理時間が数十秒〜数百秒になるため省く）。圧縮の精度改善は M5-2 で行う。
+- PNG の圧縮は、250万画素以下（1080p まで）の画像でのみ 256 色化を試す（それ以上は処理時間が数十秒〜数百秒になるため省く。CLI が無いときの経路のみ）。
 
 ### 10.2 画像リサイズ(`/image-resize`)
 

@@ -8,6 +8,7 @@ use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\EncodedImageInterface;
 use Intervention\Image\Interfaces\ImageInterface;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * 画像の圧縮。CLI（jpegoptim・pngquant・oxipng・cwebp）で行い、
@@ -20,12 +21,29 @@ class ImageCompressService
 {
     private const SUPPORTED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
+    private ?float $deadline = null;
+
     public function __construct(private readonly CliRunner $cli = new CliRunner) {}
+
+    /**
+     * リクエスト全体の締め切り（UNIX 時刻）。CLI の時間切れはこの残り時間で頭打ちになり、
+     * 過ぎたあとの処理は例外で打ち切る（Caddy の時間切れで 502 になるのを避ける）。
+     */
+    public function deadlineAt(float $unixTime): static
+    {
+        $this->deadline = $unixTime;
+
+        return $this;
+    }
 
     public function compress(string $inputPath, string $outputPath, string $mimeType, string $level = 'recommended'): int
     {
         if (! in_array($mimeType, self::SUPPORTED_MIME_TYPES, true)) {
             throw new InvalidArgumentException("Unsupported mime type: {$mimeType}");
+        }
+
+        if ($this->deadline !== null && microtime(true) >= $this->deadline) {
+            throw new RuntimeException('Image compression time budget exceeded.');
         }
 
         $settings = $this->settingsFor($level);
@@ -55,7 +73,13 @@ class ImageCompressService
 
     private function timeout(): int
     {
-        return (int) config('image_tools.compression.cli_timeout', 120);
+        $timeout = (int) config('image_tools.compression.cli_timeout', 120);
+
+        if ($this->deadline === null) {
+            return $timeout;
+        }
+
+        return max(1, min($timeout, (int) floor($this->deadline - microtime(true))));
     }
 
     /**
@@ -66,7 +90,7 @@ class ImageCompressService
      */
     private function jpegWithCli(string $input, string $output, array $settings): bool
     {
-        if (! $this->cli->has('jpegoptim') || ! copy($input, $output)) {
+        if (! $this->cli->has('jpegoptim') || ! @copy($input, $output)) {
             return false;
         }
 
@@ -78,7 +102,7 @@ class ImageCompressService
 
         $command[] = $output;
 
-        return $this->succeeded($this->cli->run($command, $this->timeout()), $output);
+        return $this->succeeded($this->cli->run($command, $this->timeout()), $output, 'jpegoptim');
     }
 
     /**
@@ -88,28 +112,45 @@ class ImageCompressService
      */
     private function pngWithCli(string $input, string $output, array $settings): bool
     {
+        $size = @getimagesize($input);
+        $pixels = $size === false ? 0 : $size[0] * $size[1];
+        $large = $pixels > (int) config('image_tools.compression.png.large_pixels');
+
         if ($settings['png_quality'] !== null && $this->cli->has('pngquant')) {
             $code = $this->cli->run([
-                'pngquant', '--quality='.$settings['png_quality'], '--speed', '3', '--strip', '--force', '--output', $output, $input,
+                'pngquant', '--quality='.$settings['png_quality'], '--speed', $large ? '10' : '3', '--strip', '--force', '--output', $output, $input,
             ], $this->timeout());
 
-            if ($this->succeeded($code, $output)) {
+            if ($this->succeeded($code, $output, 'pngquant')) {
                 return true;
             }
+
+            // 時間切れ・起動失敗のときは、次の CLI を試さずに組み込み方式へ進む
+            if ($code !== 98 && $code !== 99) {
+                return false;
+            }
+        }
+
+        // 大きな PNG の無劣化の再圧縮は、時間もメモリも大きい。品質を満たせなかったときは元のまま返す
+        if ($pixels > (int) config('image_tools.compression.png.oxipng_max_pixels')) {
+            return @copy($input, $output);
         }
 
         if (! $this->cli->has('oxipng')) {
             return false;
         }
 
-        $code = $this->cli->run(['oxipng', '-o', '2', '--strip', 'safe', '-q', '--out', $output, $input], $this->timeout());
+        $code = $this->cli->run(
+            ['oxipng', '-o', $large ? '1' : '2', '--strip', 'safe', '-q', '--out', $output, $input],
+            $this->timeout(),
+        );
 
         // すでに最適化済みで、oxipng が出力を書かないことがある
         if ($code === 0 && ! is_file($output)) {
-            copy($input, $output);
+            @copy($input, $output);
         }
 
-        return $this->succeeded($code, $output);
+        return $this->succeeded($code, $output, 'oxipng');
     }
 
     /**
@@ -124,14 +165,14 @@ class ImageCompressService
         }
 
         $code = $this->cli->run(
-            ['cwebp', '-quiet', '-q', (string) $settings['webp_quality'], '-m', '4', $input, '-o', $output],
+            ['cwebp', '-quiet', '-q', (string) $settings['webp_quality'], '-m', '4', '-metadata', 'icc,exif', $input, '-o', $output],
             $this->timeout(),
         );
 
-        return $this->succeeded($code, $output);
+        return $this->succeeded($code, $output, 'cwebp');
     }
 
-    private function succeeded(int $exitCode, string $output): bool
+    private function succeeded(int $exitCode, string $output, string $binary): bool
     {
         if ($exitCode === 0 && is_file($output) && filesize($output) > 0) {
             return true;
@@ -139,7 +180,7 @@ class ImageCompressService
 
         // 98・99 は pngquant が品質の範囲を満たせなかっただけで、異常ではない
         if ($exitCode !== 0 && $exitCode !== 98 && $exitCode !== 99) {
-            Log::warning('Image compression CLI failed; falling back.', ['exit_code' => $exitCode]);
+            Log::warning('Image compression CLI failed; falling back.', ['command' => $binary, 'exit_code' => $exitCode]);
         }
 
         @unlink($output);

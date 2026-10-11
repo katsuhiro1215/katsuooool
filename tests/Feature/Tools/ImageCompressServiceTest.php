@@ -221,7 +221,7 @@ test('webp uses cwebp with the level quality and method 4', function () {
 
     [, $input, $output] = compressWithFakeCli($cli, 'webp', 'image/webp');
 
-    expect($cli->commands[0])->toBe(['cwebp', '-quiet', '-q', '80', '-m', '4', $input, '-o', $output]);
+    expect($cli->commands[0])->toBe(['cwebp', '-quiet', '-q', '80', '-m', '4', '-metadata', 'icc,exif', $input, '-o', $output]);
 
     @unlink($input);
     @unlink($output);
@@ -265,6 +265,65 @@ test('an unsupported mime type throws even when every CLI is available', functio
     expect($cli->commands)->toBeEmpty();
 
     @unlink($input);
+});
+
+test('a large png uses the fast pngquant speed and the light oxipng level', function () {
+    config()->set('image_tools.compression.png.large_pixels', 1);
+    $quant = new FakeCli(['pngquant', 'oxipng']);
+    $lossless = new FakeCli(['pngquant', 'oxipng'], ['pngquant' => 99]);
+
+    [, $in1, $out1] = compressWithFakeCli($quant, 'png', 'image/png');
+    [, $in2, $out2] = compressWithFakeCli($lossless, 'png', 'image/png');
+
+    expect($quant->commands[0])->toContain('--speed', '10')
+        ->and($lossless->commands[1])->toContain('-o', '1');
+
+    array_map('unlink', [$in1, $out1, $in2, $out2]);
+});
+
+test('a png too large for lossless recompression is returned unchanged when pngquant cannot meet the quality', function () {
+    config()->set('image_tools.compression.png.oxipng_max_pixels', 1);
+    $cli = new FakeCli(['pngquant', 'oxipng'], ['pngquant' => 99]);
+
+    [$bytes, $input, $output] = compressWithFakeCli($cli, 'png', 'image/png');
+
+    expect(array_column($cli->commands, 0))->toBe(['pngquant'])
+        ->and($bytes)->toBe(filesize($input))
+        ->and(file_get_contents($output))->toBe(file_get_contents($input));
+
+    @unlink($input);
+    @unlink($output);
+});
+
+test('a timed-out CLI falls straight back to the built-in method without trying the next CLI', function () {
+    $cli = new FakeCli(['pngquant', 'oxipng'], ['pngquant' => -1]);
+
+    [$bytes, $input, $output] = compressWithFakeCli($cli, 'png', 'image/png');
+
+    expect(array_column($cli->commands, 0))->toBe(['pngquant'])
+        ->and($bytes)->toBeGreaterThan(0)
+        ->and(getimagesize($output)['mime'])->toBe('image/png');
+
+    @unlink($input);
+    @unlink($output);
+});
+
+test('the request deadline caps every CLI timeout, and an expired deadline stops the work', function () {
+    $cli = new FakeCli(['jpegoptim']);
+    $input = makeTempInputFile('jpg');
+    $output = sys_get_temp_dir().'/'.uniqid('deadline-', true).'.jpg';
+
+    $service = (new ImageCompressService($cli))->deadlineAt(microtime(true) + 30);
+    $service->compress($input, $output, 'image/jpeg');
+
+    expect($cli->timeouts[0])->toBeLessThanOrEqual(30)->toBeGreaterThan(0);
+
+    $expired = (new ImageCompressService($cli))->deadlineAt(microtime(true) - 1);
+
+    expect(fn () => $expired->compress($input, $output, 'image/jpeg'))->toThrow(RuntimeException::class);
+
+    @unlink($input);
+    @unlink($output);
 });
 
 $realCli = new CliRunner;

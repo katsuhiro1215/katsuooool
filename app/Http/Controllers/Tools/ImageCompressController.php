@@ -50,6 +50,8 @@ class ImageCompressController extends Controller
             'files.*' => ['file'],
         ]);
 
+        $compressService->deadlineAt(microtime(true) + (int) config('image_tools.compression.request_budget', 270));
+
         $uploadedFiles = $request->file('files');
         $originalNames = array_map(
             fn ($file) => $file->getClientOriginalName(),

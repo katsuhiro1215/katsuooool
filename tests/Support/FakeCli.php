@@ -12,6 +12,9 @@ class FakeCli extends CliRunner
     /** @var list<list<string>> */
     public array $commands = [];
 
+    /** @var list<int> */
+    public array $timeouts = [];
+
     /**
      * @param  list<string>  $available  使えることにするコマンド名
      * @param  array<string, int>  $exitCodes  コマンド名ごとの終了コード（既定 0）
@@ -26,6 +29,7 @@ class FakeCli extends CliRunner
     public function run(array $command, int $timeoutSeconds = 120): int
     {
         $this->commands[] = $command;
+        $this->timeouts[] = $timeoutSeconds;
         $code = $this->exitCodes[$command[0]] ?? 0;
 
         if ($code === 0) {

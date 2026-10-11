@@ -130,16 +130,14 @@ test('a HEIC photo with EXIF orientation 6 is rotated exactly once (portrait out
     'この環境の Imagick は HEIC に対応していない',
 );
 
-test('avif conversion sets the configured heic:speed on the Imagick image', function () {
+test('avif speed from the configuration is applied to the Imagick image', function () {
     config()->set('image_tools.avif_speed', 8);
     $input = makeConvertTestInputFile('jpg');
-    $output = sys_get_temp_dir().'/'.uniqid('avif-speed-', true).'.avif';
+    $image = ImageManager::imagick()->read($input);
 
-    (new ImageConvertService)->convert($input, $output, 'image/avif');
+    (new ImageConvertService)->applyAvifSpeed($image);
 
-    expect(ImageConvertService::lastAvifSpeed())->toBe('8')
-        ->and(filesize($output))->toBeGreaterThan(0);
+    expect($image->core()->native()->getOption('heic:speed'))->toBe('8');
 
     @unlink($input);
-    @unlink($output);
 })->skip(! class_exists(Imagick::class), 'Imagick 拡張が無い環境');

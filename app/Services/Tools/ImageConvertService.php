@@ -18,14 +18,6 @@ class ImageConvertService
     // file at high quality settings under resource pressure.
     private const AVIF_QUALITY = 80;
 
-    private static ?string $lastAvifSpeed = null;
-
-    /** テストで、直前の AVIF 変換に設定した速度を確かめるために使う */
-    public static function lastAvifSpeed(): ?string
-    {
-        return self::$lastAvifSpeed;
-    }
-
     public function convert(string $inputPath, string $outputPath, string $targetMimeType): int
     {
         $image = $this->makeManager()->read($inputPath);
@@ -51,15 +43,20 @@ class ImageConvertService
 
     /**
      * AVIF のエンコード速度を上げる。8 で約3倍速い（12MP: 9.3秒→3.3秒）。メモリは変わらない。
+     * Imagick 以外（GD）には速度を渡す手段がないので、何もしない。
      */
-    private function encodeAvif(ImageInterface $image): EncodedImageInterface
+    public function applyAvifSpeed(ImageInterface $image): void
     {
         $native = $image->core()->native();
 
         if ($native instanceof \Imagick) {
-            self::$lastAvifSpeed = (string) config('image_tools.avif_speed', 8);
-            $native->setOption('heic:speed', self::$lastAvifSpeed);
+            $native->setOption('heic:speed', (string) config('image_tools.avif_speed', 8));
         }
+    }
+
+    private function encodeAvif(ImageInterface $image): EncodedImageInterface
+    {
+        $this->applyAvifSpeed($image);
 
         return $image->toAvif(quality: self::AVIF_QUALITY);
     }

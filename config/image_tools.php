@@ -44,6 +44,11 @@ return [
     'compression' => [
         'default_level' => 'recommended',
         'cli_timeout' => 120,
+        // 1リクエスト全体の締め切り（秒）。Caddy の 300秒と fpm の 330秒より手前で切り上げる（M5-2 レビューの実測から）
+        'request_budget' => 270,
+        // 大きな PNG は pngquant・oxipng のメモリと時間が急に増える（12MP で pngquant 366MB、oxipng 30秒超）。
+        // large_pixels を超えたら pngquant は --speed 10、oxipng は -o 1。oxipng_max_pixels を超えて pngquant が品質を満たせないときは、元のまま返す
+        'png' => ['large_pixels' => 4_000_000, 'oxipng_max_pixels' => 12_000_000],
         'levels' => [
             'light' => ['jpeg_max' => null, 'png_quality' => null, 'webp_quality' => 90],
             'recommended' => ['jpeg_max' => 85, 'png_quality' => '80-95', 'webp_quality' => 80],
