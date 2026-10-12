@@ -1,0 +1,32 @@
+[
+  {
+    "title": "ボーダーテキストエリア（Outlined Textarea）",
+    "html": "<div class=\"ot\">\n  <label class=\"ot-label\" for=\"ot-msg\">お問い合わせ内容</label>\n  <textarea class=\"ot-area\" id=\"ot-msg\" rows=\"4\" placeholder=\"ご質問やご要望をご記入ください\"></textarea>\n</div>",
+    "css": ".ot { width: 320px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.ot-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #374151; }\n.ot-area { display: block; width: 100%; padding: 12px 14px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; font: inherit; font-size: 14px; line-height: 1.6; color: #111827; resize: vertical; }\n.ot-area::placeholder { color: #9ca3af; }\n.ot-area:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18); }"
+  },
+  {
+    "title": "塗りつぶしテキストエリア（Filled Textarea）",
+    "html": "<div class=\"ft\">\n  <label class=\"ft-label\" for=\"ft-memo\">メモ</label>\n  <textarea class=\"ft-area\" id=\"ft-memo\" rows=\"4\" placeholder=\"自由にメモを残せます\"></textarea>\n</div>",
+    "css": ".ft { width: 320px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.ft-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #374151; }\n.ft-area { display: block; width: 100%; padding: 12px 14px; box-sizing: border-box; border: 2px solid transparent; border-radius: 10px; background: #f3f4f6; font: inherit; font-size: 14px; line-height: 1.6; color: #111827; resize: none; transition: background 0.15s, border-color 0.15s; }\n.ft-area:hover { background: #e5e7eb; }\n.ft-area:focus { outline: none; background: #fff; border-color: #6366f1; }"
+  },
+  {
+    "title": "文字数カウンタ付きテキストエリア（Counter Textarea）",
+    "html": "<div class=\"ct\">\n  <label class=\"ct-label\" for=\"ct-bio\">自己紹介</label>\n  <div class=\"ct-wrap\">\n    <textarea class=\"ct-area\" id=\"ct-bio\" rows=\"4\" maxlength=\"140\" placeholder=\"140文字以内でご記入ください\">はじめまして。Webデザイナーをしています。</textarea>\n    <span class=\"ct-count\">21 / 140</span>\n  </div>\n</div>",
+    "css": ".ct { width: 320px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.ct-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #374151; }\n.ct-wrap { position: relative; }\n.ct-area { display: block; width: 100%; padding: 12px 14px 30px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; font: inherit; font-size: 14px; line-height: 1.6; color: #111827; resize: none; }\n.ct-area:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18); }\n.ct-count { position: absolute; right: 12px; bottom: 8px; font-size: 12px; color: #6b7280; }"
+  },
+  {
+    "title": "エラーテキストエリア（Error Textarea）",
+    "html": "<div class=\"et\">\n  <label class=\"et-label\" for=\"et-msg\">コメント</label>\n  <textarea class=\"et-area\" id=\"et-msg\" rows=\"4\" aria-invalid=\"true\" aria-describedby=\"et-error\"></textarea>\n  <p class=\"et-error\" id=\"et-error\">⚠ コメントを入力してください。</p>\n</div>",
+    "css": ".et { width: 320px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.et-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #374151; }\n.et-area { display: block; width: 100%; padding: 12px 14px; box-sizing: border-box; border: 1px solid #ef4444; border-radius: 8px; background: #fef2f2; font: inherit; font-size: 14px; line-height: 1.6; resize: none; }\n.et-area:focus { outline: none; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }\n.et-error { margin: 6px 0 0; font-size: 12px; color: #b91c1c; }"
+  },
+  {
+    "title": "無効テキストエリア（Disabled Textarea）",
+    "html": "<div class=\"dt\">\n  <label class=\"dt-label\" for=\"dt-note\">管理者メモ</label>\n  <textarea class=\"dt-area\" id=\"dt-note\" rows=\"4\" disabled>この項目は管理者のみ編集できます。</textarea>\n</div>",
+    "css": ".dt { width: 320px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.dt-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #9ca3af; }\n.dt-area { display: block; width: 100%; padding: 12px 14px; box-sizing: border-box; border: 1px solid #e5e7eb; border-radius: 8px; background: #f3f4f6; font: inherit; font-size: 14px; line-height: 1.6; color: #9ca3af; resize: none; cursor: not-allowed; }"
+  },
+  {
+    "title": "拡大可能テキストエリア（Resizable Textarea）",
+    "html": "<div class=\"rt\">\n  <label class=\"rt-label\" for=\"rt-body\">本文</label>\n  <textarea class=\"rt-area\" id=\"rt-body\" rows=\"3\" placeholder=\"右下のつまみをドラッグして大きさを変えられます\"></textarea>\n  <p class=\"rt-hint\">右下をドラッグして高さを変更できます</p>\n</div>",
+    "css": ".rt { width: 320px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.rt-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #374151; }\n.rt-area { display: block; width: 100%; min-height: 72px; max-height: 240px; padding: 12px 14px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; font: inherit; font-size: 14px; line-height: 1.6; resize: vertical; }\n.rt-area:focus { outline: none; border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }\n.rt-hint { margin: 6px 0 0; font-size: 12px; color: #9ca3af; }"
+  }
+]
