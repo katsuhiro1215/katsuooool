@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
-import { buildPatternDocument } from '@/lib/uiPatternSnippet';
+import {
+    PREVIEW_SIZE_MESSAGE,
+    buildPatternDocument,
+    fitScale,
+} from '@/lib/uiPatternSnippet';
 
 const props = defineProps<{
     id: number;
@@ -13,7 +17,14 @@ const props = defineProps<{
     lockedSrcdoc?: string;
 }>();
 
+const MAX_PREVIEW_SIZE = 4000;
+
 const activeTab = ref<'html' | 'css'>('html');
+const frame = ref<HTMLIFrameElement | null>(null);
+const box = ref<HTMLElement | null>(null);
+// プレビュー内の部品の実寸。通知が来るまでは null（枠いっぱいに表示する従来の見え方）。
+const contentSize = ref<{ width: number; height: number } | null>(null);
+const boxSize = ref({ width: 0, height: 0 });
 const copied = ref(false);
 
 const srcdoc = computed(() =>
@@ -25,6 +36,100 @@ const srcdoc = computed(() =>
 const activeCode = computed(() =>
     activeTab.value === 'html' ? (props.html ?? '') : (props.css ?? ''),
 );
+
+function measureBox() {
+    if (box.value) {
+        boxSize.value = {
+            width: box.value.clientWidth,
+            height: box.value.clientHeight,
+        };
+    }
+}
+
+function clampSize(value: unknown): number | null {
+    if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) {
+        return null;
+    }
+
+    return Math.min(MAX_PREVIEW_SIZE, Math.ceil(value));
+}
+
+// 自分の iframe からの通知だけを受け取る（sandbox に allow-same-origin が無いので、親の画面には触れない）。
+function onMessage(event: MessageEvent) {
+    if (!frame.value || event.source !== frame.value.contentWindow) {
+        return;
+    }
+
+    const data = event.data as {
+        type?: unknown;
+        width?: unknown;
+        height?: unknown;
+    } | null;
+
+    if (!data || data.type !== PREVIEW_SIZE_MESSAGE) {
+        return;
+    }
+
+    const width = clampSize(data.width);
+    const height = clampSize(data.height);
+
+    if (width === null || height === null) {
+        return;
+    }
+
+    measureBox();
+    contentSize.value = { width, height };
+}
+
+const frameStyle = computed(() => {
+    if (!contentSize.value) {
+        return undefined;
+    }
+
+    const { width, height } = contentSize.value;
+    const scale = fitScale(
+        width,
+        height,
+        boxSize.value.width,
+        boxSize.value.height,
+    );
+
+    return {
+        width: `${width}px`,
+        height: `${height}px`,
+        position: 'absolute' as const,
+        left: '50%',
+        top: '50%',
+        maxWidth: 'none',
+        transform: `translate(-50%, -50%) scale(${scale})`,
+    };
+});
+
+// 表示するドキュメントが変わったら、前のサイズは捨てる（新しいドキュメントが通知するまで枠いっぱいに表示）。
+watch(srcdoc, () => {
+    contentSize.value = null;
+});
+
+let boxObserver: ResizeObserver | null = null;
+
+onMounted(() => {
+    measureBox();
+
+    // サイドバーの開閉やスクロールバーの出現など、ウィンドウ以外の理由で枠の幅が変わっても追従する。
+    if (typeof ResizeObserver !== 'undefined' && box.value) {
+        boxObserver = new ResizeObserver(measureBox);
+        boxObserver.observe(box.value);
+    }
+
+    window.addEventListener('message', onMessage);
+    window.addEventListener('resize', measureBox);
+});
+
+onBeforeUnmount(() => {
+    boxObserver?.disconnect();
+    window.removeEventListener('message', onMessage);
+    window.removeEventListener('resize', measureBox);
+});
 
 async function copyCode() {
     try {
@@ -52,13 +157,16 @@ async function copyCode() {
             Premium
         </span>
         <div
-            class="flex h-40 items-center justify-center border-b border-gray-200 bg-gray-50"
+            ref="box"
+            class="relative flex h-56 items-center justify-center overflow-hidden border-b border-gray-200 bg-gray-50"
         >
             <iframe
+                ref="frame"
                 :srcdoc="srcdoc"
-                sandbox=""
-                class="h-full w-full"
-                title="プレビュー"
+                sandbox="allow-scripts"
+                :class="contentSize ? '' : 'h-full w-full'"
+                :style="frameStyle"
+                :title="`${title} のプレビュー`"
             />
         </div>
         <div class="p-4">

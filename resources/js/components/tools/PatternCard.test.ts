@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { mount } from '@vue/test-utils';
 import axios from 'axios';
-import { beforeEach, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
 import PatternCard from './PatternCard.vue';
 
@@ -104,4 +104,175 @@ test('a locked pattern never triggers a copy-tracking request (no copy button ex
     });
 
     expect(axios.post).not.toHaveBeenCalled();
+});
+
+const wrappers: { unmount: () => void }[] = [];
+
+afterEach(() => {
+    while (wrappers.length > 0) {
+        wrappers.pop()?.unmount();
+    }
+});
+
+function mountAttached(props: Record<string, unknown> = {}) {
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
+        configurable: true,
+        get: () => 300,
+    });
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+        configurable: true,
+        get: () => 200,
+    });
+    const wrapper = mount(PatternCard, {
+        props: { id: 1, title: 'サンプル', locked: false, html, css, ...props },
+        attachTo: document.body,
+    });
+    wrappers.push(wrapper);
+
+    return wrapper;
+}
+
+function sendSize(
+    iframe: HTMLIFrameElement,
+    width: number,
+    height: number,
+    source: unknown = iframe.contentWindow,
+) {
+    window.dispatchEvent(
+        new MessageEvent('message', {
+            data: { type: 'pattern-preview-size', width, height },
+            source: source as MessageEventSource,
+        }),
+    );
+}
+
+test('the preview iframe is sandboxed with allow-scripts only (no same-origin)', () => {
+    const wrapper = mountAttached();
+    const sandbox = wrapper.find('iframe').attributes('sandbox');
+
+    expect(sandbox).toBe('allow-scripts');
+});
+
+test('a size message from its own iframe scales a tall pattern down to fit the box', async () => {
+    const wrapper = mountAttached();
+    const iframe = wrapper.find('iframe').element as HTMLIFrameElement;
+
+    // 内容 600x400 を 300x200 の枠に収める → 倍率 0.5
+    sendSize(iframe, 600, 400);
+    await wrapper.vm.$nextTick();
+
+    const style = wrapper.find('iframe').attributes('style') ?? '';
+    expect(style).toContain('width: 600px');
+    expect(style).toContain('height: 400px');
+    expect(style).toContain('scale(0.5)');
+});
+
+test('a small pattern is never enlarged', async () => {
+    const wrapper = mountAttached();
+    const iframe = wrapper.find('iframe').element as HTMLIFrameElement;
+
+    sendSize(iframe, 120, 60);
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('iframe').attributes('style')).toContain('scale(1)');
+});
+
+test('messages from another window or with a malformed payload are ignored', async () => {
+    const wrapper = mountAttached();
+    const iframe = wrapper.find('iframe').element as HTMLIFrameElement;
+
+    sendSize(iframe, 600, 400, window);
+    window.dispatchEvent(
+        new MessageEvent('message', {
+            data: { type: 'pattern-preview-size', width: 'x', height: -5 },
+            source: iframe.contentWindow as MessageEventSource,
+        }),
+    );
+    window.dispatchEvent(
+        new MessageEvent('message', {
+            data: 'hello',
+            source: iframe.contentWindow as MessageEventSource,
+        }),
+    );
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('iframe').attributes('style') ?? '').not.toContain(
+        'scale(',
+    );
+});
+
+test('huge sizes are clamped', async () => {
+    const wrapper = mountAttached();
+    const iframe = wrapper.find('iframe').element as HTMLIFrameElement;
+
+    sendSize(iframe, 999999, 999999);
+    await wrapper.vm.$nextTick();
+
+    const style = wrapper.find('iframe').attributes('style') ?? '';
+    expect(style).toContain('width: 4000px');
+    expect(style).toContain('height: 4000px');
+});
+
+test('without any size message the iframe fills the box as before', () => {
+    const wrapper = mountAttached();
+
+    expect(wrapper.find('iframe').classes()).toContain('h-full');
+    expect(wrapper.find('iframe').attributes('style') ?? '').not.toContain(
+        'scale(',
+    );
+});
+
+test('the message listener is removed when the card is unmounted', () => {
+    const remove = vi.spyOn(window, 'removeEventListener');
+    const wrapper = mountAttached();
+    wrapper.unmount();
+    wrappers.pop();
+
+    expect(remove).toHaveBeenCalledWith('message', expect.any(Function));
+});
+
+test('the box width changing (window resize) updates the scale', async () => {
+    const wrapper = mountAttached();
+    const iframe = wrapper.find('iframe').element as HTMLIFrameElement;
+
+    sendSize(iframe, 600, 400);
+    await wrapper.vm.$nextTick();
+    expect(wrapper.find('iframe').attributes('style')).toContain('scale(0.5)');
+
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
+        configurable: true,
+        get: () => 150,
+    });
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+        configurable: true,
+        get: () => 100,
+    });
+    window.dispatchEvent(new Event('resize'));
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('iframe').attributes('style')).toContain('scale(0.25)');
+});
+
+test('when the preview document changes, the old size is discarded', async () => {
+    const wrapper = mountAttached();
+    const iframe = wrapper.find('iframe').element as HTMLIFrameElement;
+
+    sendSize(iframe, 600, 400);
+    await wrapper.vm.$nextTick();
+    expect(wrapper.find('iframe').attributes('style')).toContain('scale(');
+
+    await wrapper.setProps({ html: '<a href="#">Other</a>' });
+
+    expect(wrapper.find('iframe').attributes('style') ?? '').not.toContain(
+        'scale(',
+    );
+    expect(wrapper.find('iframe').classes()).toContain('h-full');
+});
+
+test('each preview iframe has a title naming its pattern', () => {
+    const wrapper = mountAttached({ title: '斜線シャドウボタン' });
+
+    expect(wrapper.find('iframe').attributes('title')).toBe(
+        '斜線シャドウボタン のプレビュー',
+    );
 });
