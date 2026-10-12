@@ -1,6 +1,6 @@
 # M9-2: UI パターンのデータ拡充 設計書
 
-ステータス: 設計（オーナー承認済み。実装計画は `docs/superpowers/plans/2026-10-12-m9-2-pattern-data.md`）
+ステータス: 実装済み（オーナー承認済み。本番反映は未実施。実装計画は `docs/superpowers/plans/2026-10-12-m9-2-pattern-data.md`）
 
 作成日: 2026-10-12 / ブランチ: `feature/m9-2-pattern-data` / 対象: ロードマップ M9 の第2段階（M9-1 プレビューの修正は完了）
 
