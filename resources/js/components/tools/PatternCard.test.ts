@@ -230,3 +230,49 @@ test('the message listener is removed when the card is unmounted', () => {
 
     expect(remove).toHaveBeenCalledWith('message', expect.any(Function));
 });
+
+test('the box width changing (window resize) updates the scale', async () => {
+    const wrapper = mountAttached();
+    const iframe = wrapper.find('iframe').element as HTMLIFrameElement;
+
+    sendSize(iframe, 600, 400);
+    await wrapper.vm.$nextTick();
+    expect(wrapper.find('iframe').attributes('style')).toContain('scale(0.5)');
+
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
+        configurable: true,
+        get: () => 150,
+    });
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+        configurable: true,
+        get: () => 100,
+    });
+    window.dispatchEvent(new Event('resize'));
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('iframe').attributes('style')).toContain('scale(0.25)');
+});
+
+test('when the preview document changes, the old size is discarded', async () => {
+    const wrapper = mountAttached();
+    const iframe = wrapper.find('iframe').element as HTMLIFrameElement;
+
+    sendSize(iframe, 600, 400);
+    await wrapper.vm.$nextTick();
+    expect(wrapper.find('iframe').attributes('style')).toContain('scale(');
+
+    await wrapper.setProps({ html: '<a href="#">Other</a>' });
+
+    expect(wrapper.find('iframe').attributes('style') ?? '').not.toContain(
+        'scale(',
+    );
+    expect(wrapper.find('iframe').classes()).toContain('h-full');
+});
+
+test('each preview iframe has a title naming its pattern', () => {
+    const wrapper = mountAttached({ title: '斜線シャドウボタン' });
+
+    expect(wrapper.find('iframe').attributes('title')).toBe(
+        '斜線シャドウボタン のプレビュー',
+    );
+});

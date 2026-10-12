@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import {
     PREVIEW_SIZE_MESSAGE,
@@ -105,13 +105,28 @@ const frameStyle = computed(() => {
     };
 });
 
+// 表示するドキュメントが変わったら、前のサイズは捨てる（新しいドキュメントが通知するまで枠いっぱいに表示）。
+watch(srcdoc, () => {
+    contentSize.value = null;
+});
+
+let boxObserver: ResizeObserver | null = null;
+
 onMounted(() => {
     measureBox();
+
+    // サイドバーの開閉やスクロールバーの出現など、ウィンドウ以外の理由で枠の幅が変わっても追従する。
+    if (typeof ResizeObserver !== 'undefined' && box.value) {
+        boxObserver = new ResizeObserver(measureBox);
+        boxObserver.observe(box.value);
+    }
+
     window.addEventListener('message', onMessage);
     window.addEventListener('resize', measureBox);
 });
 
 onBeforeUnmount(() => {
+    boxObserver?.disconnect();
     window.removeEventListener('message', onMessage);
     window.removeEventListener('resize', measureBox);
 });
@@ -151,7 +166,7 @@ async function copyCode() {
                 sandbox="allow-scripts"
                 :class="contentSize ? '' : 'h-full w-full'"
                 :style="frameStyle"
-                title="プレビュー"
+                :title="`${title} のプレビュー`"
             />
         </div>
         <div class="p-4">

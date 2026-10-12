@@ -9,13 +9,16 @@ class PatternDocumentRenderer
 (function () {
   var wrap = document.getElementById('__pw');
   var sent = '';
+  var count = 0;
   function report() {
     var r = wrap.getBoundingClientRect();
+    if (r.width < 1 || r.height < 1) { return; }
     var w = Math.ceil(Math.max(r.width, wrap.scrollWidth)) + 32;
     var h = Math.ceil(Math.max(r.height, wrap.scrollHeight)) + 32;
     var key = w + 'x' + h;
-    if (key === sent) { return; }
+    if (key === sent || count >= 8) { return; }
     sent = key;
+    count += 1;
     parent.postMessage({ type: 'pattern-preview-size', width: w, height: h }, '*');
   }
   window.addEventListener('load', report);
@@ -48,7 +51,7 @@ JS;
 </style>
 </head>
 <body>
-<div id="__pw" style="width:max-content;max-width:640px">
+<div id="__pw" style="display:flex;align-items:center;justify-content:center;width:max-content;min-width:100%;max-width:960px">
 {$html}
 </div>
 <script>
