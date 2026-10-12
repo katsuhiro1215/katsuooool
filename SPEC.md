@@ -609,8 +609,8 @@ UIパターン系ジェネレーターツール(`/ui-pattern-*`)の下部に、A
 ### 33.x ギャラリーのデータ拡充と取り込み(M9-1・M9-2、2026-10-12)
 
 - **プレビュー(M9-1)**: ギャラリーのプレビュー iframe は `sandbox="allow-scripts"`(`allow-same-origin` なし)。プレビュー用ドキュメントに、部品の実寸を `postMessage` で親へ知らせる小さなスクリプトを入れ(サーバー `PatternDocumentRenderer`・クライアント `uiPatternSnippet.ts` で同一内容)、`PatternCard.vue` が実寸で置いて枠(高さ224px)に収まるよう縮小する(拡大はしない)。実寸が測れない(固定配置など)ときは従来どおり枠いっぱいに表示。ヘッダー・フッターのページは1列表示。
-- **データ(M9-2)**: パターンは `database/data/ui-patterns/<カテゴリ>.json`(`[{"title","html","css"}]`)に置き、`php artisan ui-patterns:import [カテゴリ]` で取り込む。同じ(カテゴリ, タイトル)は html/css だけ更新、なければ追加(`is_premium` は false、`copy_count` は0)。既存行の `copy_count`・`is_premium`、JSON にない行(管理画面から登録したもの)には触れない。何度実行しても同じ結果。エラーがあれば何も書き込まない。
-- **決まり**: `tests/Feature/UiPatternDataTest.php` が全ファイルを検査する(必須項目、タイトルは「日本語名（English Name）」形式で重複なし、外部URLは `placehold.co` のみ、`<script>`・`position: fixed`・`vh/vw`・`@import` を使わない、カテゴリごとの最低件数)。モーダル・トーストは画面に固定せず部品そのものを静的に置く。動きは CSS のみ。
+- **データ(M9-2)**: パターンは `database/data/ui-patterns/<カテゴリ>.json`(`[{"title","html","css"}]`)に置き、`php artisan ui-patterns:import [カテゴリ]` で取り込む。同じ(カテゴリ, タイトル)は html/css だけ更新、なければ追加(`is_premium` は false、`copy_count` は0)。既存行の `copy_count`・`is_premium`、JSON にないタイトルの行には触れない(同じタイトルの行は html/css が JSON の内容で上書きされる。`--dry-run` で、書き換わる行を先に確認できる)。実行結果は「追加・更新・変更なし」の件数で表示し、何度実行しても同じ結果。エラーがあれば何も書き込まない。
+- **決まり**: `tests/Feature/UiPatternDataTest.php` が全ファイルを検査する(必須項目、タイトルは「日本語名（English Name）」形式で重複なし、クラス名を別のパターンと共有しない、500px 以上の固定幅には `max-width: 100%`、外部URLは `placehold.co` のみ、`<script>`・`position: fixed`・`vh/vw`・`@import` を使わない、カテゴリごとの最低件数)。モーダル・トーストは画面に固定せず部品そのものを静的に置く。動きは CSS のみ。
 - **件数(2026-10-12時点、リポジトリのデータ)**: モーダル10・トースト10・ローディング11・スケルトン8・ヘッダー8・フッター8・フォーム入力10・テキストエリア6・チェック/ラジオ10・セレクト8・フォームグループ8・ページネーション7(合計104)。ボタン・カードは本番で管理画面から登録済み(49・24件)。
 
 ## 34. 公開ページ共通ヘッダー/フッター仕様(Phase 28)

@@ -12,9 +12,10 @@ class ImportUiPatternsCommand extends Command
 {
     protected $signature = 'ui-patterns:import
         {category? : 取り込むカテゴリ（省略するとすべて）}
-        {--path= : データの置き場所（省略すると database/data/ui-patterns）}';
+        {--path= : データの置き場所（省略すると database/data/ui-patterns）}
+        {--dry-run : 何も書き込まず、追加・更新される内容だけを表示する}';
 
-    protected $description = 'database/data/ui-patterns の JSON から UI パターンを取り込む（同じカテゴリ・タイトルは html/css だけ更新）';
+    protected $description = 'database/data/ui-patterns の JSON から UI パターンを取り込む（同じカテゴリ・タイトルは html/css だけ更新。管理画面での手直しは JSON の内容で上書きされる）';
 
     public function handle(): int
     {
@@ -29,6 +30,12 @@ class ImportUiPatternsCommand extends Command
 
         $loaded = [];
         $errors = [];
+
+        if ($only !== null && ! in_array($only, UiPatternSnippet::CATEGORIES, true)) {
+            $this->error("カテゴリ「{$only}」は許可されていません");
+
+            return self::FAILURE;
+        }
 
         foreach (File::glob($dir.'/*.json') ?: [] as $file) {
             $category = basename($file, '.json');
@@ -68,31 +75,58 @@ class ImportUiPatternsCommand extends Command
             return self::FAILURE;
         }
 
+        $dryRun = (bool) $this->option('dry-run');
         $added = 0;
         $updated = 0;
+        $unchanged = 0;
+        $willChange = [];
 
-        DB::transaction(function () use ($loaded, &$added, &$updated): void {
+        DB::transaction(function () use ($loaded, $dryRun, &$added, &$updated, &$unchanged, &$willChange): void {
             foreach ($loaded as $category => $items) {
                 foreach ($items as $item) {
                     $row = UiPatternSnippet::where('category', $category)->where('title', $item['title'])->first();
 
-                    if ($row) {
-                        $row->update(['html' => $item['html'], 'css' => $item['css']]);
-                        $updated++;
-                    } else {
-                        UiPatternSnippet::create([
-                            'category' => $category,
-                            'title' => $item['title'],
-                            'html' => $item['html'],
-                            'css' => $item['css'],
-                        ]);
+                    if ($row === null) {
                         $added++;
+
+                        if (! $dryRun) {
+                            UiPatternSnippet::create([
+                                'category' => $category,
+                                'title' => $item['title'],
+                                'html' => $item['html'],
+                                'css' => $item['css'],
+                            ]);
+                        }
+
+                        continue;
+                    }
+
+                    if ($row->html === $item['html'] && $row->css === $item['css']) {
+                        $unchanged++;
+
+                        continue;
+                    }
+
+                    $updated++;
+                    $willChange[] = "{$category}: {$item['title']}";
+
+                    if (! $dryRun) {
+                        $row->update(['html' => $item['html'], 'css' => $item['css']]);
                     }
                 }
             }
         });
 
-        $this->info("追加 {$added} 件・更新 {$updated} 件");
+        if ($willChange !== []) {
+            $this->line($dryRun ? '内容が書き換わる既存の行:' : '内容を書き換えた既存の行:');
+
+            foreach ($willChange as $line) {
+                $this->line("  {$line}");
+            }
+        }
+
+        $suffix = $dryRun ? '（--dry-run のため、何も書き込んでいません）' : '';
+        $this->info("追加 {$added} 件・更新 {$updated} 件・変更なし {$unchanged} 件{$suffix}");
 
         return self::SUCCESS;
     }

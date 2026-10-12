@@ -61,3 +61,42 @@ test('各カテゴリが最低件数を満たす', function () {
         expect(count($items), "{$category}.json の件数")->toBeGreaterThanOrEqual(UI_PATTERN_MIN_COUNTS[$category] ?? 1);
     }
 });
+
+test('別のパターンとクラス名を共有しない（コピーして同じページに並べても衝突しない）', function () {
+    $owners = [];
+
+    foreach (uiPatternFiles() as $file) {
+        $category = basename($file, '.json');
+
+        foreach (json_decode(File::get($file), true, 512, JSON_THROW_ON_ERROR) as $item) {
+            preg_match_all('/\.([A-Za-z_][\w-]*)/', preg_replace('/\d+\.\d+/', '', $item['css']), $m);
+
+            foreach (array_unique($m[1]) as $class) {
+                // 状態を表す `is-*`（is-current など）は、パターンの外から付け外しする前提の名前なので共有してよい。
+                if (str_starts_with($class, 'is-')) {
+                    continue;
+                }
+
+                $owners[$class][$category.'/'.$item['title']] = true;
+            }
+        }
+    }
+
+    $shared = array_filter($owners, fn ($patterns) => count($patterns) > 1);
+
+    expect(array_map(fn ($patterns) => array_keys($patterns), $shared))->toBe([]);
+});
+
+test('固定幅が 500px 以上の規則は、狭い画面で横にはみ出さないよう max-width: 100% を持つ', function () {
+    foreach (uiPatternFiles() as $file) {
+        $category = basename($file, '.json');
+
+        foreach (json_decode(File::get($file), true, 512, JSON_THROW_ON_ERROR) as $item) {
+            foreach (explode('}', $item['css']) as $rule) {
+                if (preg_match('/(?<![-\w])width\s*:\s*(\d{3,})px/', $rule, $m) && (int) $m[1] >= 500) {
+                    expect($rule, "{$category}/{$item['title']}: 幅 {$m[1]}px")->toMatch('/max-width\s*:\s*100%/');
+                }
+            }
+        }
+    }
+});

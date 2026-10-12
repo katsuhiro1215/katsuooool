@@ -38,12 +38,12 @@ test('新しいパターンを追加し、件数を表示する', function () {
         ->and(UiPatternSnippet::first()->copy_count)->toBe(0);
 });
 
-test('2 回実行しても件数は増えず、更新として扱う', function () {
+test('2 回実行しても件数は増えず、変更なしとして数える', function () {
     $dir = makeDataDir(['modal.json' => [pattern('シンプルモーダル（Simple Modal）')]]);
 
     $this->artisan('ui-patterns:import', ['--path' => $dir])->assertExitCode(0);
     $this->artisan('ui-patterns:import', ['--path' => $dir])
-        ->expectsOutputToContain('追加 0 件・更新 1 件')
+        ->expectsOutputToContain('追加 0 件・更新 0 件・変更なし 1 件')
         ->assertExitCode(0);
 
     expect(UiPatternSnippet::count())->toBe(1);
@@ -99,3 +99,36 @@ test('壊れた JSON・不明なカテゴリ・必須項目の欠落は、何も
     '不明なカテゴリ' => [['nothing.json' => [pattern('x（X）')]], 'カテゴリ'],
     'html がない' => [['toast.json' => [['title' => 'a（A）', 'css' => 'a{}']]], 'html'],
 ]);
+
+test('内容が変わる行は更新、同じ行は変更なしとして数える', function () {
+    UiPatternSnippet::create(['category' => 'modal', 'title' => 'A（A）', 'html' => '<p>old</p>', 'css' => 'p{}']);
+    UiPatternSnippet::create(['category' => 'modal', 'title' => 'B（B）', 'html' => '<p>x</p>', 'css' => 'p{color:#333}']);
+    $dir = makeDataDir(['modal.json' => [pattern('A（A）', '<p>new</p>', 'p{}'), pattern('B（B）'), pattern('C（C）')]]);
+
+    $this->artisan('ui-patterns:import', ['--path' => $dir])
+        ->expectsOutputToContain('追加 1 件・更新 1 件・変更なし 1 件')
+        ->assertExitCode(0);
+});
+
+test('--dry-run は何も書き込まず、内容が変わる既存行を一覧で示す', function () {
+    UiPatternSnippet::create(['category' => 'modal', 'title' => 'A（A）', 'html' => '<p>admin edited</p>', 'css' => 'p{}']);
+    $dir = makeDataDir(['modal.json' => [pattern('A（A）', '<p>new</p>', 'p{}'), pattern('C（C）')]]);
+
+    $this->artisan('ui-patterns:import', ['--path' => $dir, '--dry-run' => true])
+        ->expectsOutputToContain('modal: A（A）')
+        ->expectsOutputToContain('追加 1 件・更新 1 件・変更なし 0 件（--dry-run のため、何も書き込んでいません）')
+        ->assertExitCode(0);
+
+    expect(UiPatternSnippet::count())->toBe(1)
+        ->and(UiPatternSnippet::first()->html)->toBe('<p>admin edited</p>');
+});
+
+test('存在しないカテゴリを指定すると失敗する', function () {
+    $dir = makeDataDir(['modal.json' => [pattern('モーダル（Modal）')]]);
+
+    $this->artisan('ui-patterns:import', ['category' => 'modals', '--path' => $dir])
+        ->expectsOutputToContain('modals')
+        ->assertExitCode(1);
+
+    expect(UiPatternSnippet::count())->toBe(0);
+});

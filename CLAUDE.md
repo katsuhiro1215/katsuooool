@@ -62,4 +62,4 @@
 3. `docker compose -f compose.prod.yaml build app`、続けて `build katsuooool-web`（空きメモリを `free -h` で確認してから）。
 4. `docker compose -f compose.prod.yaml up -d --force-recreate app scheduler katsuooool-web`。**フロントエンド（`public/build`）が変わるときは `katsuooool-web` も必須**。web のイメージは app の `public/` を焼き込んでおり、再作成しないと新 HTML が存在しないアセットを参照して 404 になる。`.env` だけの変更なら `app`・`scheduler` のみ。
 5. 外から、トップ・ツール画面・アセットが 200 で返ること、本体（smartsprouts.jp）が影響を受けていないことを確認。
-6. UI パターンのデータ（`database/data/ui-patterns/*.json`）が増えたときは、反映後に `docker compose -f compose.prod.yaml exec app php artisan ui-patterns:import` を1回実行する（M9-2。追加・更新の件数が表示される。何度実行しても同じ結果で、`copy_count`・`is_premium`・管理画面から登録した行は変わらない）。
+6. UI パターンのデータ（`database/data/ui-patterns/*.json`）が増えたときは、反映後にサーバーで、先に `docker compose -f compose.prod.yaml exec app php artisan ui-patterns:import --dry-run`（何も書き込まず、追加・書き換わる行を一覧表示）で確認し、問題なければ `--dry-run` なしで1回実行する（M9-2）。**JSON と同じ（カテゴリ・タイトル）の既存の行は、html/css が JSON の内容で上書きされる**（管理画面での手直しは失われる）。`copy_count`・`is_premium`・JSON にないタイトルの行は変わらない。何度実行しても結果は同じ。
