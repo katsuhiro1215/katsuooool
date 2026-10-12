@@ -1,0 +1,52 @@
+[
+  {
+    "title": "成功トースト（Success Toast）",
+    "html": "<div class=\"ts\" role=\"status\">\n  <span class=\"ts-icon\">✓</span>\n  <div class=\"ts-body\">\n    <p class=\"ts-title\">保存しました</p>\n    <p class=\"ts-sub\">変更内容が反映されました。</p>\n  </div>\n</div>",
+    "css": ".ts { display: flex; align-items: flex-start; gap: 12px; width: 320px; padding: 14px 16px; box-sizing: border-box; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; color: #065f46; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.ts-icon { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #10b981; color: #fff; font-size: 14px; font-weight: 700; line-height: 24px; text-align: center; }\n.ts-title { margin: 0; font-size: 14px; font-weight: 700; }\n.ts-sub { margin: 2px 0 0; font-size: 12px; opacity: 0.85; line-height: 1.6; }"
+  },
+  {
+    "title": "エラートースト（Error Toast）",
+    "html": "<div class=\"te\" role=\"status\">\n  <span class=\"te-icon\">✕</span>\n  <div class=\"te-body\">\n    <p class=\"te-title\">送信に失敗しました</p>\n    <p class=\"te-sub\">ネットワークを確認して、もう一度お試しください。</p>\n  </div>\n</div>",
+    "css": ".te { display: flex; align-items: flex-start; gap: 12px; width: 320px; padding: 14px 16px; box-sizing: border-box; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; color: #991b1b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.te-icon { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #ef4444; color: #fff; font-size: 14px; font-weight: 700; line-height: 24px; text-align: center; }\n.te-title { margin: 0; font-size: 14px; font-weight: 700; }\n.te-sub { margin: 2px 0 0; font-size: 12px; opacity: 0.85; line-height: 1.6; }"
+  },
+  {
+    "title": "警告トースト（Warning Toast）",
+    "html": "<div class=\"tw\" role=\"status\">\n  <span class=\"tw-icon\">!</span>\n  <div class=\"tw-body\">\n    <p class=\"tw-title\">容量が残りわずかです</p>\n    <p class=\"tw-sub\">ストレージの空きが 10% を切りました。</p>\n  </div>\n</div>",
+    "css": ".tw { display: flex; align-items: flex-start; gap: 12px; width: 320px; padding: 14px 16px; box-sizing: border-box; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; color: #92400e; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.tw-icon { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #f59e0b; color: #fff; font-size: 14px; font-weight: 700; line-height: 24px; text-align: center; }\n.tw-title { margin: 0; font-size: 14px; font-weight: 700; }\n.tw-sub { margin: 2px 0 0; font-size: 12px; opacity: 0.85; line-height: 1.6; }"
+  },
+  {
+    "title": "情報トースト（Info Toast）",
+    "html": "<div class=\"ti\" role=\"status\">\n  <span class=\"ti-icon\">i</span>\n  <div class=\"ti-body\">\n    <p class=\"ti-title\">新しいバージョンがあります</p>\n    <p class=\"ti-sub\">更新すると、最新の機能が使えます。</p>\n  </div>\n</div>",
+    "css": ".ti { display: flex; align-items: flex-start; gap: 12px; width: 320px; padding: 14px 16px; box-sizing: border-box; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; color: #1e40af; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.ti-icon { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #3b82f6; color: #fff; font-size: 14px; font-weight: 700; line-height: 24px; text-align: center; }\n.ti-title { margin: 0; font-size: 14px; font-weight: 700; }\n.ti-sub { margin: 2px 0 0; font-size: 12px; opacity: 0.85; line-height: 1.6; }"
+  },
+  {
+    "title": "アイコン付きトースト（Icon Toast）",
+    "html": "<div class=\"ic\" role=\"status\">\n  <span class=\"ic-icon\">🔔</span>\n  <div class=\"ic-body\">\n    <p class=\"ic-title\">新しい通知</p>\n    <p class=\"ic-text\">田中さんがあなたの投稿にコメントしました。</p>\n  </div>\n  <span class=\"ic-time\">今</span>\n</div>",
+    "css": ".ic { display: flex; align-items: center; gap: 12px; width: 330px; padding: 12px 14px; box-sizing: border-box; background: #fff; border-radius: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14); color: #222; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.ic-icon { flex: none; width: 40px; height: 40px; border-radius: 10px; background: #fef3c7; font-size: 20px; line-height: 40px; text-align: center; }\n.ic-body { flex: 1; min-width: 0; }\n.ic-title { margin: 0; font-size: 13px; font-weight: 700; }\n.ic-text { margin: 2px 0 0; font-size: 12px; line-height: 1.5; color: #6b7280; }\n.ic-time { flex: none; align-self: flex-start; font-size: 11px; color: #9ca3af; }"
+  },
+  {
+    "title": "閉じるボタン付きトースト（Dismissible Toast）",
+    "html": "<div class=\"dm\" role=\"status\">\n  <p class=\"dm-text\">プロフィールを更新しました。</p>\n  <button class=\"dm-close\" type=\"button\" aria-label=\"閉じる\">&times;</button>\n</div>",
+    "css": ".dm { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 320px; padding: 12px 12px 12px 16px; box-sizing: border-box; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1); color: #222; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.dm-text { margin: 0; font-size: 14px; }\n.dm-close { width: 28px; height: 28px; border: 0; border-radius: 6px; background: transparent; color: #6b7280; font-size: 20px; line-height: 1; cursor: pointer; }\n.dm-close:hover { background: #f3f4f6; color: #111827; }"
+  },
+  {
+    "title": "進行バー付きトースト（Progress Toast）",
+    "html": "<div class=\"pg\" role=\"status\">\n  <p class=\"pg-text\">ファイルをアップロードしました。</p>\n  <span class=\"pg-bar\"></span>\n</div>",
+    "css": ".pg { position: relative; width: 320px; padding: 14px 16px 18px; box-sizing: border-box; overflow: hidden; background: #fff; border-radius: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14); color: #222; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.pg-text { margin: 0; font-size: 14px; }\n.pg-bar { position: absolute; left: 0; bottom: 0; height: 4px; width: 100%; background: #6366f1; transform-origin: left; animation: pg-shrink 4s linear infinite; }\n@keyframes pg-shrink { from { transform: scaleX(1); } to { transform: scaleX(0); } }"
+  },
+  {
+    "title": "アクション付きトースト（Action Toast）",
+    "html": "<div class=\"ac\" role=\"status\">\n  <p class=\"ac-text\">メールを削除しました。</p>\n  <button class=\"ac-undo\" type=\"button\">元に戻す</button>\n</div>",
+    "css": ".ac { display: flex; align-items: center; justify-content: space-between; gap: 20px; width: 320px; padding: 12px 14px 12px 18px; box-sizing: border-box; background: #1f2937; border-radius: 10px; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.ac-text { margin: 0; font-size: 14px; }\n.ac-undo { padding: 6px 10px; border: 0; border-radius: 6px; background: transparent; color: #93c5fd; font-size: 13px; font-weight: 700; cursor: pointer; }\n.ac-undo:hover { background: rgba(255, 255, 255, 0.1); }"
+  },
+  {
+    "title": "ダークトースト（Dark Toast）",
+    "html": "<div class=\"dk\" role=\"status\">\n  <span class=\"dk-icon\">✓</span>\n  <div class=\"dk-body\">\n    <p class=\"dk-title\">コピーしました</p>\n    <p class=\"dk-text\">クリップボードに保存されています。</p>\n  </div>\n</div>",
+    "css": ".dk { display: flex; align-items: center; gap: 12px; width: 320px; padding: 14px 16px; box-sizing: border-box; background: #111827; border: 1px solid #374151; border-radius: 12px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3); color: #f9fafb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.dk-icon { flex: none; width: 28px; height: 28px; border-radius: 8px; background: #22c55e; color: #052e16; font-size: 15px; font-weight: 800; line-height: 28px; text-align: center; }\n.dk-title { margin: 0; font-size: 14px; font-weight: 700; }\n.dk-text { margin: 2px 0 0; font-size: 12px; color: #9ca3af; }"
+  },
+  {
+    "title": "左ボーダー強調トースト（Accent Border Toast）",
+    "html": "<div class=\"ab\" role=\"status\">\n  <p class=\"ab-title\">お知らせ</p>\n  <p class=\"ab-text\">メンテナンスのため、明日 2:00〜4:00 は一時的にご利用いただけません。</p>\n</div>",
+    "css": ".ab { width: 330px; padding: 14px 16px; box-sizing: border-box; background: #fff; border-left: 4px solid #6366f1; border-radius: 6px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); color: #222; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.ab-title { margin: 0 0 4px; font-size: 14px; font-weight: 700; color: #4338ca; }\n.ab-text { margin: 0; font-size: 13px; line-height: 1.7; color: #4b5563; }"
+  }
+]
