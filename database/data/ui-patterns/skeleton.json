@@ -1,0 +1,42 @@
+[
+  {
+    "title": "テキスト行（Text Lines）",
+    "html": "<div class=\"tl\" aria-busy=\"true\">\n  <div class=\"tl-bar tl-w90\"></div>\n  <div class=\"tl-bar tl-w100\"></div>\n  <div class=\"tl-bar tl-w75\"></div>\n  <div class=\"tl-bar tl-w50\"></div>\n</div>",
+    "css": ".tl { width: 300px; }\n.tl-bar { height: 14px; margin-bottom: 12px; border-radius: 6px; }\n.tl-w100 { width: 100%; } .tl-w90 { width: 90%; } .tl-w75 { width: 75%; } .tl-w50 { width: 50%; }\n.tl-bar { background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 37%, #e5e7eb 63%); background-size: 400% 100%; animation: tl-bar-shimmer 1.4s ease infinite; }\n@keyframes tl-bar-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }"
+  },
+  {
+    "title": "アバター付き（Avatar Row）",
+    "html": "<div class=\"av\" aria-busy=\"true\">\n  <div class=\"av-pic\"></div>\n  <div class=\"av-lines\">\n    <div class=\"av-line av-name\"></div>\n    <div class=\"av-line av-sub\"></div>\n  </div>\n</div>",
+    "css": ".av { display: flex; align-items: center; gap: 14px; width: 300px; }\n.av-pic { flex: none; width: 52px; height: 52px; border-radius: 50%; }\n.av-lines { flex: 1; }\n.av-line { height: 12px; border-radius: 6px; }\n.av-name { width: 60%; margin-bottom: 10px; }\n.av-sub { width: 90%; }\n.av-pic, .av-line { background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 37%, #e5e7eb 63%); background-size: 400% 100%; animation: av-shimmer 1.4s ease infinite; }\n@keyframes av-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }"
+  },
+  {
+    "title": "カード（Card Skeleton）",
+    "html": "<div class=\"cd\" aria-busy=\"true\">\n  <div class=\"cd-img\"></div>\n  <div class=\"cd-body\">\n    <div class=\"cd-line cd-title\"></div>\n    <div class=\"cd-line\"></div>\n    <div class=\"cd-line cd-short\"></div>\n  </div>\n</div>",
+    "css": ".cd { width: 260px; overflow: hidden; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; }\n.cd-img { height: 120px; }\n.cd-body { padding: 14px; }\n.cd-line { height: 11px; margin-bottom: 9px; border-radius: 6px; }\n.cd-title { width: 70%; height: 15px; margin-bottom: 14px; }\n.cd-short { width: 45%; }\n.cd-img, .cd-line { background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 37%, #e5e7eb 63%); background-size: 400% 100%; animation: cd-shimmer 1.4s ease infinite; }\n@keyframes cd-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }"
+  },
+  {
+    "title": "リスト（List Skeleton）",
+    "html": "<div class=\"ls\" aria-busy=\"true\">\n  <div class=\"ls-row\"><div class=\"ls-thumb\"></div><div class=\"ls-text\"><div class=\"ls-line ls-a\"></div><div class=\"ls-line ls-b\"></div></div></div>\n  <div class=\"ls-row\"><div class=\"ls-thumb\"></div><div class=\"ls-text\"><div class=\"ls-line ls-a\"></div><div class=\"ls-line ls-b\"></div></div></div>\n  <div class=\"ls-row\"><div class=\"ls-thumb\"></div><div class=\"ls-text\"><div class=\"ls-line ls-a\"></div><div class=\"ls-line ls-b\"></div></div></div>\n</div>",
+    "css": ".ls { width: 300px; }\n.ls-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }\n.ls-thumb { flex: none; width: 48px; height: 48px; border-radius: 8px; }\n.ls-text { flex: 1; }\n.ls-line { height: 11px; border-radius: 6px; }\n.ls-a { width: 75%; margin-bottom: 8px; }\n.ls-b { width: 45%; }\n.ls-thumb, .ls-line { background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 37%, #e5e7eb 63%); background-size: 400% 100%; animation: ls-shimmer 1.4s ease infinite; }\n@keyframes ls-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }"
+  },
+  {
+    "title": "記事（Article Skeleton）",
+    "html": "<div class=\"ar\" aria-busy=\"true\">\n  <div class=\"ar-block ar-title\"></div>\n  <div class=\"ar-block ar-meta\"></div>\n  <div class=\"ar-block ar-hero\"></div>\n  <div class=\"ar-block ar-p\"></div>\n  <div class=\"ar-block ar-p\"></div>\n  <div class=\"ar-block ar-p ar-last\"></div>\n</div>",
+    "css": ".ar { width: 320px; }\n.ar-block { margin-bottom: 12px; border-radius: 6px; }\n.ar-title { width: 85%; height: 22px; }\n.ar-meta { width: 40%; height: 11px; margin-bottom: 16px; }\n.ar-hero { height: 110px; margin-bottom: 16px; border-radius: 10px; }\n.ar-p { height: 12px; }\n.ar-last { width: 60%; }\n.ar-block { background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 37%, #e5e7eb 63%); background-size: 400% 100%; animation: ar-shimmer 1.4s ease infinite; }\n@keyframes ar-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }"
+  },
+  {
+    "title": "テーブル行（Table Rows）",
+    "html": "<div class=\"tb\" aria-busy=\"true\">\n  <div class=\"tb-row tb-head\"><span class=\"tb-cell\"></span><span class=\"tb-cell\"></span><span class=\"tb-cell\"></span></div>\n  <div class=\"tb-row\"><span class=\"tb-cell\"></span><span class=\"tb-cell\"></span><span class=\"tb-cell\"></span></div>\n  <div class=\"tb-row\"><span class=\"tb-cell\"></span><span class=\"tb-cell\"></span><span class=\"tb-cell\"></span></div>\n  <div class=\"tb-row\"><span class=\"tb-cell\"></span><span class=\"tb-cell\"></span><span class=\"tb-cell\"></span></div>\n</div>",
+    "css": ".tb { width: 340px; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; background: #fff; }\n.tb-row { display: grid; grid-template-columns: 1.4fr 1fr 0.8fr; gap: 14px; padding: 12px 14px; border-bottom: 1px solid #f1f5f9; }\n.tb-head { background: #f9fafb; }\n.tb-cell { display: block; height: 11px; border-radius: 6px; background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 37%, #e5e7eb 63%); background-size: 400% 100%; animation: tb-shimmer 1.4s ease infinite; }\n@keyframes tb-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }"
+  },
+  {
+    "title": "プロフィール（Profile Skeleton）",
+    "html": "<div class=\"pf\" aria-busy=\"true\">\n  <div class=\"pf-banner\"></div>\n  <div class=\"pf-avatar\"></div>\n  <div class=\"pf-name\"></div>\n  <div class=\"pf-bio\"></div>\n  <div class=\"pf-stats\"><span></span><span></span><span></span></div>\n</div>",
+    "css": ".pf { position: relative; width: 280px; padding-bottom: 18px; overflow: hidden; background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; text-align: center; }\n.pf-banner { height: 80px; }\n.pf-avatar { width: 64px; height: 64px; margin: -32px auto 12px; border: 4px solid #fff; border-radius: 50%; }\n.pf-name { width: 40%; height: 14px; margin: 0 auto 10px; border-radius: 6px; }\n.pf-bio { width: 70%; height: 11px; margin: 0 auto 16px; border-radius: 6px; }\n.pf-stats { display: flex; justify-content: center; gap: 12px; }\n.pf-stats span { width: 50px; height: 24px; border-radius: 6px; background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 37%, #e5e7eb 63%); background-size: 400% 100%; animation: pf-shimmer 1.4s ease infinite; }\n.pf-banner, .pf-avatar, .pf-name, .pf-bio { background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 37%, #e5e7eb 63%); background-size: 400% 100%; animation: pf-shimmer 1.4s ease infinite; }\n@keyframes pf-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }"
+  },
+  {
+    "title": "画像グリッド（Image Grid）",
+    "html": "<div class=\"ig\" aria-busy=\"true\">\n  <div class=\"ig-item\"><div class=\"ig-img\"></div><div class=\"ig-cap\"></div></div>\n  <div class=\"ig-item\"><div class=\"ig-img\"></div><div class=\"ig-cap\"></div></div>\n  <div class=\"ig-item\"><div class=\"ig-img\"></div><div class=\"ig-cap\"></div></div>\n  <div class=\"ig-item\"><div class=\"ig-img\"></div><div class=\"ig-cap\"></div></div>\n</div>",
+    "css": ".ig { display: grid; grid-template-columns: repeat(2, 140px); gap: 14px; }\n.ig-img { height: 100px; margin-bottom: 8px; border-radius: 10px; }\n.ig-cap { width: 70%; height: 11px; border-radius: 6px; }\n.ig-img, .ig-cap { background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 37%, #e5e7eb 63%); background-size: 400% 100%; animation: ig-shimmer 1.4s ease infinite; }\n@keyframes ig-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }"
+  }
+]

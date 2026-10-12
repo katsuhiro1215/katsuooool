@@ -1,0 +1,37 @@
+[
+  {
+    "title": "前へ・次へ（Prev Next Pagination）",
+    "html": "<nav class=\"pn\" aria-label=\"ページ送り\">\n  <a class=\"pn-btn\" href=\"#\">← 前へ</a>\n  <span class=\"pn-info\">3 / 12 ページ</span>\n  <a class=\"pn-btn\" href=\"#\">次へ →</a>\n</nav>",
+    "css": ".pn { display: flex; align-items: center; gap: 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.pn-btn { padding: 9px 18px; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; font-size: 14px; color: #374151; text-decoration: none; transition: background 0.15s, border-color 0.15s; }\n.pn-btn:hover { border-color: #9ca3af; background: #f9fafb; }\n.pn-info { font-size: 13px; color: #6b7280; }"
+  },
+  {
+    "title": "ドットページネーション（Dot Pagination）",
+    "html": "<nav class=\"dp\" aria-label=\"ページ送り\">\n  <a class=\"dp-dot\" href=\"#\" aria-label=\"1ページ目\"></a>\n  <a class=\"dp-dot is-current\" href=\"#\" aria-label=\"2ページ目\" aria-current=\"page\"></a>\n  <a class=\"dp-dot\" href=\"#\" aria-label=\"3ページ目\"></a>\n  <a class=\"dp-dot\" href=\"#\" aria-label=\"4ページ目\"></a>\n  <a class=\"dp-dot\" href=\"#\" aria-label=\"5ページ目\"></a>\n</nav>",
+    "css": ".dp { display: flex; align-items: center; gap: 10px; }\n.dp-dot { display: block; width: 10px; height: 10px; border-radius: 999px; background: #d1d5db; transition: width 0.2s, background 0.2s; }\n.dp-dot:hover { background: #9ca3af; }\n.dp-dot.is-current { width: 28px; background: #4f46e5; }"
+  },
+  {
+    "title": "省略付きページネーション（Ellipsis Pagination）",
+    "html": "<nav class=\"ep\" aria-label=\"ページ送り\">\n  <a class=\"ep-item\" href=\"#\">‹</a>\n  <a class=\"ep-item\" href=\"#\">1</a>\n  <span class=\"ep-dots\">…</span>\n  <a class=\"ep-item\" href=\"#\">4</a>\n  <a class=\"ep-item is-current\" href=\"#\" aria-current=\"page\">5</a>\n  <a class=\"ep-item\" href=\"#\">6</a>\n  <span class=\"ep-dots\">…</span>\n  <a class=\"ep-item\" href=\"#\">20</a>\n  <a class=\"ep-item\" href=\"#\">›</a>\n</nav>",
+    "css": ".ep { display: flex; align-items: center; gap: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.ep-item { min-width: 36px; height: 36px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; font-size: 14px; line-height: 36px; color: #374151; text-align: center; text-decoration: none; transition: background 0.15s; }\n.ep-item:hover { background: #f3f4f6; }\n.ep-item.is-current { background: #111827; color: #fff; font-weight: 700; }\n.ep-dots { min-width: 24px; color: #9ca3af; text-align: center; }"
+  },
+  {
+    "title": "もっと見るボタン（Load More Pagination）",
+    "html": "<div class=\"lm\">\n  <p class=\"lm-info\">24件中 12件を表示中</p>\n  <div class=\"lm-bar\"><span class=\"lm-fill\"></span></div>\n  <button class=\"lm-btn\" type=\"button\">もっと見る</button>\n</div>",
+    "css": ".lm { width: 260px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.lm-info { margin: 0 0 8px; font-size: 13px; color: #6b7280; }\n.lm-bar { height: 4px; margin-bottom: 16px; overflow: hidden; border-radius: 999px; background: #e5e7eb; }\n.lm-fill { display: block; width: 50%; height: 100%; border-radius: 999px; background: #4f46e5; }\n.lm-btn { padding: 11px 32px; border: 1px solid #4f46e5; border-radius: 999px; background: #fff; color: #4f46e5; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.15s, color 0.15s; }\n.lm-btn:hover { background: #4f46e5; color: #fff; }"
+  },
+  {
+    "title": "ページ入力（Page Input Pagination）",
+    "html": "<nav class=\"ppi\" aria-label=\"ページ送り\">\n  <a class=\"ppi-arrow\" href=\"#\" aria-label=\"前へ\">‹</a>\n  <label class=\"ppi-field\"><input class=\"ppi-input\" type=\"number\" value=\"5\" min=\"1\" max=\"20\" aria-label=\"ページ番号\"><span class=\"ppi-total\">/ 20</span></label>\n  <a class=\"ppi-arrow\" href=\"#\" aria-label=\"次へ\">›</a>\n</nav>",
+    "css": ".ppi { display: flex; align-items: center; gap: 10px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.ppi-arrow { width: 36px; height: 36px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 18px; line-height: 34px; color: #374151; text-align: center; text-decoration: none; }\n.ppi-arrow:hover { background: #f3f4f6; }\n.ppi-field { display: flex; align-items: center; gap: 8px; }\n.ppi-input { width: 56px; height: 36px; padding: 0 8px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; text-align: center; }\n.ppi-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18); }\n.ppi-total { font-size: 14px; color: #6b7280; }"
+  },
+  {
+    "title": "コンパクトページネーション（Compact Pagination）",
+    "html": "<nav class=\"pcp\" aria-label=\"ページ送り\">\n  <a class=\"pcp-arrow\" href=\"#\" aria-label=\"前へ\">‹</a>\n  <span class=\"pcp-now\">3</span><span class=\"pcp-sep\">/</span><span class=\"pcp-all\">12</span>\n  <a class=\"pcp-arrow\" href=\"#\" aria-label=\"次へ\">›</a>\n</nav>",
+    "css": ".pcp { display: inline-flex; align-items: center; gap: 6px; padding: 4px; background: #f3f4f6; border-radius: 999px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.pcp-arrow { width: 32px; height: 32px; border-radius: 50%; font-size: 18px; line-height: 30px; color: #374151; text-align: center; text-decoration: none; }\n.pcp-arrow:hover { background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); }\n.pcp-now { min-width: 18px; text-align: right; font-size: 14px; font-weight: 700; color: #111827; }\n.pcp-sep, .pcp-all { font-size: 14px; color: #9ca3af; }"
+  },
+  {
+    "title": "カード型ページネーション（Card Pagination）",
+    "html": "<nav class=\"pcd\" aria-label=\"ページ送り\">\n  <a class=\"pcd-card\" href=\"#\"><span class=\"pcd-dir\">← 前の記事</span><span class=\"pcd-title\">はじめてのCSSグリッド</span></a>\n  <a class=\"pcd-card pcd-next\" href=\"#\"><span class=\"pcd-dir\">次の記事 →</span><span class=\"pcd-title\">Flexboxの使い分け</span></a>\n</nav>",
+    "css": ".pcd { display: flex; gap: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.pcd-card { display: flex; flex-direction: column; gap: 4px; width: 170px; padding: 14px 16px; box-sizing: border-box; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; text-decoration: none; transition: box-shadow 0.15s, transform 0.15s; }\n.pcd-card:hover { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); transform: translateY(-2px); }\n.pcd-next { text-align: right; }\n.pcd-dir { font-size: 11px; font-weight: 700; color: #6366f1; }\n.pcd-title { font-size: 13px; line-height: 1.5; color: #111827; }"
+  }
+]
