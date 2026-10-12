@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { buildPatternDocument } from './uiPatternSnippet';
+import { buildPatternDocument, fitScale } from './uiPatternSnippet';
 import type { PatternSnippet } from './uiPatternSnippet';
 
 test('buildPatternDocument produces the exact wrapper document byte-for-byte', () => {
@@ -31,7 +31,27 @@ test('buildPatternDocument produces the exact wrapper document byte-for-byte', (
 </style>
 </head>
 <body>
+<div id="__pw" style="width:max-content;max-width:640px">
 <a href="#">Button</a>
+</div>
+<script>
+(function () {
+  var wrap = document.getElementById('__pw');
+  var sent = '';
+  function report() {
+    var r = wrap.getBoundingClientRect();
+    var w = Math.ceil(Math.max(r.width, wrap.scrollWidth)) + 32;
+    var h = Math.ceil(Math.max(r.height, wrap.scrollHeight)) + 32;
+    var key = w + 'x' + h;
+    if (key === sent) { return; }
+    sent = key;
+    parent.postMessage({ type: 'pattern-preview-size', width: w, height: h }, '*');
+  }
+  window.addEventListener('load', report);
+  if (window.ResizeObserver) { new ResizeObserver(report).observe(wrap); }
+  report();
+})();
+</script>
 </body>
 </html>`;
 
@@ -55,4 +75,17 @@ test('PatternSnippet accepts both locked and unlocked shapes', () => {
 
     expect(unlocked.locked).toBe(false);
     expect(locked.locked).toBe(true);
+});
+
+test('fitScale は枠に収まるよう縮小し、拡大はしない', () => {
+    expect(fitScale(200, 100, 400, 200)).toBe(1);
+    expect(fitScale(800, 100, 400, 200)).toBe(0.5);
+    expect(fitScale(100, 400, 400, 200)).toBe(0.5);
+    expect(fitScale(800, 800, 400, 200)).toBe(0.25);
+});
+
+test('fitScale は不正な寸法のとき 1 を返す', () => {
+    expect(fitScale(0, 100, 400, 200)).toBe(1);
+    expect(fitScale(100, 100, 0, 200)).toBe(1);
+    expect(fitScale(Number.NaN, 100, 400, 200)).toBe(1);
 });

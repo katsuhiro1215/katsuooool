@@ -30,7 +30,27 @@ test('build produces the exact wrapper document byte-for-byte', function () {
 </style>
 </head>
 <body>
+<div id="__pw" style="width:max-content;max-width:640px">
 <a href="#">Button</a>
+</div>
+<script>
+(function () {
+  var wrap = document.getElementById('__pw');
+  var sent = '';
+  function report() {
+    var r = wrap.getBoundingClientRect();
+    var w = Math.ceil(Math.max(r.width, wrap.scrollWidth)) + 32;
+    var h = Math.ceil(Math.max(r.height, wrap.scrollHeight)) + 32;
+    var key = w + 'x' + h;
+    if (key === sent) { return; }
+    sent = key;
+    parent.postMessage({ type: 'pattern-preview-size', width: w, height: h }, '*');
+  }
+  window.addEventListener('load', report);
+  if (window.ResizeObserver) { new ResizeObserver(report).observe(wrap); }
+  report();
+})();
+</script>
 </body>
 </html>
 HTML;
