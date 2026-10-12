@@ -1,0 +1,52 @@
+[
+  {
+    "title": "ボーダー入力（Outlined Input）",
+    "html": "<div class=\"oi\">\n  <label class=\"oi-label\" for=\"oi-name\">お名前</label>\n  <input class=\"oi-input\" id=\"oi-name\" type=\"text\" placeholder=\"山田 太郎\">\n</div>",
+    "css": ".oi { width: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.oi-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #374151; }\n.oi-input { width: 100%; padding: 11px 14px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; font-size: 14px; color: #111827; transition: border-color 0.15s, box-shadow 0.15s; }\n.oi-input::placeholder { color: #9ca3af; }\n.oi-input:hover { border-color: #9ca3af; }\n.oi-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18); }"
+  },
+  {
+    "title": "塗りつぶし入力（Filled Input）",
+    "html": "<div class=\"fi\">\n  <label class=\"fi-label\" for=\"fi-mail\">メールアドレス</label>\n  <input class=\"fi-input\" id=\"fi-mail\" type=\"email\" placeholder=\"you@example.com\">\n</div>",
+    "css": ".fi { width: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.fi-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #374151; }\n.fi-input { width: 100%; padding: 12px 14px; box-sizing: border-box; border: 2px solid transparent; border-radius: 10px; background: #f3f4f6; font-size: 14px; color: #111827; transition: background 0.15s, border-color 0.15s; }\n.fi-input:hover { background: #e5e7eb; }\n.fi-input:focus { outline: none; background: #fff; border-color: #6366f1; }"
+  },
+  {
+    "title": "下線入力（Underline Input）",
+    "html": "<div class=\"ui\">\n  <label class=\"ui-label\" for=\"ui-user\">ユーザー名</label>\n  <input class=\"ui-input\" id=\"ui-user\" type=\"text\" placeholder=\"username\">\n</div>",
+    "css": ".ui { width: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.ui-label { display: block; font-size: 12px; font-weight: 600; color: #6b7280; }\n.ui-input { width: 100%; padding: 8px 2px; box-sizing: border-box; border: 0; border-bottom: 2px solid #d1d5db; border-radius: 0; background: transparent; font-size: 15px; color: #111827; transition: border-color 0.2s; }\n.ui-input:focus { outline: none; border-bottom-color: #10b981; }"
+  },
+  {
+    "title": "アイコン付き入力（Icon Input）",
+    "html": "<div class=\"ci\">\n  <label class=\"ci-label\" for=\"ci-search\">検索</label>\n  <div class=\"ci-wrap\">\n    <span class=\"ci-icon\">🔍</span>\n    <input class=\"ci-input\" id=\"ci-search\" type=\"search\" placeholder=\"キーワードを入力\">\n  </div>\n</div>",
+    "css": ".ci { width: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.ci-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #374151; }\n.ci-wrap { position: relative; }\n.ci-icon { position: absolute; top: 50%; left: 13px; transform: translateY(-50%); font-size: 14px; opacity: 0.6; }\n.ci-input { width: 100%; padding: 11px 14px 11px 38px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; font-size: 14px; }\n.ci-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18); }"
+  },
+  {
+    "title": "角丸入力（Pill Input）",
+    "html": "<div class=\"pi\">\n  <input class=\"pi-input\" type=\"text\" placeholder=\"メッセージを入力\" aria-label=\"メッセージ\">\n  <button class=\"pi-btn\" type=\"button\" aria-label=\"送信\">➤</button>\n</div>",
+    "css": ".pi { position: relative; width: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.pi-input { width: 100%; padding: 13px 52px 13px 20px; box-sizing: border-box; border: 1px solid #e5e7eb; border-radius: 999px; background: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); font-size: 14px; }\n.pi-input:focus { outline: none; border-color: #a5b4fc; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }\n.pi-btn { position: absolute; top: 50%; right: 6px; width: 36px; height: 36px; transform: translateY(-50%); border: 0; border-radius: 50%; background: #6366f1; color: #fff; font-size: 13px; cursor: pointer; }\n.pi-btn:hover { background: #4f46e5; }"
+  },
+  {
+    "title": "フローティングラベル入力（Floating Label Input）",
+    "html": "<div class=\"fl\">\n  <input class=\"fl-input\" id=\"fl-mail\" type=\"email\" placeholder=\" \">\n  <label class=\"fl-label\" for=\"fl-mail\">メールアドレス</label>\n</div>",
+    "css": ".fl { position: relative; width: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.fl-input { width: 100%; padding: 22px 14px 8px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 10px; background: #fff; font-size: 15px; color: #111827; }\n.fl-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18); }\n.fl-label { position: absolute; top: 50%; left: 15px; transform: translateY(-50%); font-size: 15px; color: #9ca3af; pointer-events: none; transition: top 0.15s, font-size 0.15s, color 0.15s; }\n.fl-input:focus + .fl-label, .fl-input:not(:placeholder-shown) + .fl-label { top: 14px; font-size: 11px; color: #2563eb; }"
+  },
+  {
+    "title": "エラー入力（Error Input）",
+    "html": "<div class=\"ei\">\n  <label class=\"ei-label\" for=\"ei-mail\">メールアドレス</label>\n  <input class=\"ei-input\" id=\"ei-mail\" type=\"email\" value=\"taro@example\" aria-invalid=\"true\" aria-describedby=\"ei-msg\">\n  <p class=\"ei-msg\" id=\"ei-msg\">⚠ メールアドレスの形式が正しくありません。</p>\n</div>",
+    "css": ".ei { width: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.ei-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #374151; }\n.ei-input { width: 100%; padding: 11px 14px; box-sizing: border-box; border: 1px solid #ef4444; border-radius: 8px; background: #fef2f2; font-size: 14px; color: #111827; }\n.ei-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }\n.ei-msg { margin: 6px 0 0; font-size: 12px; color: #b91c1c; }"
+  },
+  {
+    "title": "成功入力（Success Input）",
+    "html": "<div class=\"si\">\n  <label class=\"si-label\" for=\"si-user\">ユーザー名</label>\n  <input class=\"si-input\" id=\"si-user\" type=\"text\" value=\"taro_yamada\">\n  <p class=\"si-msg\">✓ このユーザー名は利用できます。</p>\n</div>",
+    "css": ".si { width: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.si-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #374151; }\n.si-input { width: 100%; padding: 11px 14px; box-sizing: border-box; border: 1px solid #22c55e; border-radius: 8px; background: #f0fdf4; font-size: 14px; color: #111827; }\n.si-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2); }\n.si-msg { margin: 6px 0 0; font-size: 12px; color: #15803d; }"
+  },
+  {
+    "title": "無効入力（Disabled Input）",
+    "html": "<div class=\"di\">\n  <label class=\"di-label\" for=\"di-id\">会員ID</label>\n  <input class=\"di-input\" id=\"di-id\" type=\"text\" value=\"A-0012345\" disabled>\n  <p class=\"di-note\">会員IDは変更できません。</p>\n</div>",
+    "css": ".di { width: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.di-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #9ca3af; }\n.di-input { width: 100%; padding: 11px 14px; box-sizing: border-box; border: 1px solid #e5e7eb; border-radius: 8px; background: #f3f4f6; font-size: 14px; color: #9ca3af; cursor: not-allowed; }\n.di-note { margin: 6px 0 0; font-size: 12px; color: #9ca3af; }"
+  },
+  {
+    "title": "サイズ違い入力（Input Sizes）",
+    "html": "<div class=\"sz\">\n  <input class=\"sz-input sz-sm\" type=\"text\" placeholder=\"小 (Small)\" aria-label=\"小\">\n  <input class=\"sz-input sz-md\" type=\"text\" placeholder=\"中 (Medium)\" aria-label=\"中\">\n  <input class=\"sz-input sz-lg\" type=\"text\" placeholder=\"大 (Large)\" aria-label=\"大\">\n</div>",
+    "css": ".sz { display: flex; flex-direction: column; gap: 12px; width: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; }\n.sz-input { width: 100%; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; color: #111827; }\n.sz-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18); }\n.sz-sm { padding: 6px 10px; font-size: 12px; }\n.sz-md { padding: 10px 14px; font-size: 14px; }\n.sz-lg { padding: 14px 18px; font-size: 17px; border-radius: 10px; }"
+  }
+]
