@@ -866,4 +866,4 @@ Phase 28で積み残していたサブプロジェクトBとして、`Blog/Index
 ## ヒアリングシートジェネレーター(2026-10-26)
 
 - [x] Codex 製の単体HTML版を Vue に移植し、`/hearing-sheet`(Generator)として追加(ステップはタブ化、文字サイズを本サイトの基準に統一)。詳細は SPEC §36。
-- [ ] 本番反映(`app`・`scheduler`・`katsuooool-web` の再作成)。
+- [x] 本番反映済み(2026-10-26)。
