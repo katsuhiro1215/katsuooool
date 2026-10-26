@@ -20,6 +20,7 @@ use App\Http\Controllers\Tools\CssGlassmorphismController;
 use App\Http\Controllers\Tools\CssGridController;
 use App\Http\Controllers\Tools\FaviconGenerateController;
 use App\Http\Controllers\Tools\GeneratorDummyDataController;
+use App\Http\Controllers\Tools\HearingSheetController;
 use App\Http\Controllers\Tools\HtmlFormatController;
 use App\Http\Controllers\Tools\ImageColorExtractController;
 use App\Http\Controllers\Tools\ImageCompressController;
@@ -121,6 +122,11 @@ Route::get('/color-generator', [ColorGeneratorController::class, 'show'])->name(
 Route::post('/color-generator/track', [ColorGeneratorController::class, 'track'])
     ->middleware('throttle:30,1')
     ->name('color-generator.track');
+
+Route::get('/hearing-sheet', [HearingSheetController::class, 'show'])->name('hearing-sheet.show');
+Route::post('/hearing-sheet/track', [HearingSheetController::class, 'track'])
+    ->middleware('throttle:30,1')
+    ->name('hearing-sheet.track');
 
 // M8: 旧「カラーパレット生成」「色の組み合わせ」は配色ジェネレーターに統合した。
 Route::redirect('/color-palette', '/color-generator', 301);
