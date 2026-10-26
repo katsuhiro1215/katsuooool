@@ -633,3 +633,13 @@ UIパターン系ジェネレーターツール(`/ui-pattern-*`)の下部に、A
 - **表示箇所・並び替え**: カラーツールページ(`/color-palette`・`/color-gradient`・`/color-scheme`)の下部に新規「例」ギャラリーセクションを追加。コンポーネント`ColorExampleGallery.vue`で登録済み例をカード表示し、「コピー」ボタンを備え、クリック時に`navigator.clipboard.writeText()`でクリップボード書き込みと同時にサーバー計測リクエストを送信(計測失敗は無視、コピーのUXをブロックしない)。一方、UIパターンページ(`/ui-pattern-*`)の既存ギャラリー(PatternCard.vue)は見た目は変わらないが、新たにコピー計測機能を追加し、デフォルトでコピー回数の多い順に並べ替える実装に変更。全ツール・全カテゴリともコピー回数でのソート順序はサーバー側`OrderByDesc('copy_count')`で実装(追加UI不要)。
 - **Admin CRUD(`color_examples`)**: `/admin/color-examples`でフルCRUD(一覧・新規作成・編集・削除)を実装。フォーム(`ColorExampleForm.vue`)は`type`セレクト(palette/gradient/scheme)・`title`・`colors`(カンマ区切りhex文字列)・`angle`(type=gradient時のみ)。一覧にはcopy_count列を追加(生の数値を表示、Admin確認用)。`copy_count`はAdmin画面からは編集不可(increment()のみ、計測の整合性を保つ)。
 - **テスト**: CopyPopularityTrackerのユニットテスト(同一copyable/IP/同日の連続呼び出しで1回のみカウント、IP異なれば別カウント、日付変わればハッシュが変わり再度カウント)。ColorExampleモデルのスコープテスト(ofType絞り込み・copy_count降順)。各カラーツール・UIパターンのFeatureテスト(copy_countインクリメント、連打でも1回のみ、type異なるIDで404)。ColorExampleGallery.vueのコンポーネントテスト(クリップボード・計測API呼び出し確認)。
+
+## 36. ヒアリングシートジェネレーター(2026-10-26)
+
+Web制作の初回ヒアリングで使うシートを、画面上の入力で作成するツール(`/hearing-sheet`、カテゴリ Generator)。Codex が作った単体HTML版(`showcases/hearingSheet`)を、本サイトの Vue 3 + TypeScript + Tailwind に移植した。
+
+- **構成**: 質問定義(`resources/js/lib/hearing/questions.ts`、6ステップ・64項目、重点項目 `core`)、判定・保存形式・出力(`sheet.ts`)、サンプル(`sample.ts`)、部品(`components/hearing/`)、ページ(`pages/HearingSheet.vue`)。コントローラーは `TrackedToolController` を継承(計測は「JSON保存・テキストコピー・印刷」の操作時に `POST /hearing-sheet/track`)。
+- **画面**: サイト共通レイアウト内。6ステップはメイン上部のタブ(元の左サイドバーの代わり)。xl 以上は「入力」と「シートプレビュー」を2列、それ未満は「ヒアリング入力 / プレビュー」の切り替え。文字は本文16px・補足14px・見出し18〜24px、12pxは用紙末尾の署名のみ。
+- **機能**: 項目ごとの「確認待ち」(回答済みに数えない)、形式チェック(メール・URL・HEX・日付)、進捗、確認ダイアログ(未回答の重点項目へ移動)、プレビュー(シート/テキスト、未回答を隠す)、テキストコピー、PDF/印刷(`@media print` で用紙のみ)、JSON保存・読込(2MBまで、知っている項目だけを取り込む)、サンプル、リセット。
+- **データ方針**: 入力は利用者のブラウザの localStorage(キー `katsuooool-hearing-sheet-v1`)にのみ保存し、サーバーへは送らない(計測は回数のみ)。
+- **テスト**: `sheet.test.ts`(判定・検証・出力)、`HearingSheet.test.ts`(画面操作)、`HearingSheetControllerTest.php`。

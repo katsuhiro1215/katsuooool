@@ -862,3 +862,8 @@ Phase 28で積み残していたサブプロジェクトBとして、`Blog/Index
 ## M8: 配色ジェネレーター(2026-10-12)
 
 - [x] 旧「カラーパレット生成」「色の組み合わせ」を「配色ジェネレーター」(`/color-generator`)に統合(気分10個×色相8系統の自動生成、役割・コントラスト・Webページのひな形・CSS変数/Tailwind/HEXのコピー、URL状態)。旧URLは301転送。詳細は SPEC §17.6、設計書・計画は `docs/superpowers/{specs,plans}/2026-10-12-m8-color-generator*.md`。
+
+## ヒアリングシートジェネレーター(2026-10-26)
+
+- [x] Codex 製の単体HTML版を Vue に移植し、`/hearing-sheet`(Generator)として追加(ステップはタブ化、文字サイズを本サイトの基準に統一)。詳細は SPEC §36。
+- [ ] 本番反映(`app`・`scheduler`・`katsuooool-web` の再作成)。

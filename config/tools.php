@@ -135,6 +135,13 @@ return [
         'href' => '/website-starter',
     ],
     [
+        'slug' => 'hearing-sheet',
+        'name' => 'ヒアリングシートジェネレーター',
+        'category' => 'generator',
+        'description' => 'Web制作のヒアリング項目に答えるだけで、確認待ちも整理できるヒアリングシートを作成。PDF・テキストで書き出せます。',
+        'href' => '/hearing-sheet',
+    ],
+    [
         'slug' => 'svg-optimize',
         'name' => 'SVG最適化',
         'category' => 'developer',
