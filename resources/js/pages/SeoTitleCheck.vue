@@ -45,18 +45,18 @@ watch(input, (value) => {
             <PageMain>
                 <label
                     for="title-input"
-                    class="block text-sm font-medium text-gray-700"
+                    class="block text-sm font-medium text-ink-900/70"
                     >title</label
                 >
                 <textarea
                     id="title-input"
                     v-model="input"
                     rows="3"
-                    class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                    class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                     placeholder="ページのtitleを入力"
                 />
 
-                <div class="mt-4 flex gap-6 text-sm text-gray-700">
+                <div class="mt-4 flex gap-6 text-sm text-ink-900/70">
                     <span>文字数: {{ result.characterCount }}</span>
                     <span>バイト数: {{ result.byteCount }}</span>
                 </div>

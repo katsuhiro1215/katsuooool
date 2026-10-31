@@ -22,8 +22,8 @@ const emit = defineEmits<{ submit: []; redo: []; clear: [] }>();
 </script>
 
 <template>
-    <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4">
-        <p class="text-xs text-gray-500">{{ countLabel }}</p>
+    <div class="space-y-4 rounded-xl border border-ink-900/10 bg-white p-4">
+        <p class="text-xs text-ink-900/40">{{ countLabel }}</p>
 
         <template v-if="phase !== 'done'">
             <slot />
@@ -45,12 +45,12 @@ const emit = defineEmits<{ submit: []; redo: []; clear: [] }>();
         </template>
 
         <template v-else>
-            <div v-if="summary" class="text-sm text-gray-700">
-                <p class="font-medium">{{ summary.count }}枚が完了しました</p>
-                <p class="mt-1 text-xs text-gray-500">
+            <div v-if="summary" class="text-sm text-ink-900/70">
+                <p class="font-medium text-ink-900">{{ summary.count }}枚が完了しました</p>
+                <p class="mt-1 text-xs text-ink-900/40">
                     合計 {{ formatBytes(summary.inputBytes) }} →
                     {{ formatBytes(summary.outputBytes) }}
-                    <span v-if="summary.percent > 0"
+                    <span v-if="summary.percent > 0" class="font-medium text-sprout-600"
                         >（{{ summary.percent }}%削減）</span
                     >
                 </p>
@@ -62,14 +62,14 @@ const emit = defineEmits<{ submit: []; redo: []; clear: [] }>();
 
             <button
                 type="button"
-                class="w-full rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                class="w-full rounded-md border border-ink-900/15 px-4 py-2 text-sm text-ink-900/70 hover:bg-ink-900/5"
                 @click="emit('redo')"
             >
                 設定を変えてやり直す
             </button>
             <button
                 type="button"
-                class="w-full text-sm text-gray-500 underline hover:text-gray-700"
+                class="w-full text-sm text-ink-900/40 underline hover:text-ink-900"
                 @click="emit('clear')"
             >
                 すべて削除

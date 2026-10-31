@@ -73,33 +73,33 @@ watch([startColor, endColor, angle], track);
                     <div>
                         <label
                             for="start"
-                            class="block text-sm font-medium text-gray-700"
+                            class="block text-sm font-medium text-ink-900/70"
                             >開始色</label
                         >
                         <input
                             id="start"
                             v-model="startColor"
                             type="color"
-                            class="mt-1 h-12 w-24 cursor-pointer rounded-md border border-gray-200"
+                            class="mt-1 h-12 w-24 cursor-pointer rounded-md border border-ink-900/10"
                         />
                     </div>
                     <div>
                         <label
                             for="end"
-                            class="block text-sm font-medium text-gray-700"
+                            class="block text-sm font-medium text-ink-900/70"
                             >終了色</label
                         >
                         <input
                             id="end"
                             v-model="endColor"
                             type="color"
-                            class="mt-1 h-12 w-24 cursor-pointer rounded-md border border-gray-200"
+                            class="mt-1 h-12 w-24 cursor-pointer rounded-md border border-ink-900/10"
                         />
                     </div>
                     <div class="flex-1">
                         <label
                             for="angle"
-                            class="block text-sm font-medium text-gray-700"
+                            class="block text-sm font-medium text-ink-900/70"
                             >角度({{ angle }}度)</label
                         >
                         <input
@@ -114,18 +114,18 @@ watch([startColor, endColor, angle], track);
                 </div>
 
                 <div
-                    class="mt-6 h-40 rounded-lg border border-gray-200"
+                    class="mt-6 h-40 rounded-lg border border-ink-900/10"
                     :style="{ backgroundImage: cssGradient }"
                 />
 
                 <div class="mt-4 flex items-center gap-2">
                     <code
-                        class="flex-1 rounded-md border border-gray-200 bg-white px-3 py-2 font-mono text-sm text-gray-800"
+                        class="flex-1 rounded-md border border-ink-900/10 bg-white px-3 py-2 font-mono text-sm text-ink-900/80"
                         >{{ cssCode }}</code
                     >
                     <button
                         type="button"
-                        class="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-gray-400"
+                        class="rounded-md border border-ink-900/20 px-3 py-2 text-sm text-ink-900/70 hover:border-ink-900/30"
                         @click="copyCode"
                     >
                         {{ copied ? 'コピーしました' : 'コピー' }}

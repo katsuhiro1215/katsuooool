@@ -151,7 +151,7 @@ function track() {
                     <input
                         :value="hexInput"
                         type="color"
-                        class="h-32 w-32 cursor-pointer rounded-md border border-gray-200"
+                        class="h-32 w-32 cursor-pointer rounded-md border border-ink-900/10"
                         aria-label="カラーピッカー"
                         @input="
                             (e) =>
@@ -164,7 +164,7 @@ function track() {
                         <div>
                             <label
                                 for="hex"
-                                class="block text-sm font-medium text-gray-700"
+                                class="block text-sm font-medium text-ink-900/70"
                                 >HEX</label
                             >
                             <div class="mt-1 flex gap-2">
@@ -172,11 +172,11 @@ function track() {
                                     id="hex"
                                     v-model="hexInput"
                                     type="text"
-                                    class="w-40 rounded-md border border-gray-300 px-3 py-2 font-mono text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                    class="w-40 rounded-md border border-ink-900/20 px-3 py-2 font-mono text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                                 />
                                 <button
                                     type="button"
-                                    class="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-gray-400"
+                                    class="rounded-md border border-ink-900/20 px-3 py-2 text-sm text-ink-900/70 hover:border-ink-900/30"
                                     @click="copy('hex', hexInput)"
                                 >
                                     {{
@@ -190,7 +190,7 @@ function track() {
 
                         <div>
                             <span
-                                class="block text-sm font-medium text-gray-700"
+                                class="block text-sm font-medium text-ink-900/70"
                                 >RGB</span
                             >
                             <div class="mt-1 flex flex-wrap items-center gap-2">
@@ -200,7 +200,7 @@ function track() {
                                     min="0"
                                     max="255"
                                     aria-label="R"
-                                    class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                    class="w-20 rounded-md border border-ink-900/20 px-2 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                                     @input="onRgbChannelChange"
                                 />
                                 <input
@@ -209,7 +209,7 @@ function track() {
                                     min="0"
                                     max="255"
                                     aria-label="G"
-                                    class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                    class="w-20 rounded-md border border-ink-900/20 px-2 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                                     @input="onRgbChannelChange"
                                 />
                                 <input
@@ -218,12 +218,12 @@ function track() {
                                     min="0"
                                     max="255"
                                     aria-label="B"
-                                    class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                    class="w-20 rounded-md border border-ink-900/20 px-2 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                                     @input="onRgbChannelChange"
                                 />
                                 <button
                                     type="button"
-                                    class="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-gray-400"
+                                    class="rounded-md border border-ink-900/20 px-3 py-2 text-sm text-ink-900/70 hover:border-ink-900/30"
                                     @click="
                                         copy(
                                             'rgb',
@@ -242,7 +242,7 @@ function track() {
 
                         <div>
                             <span
-                                class="block text-sm font-medium text-gray-700"
+                                class="block text-sm font-medium text-ink-900/70"
                                 >HSL</span
                             >
                             <div class="mt-1 flex flex-wrap items-center gap-2">
@@ -252,7 +252,7 @@ function track() {
                                     min="0"
                                     max="360"
                                     aria-label="H"
-                                    class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                    class="w-20 rounded-md border border-ink-900/20 px-2 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                                     @input="
                                         (e) =>
                                             onHslChannelChange(
@@ -268,7 +268,7 @@ function track() {
                                     min="0"
                                     max="100"
                                     aria-label="S"
-                                    class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                    class="w-20 rounded-md border border-ink-900/20 px-2 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                                     @input="
                                         (e) =>
                                             onHslChannelChange(
@@ -284,7 +284,7 @@ function track() {
                                     min="0"
                                     max="100"
                                     aria-label="L"
-                                    class="w-20 rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                                    class="w-20 rounded-md border border-ink-900/20 px-2 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                                     @input="
                                         (e) =>
                                             onHslChannelChange(
@@ -296,7 +296,7 @@ function track() {
                                 />
                                 <button
                                     type="button"
-                                    class="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:border-gray-400"
+                                    class="rounded-md border border-ink-900/20 px-3 py-2 text-sm text-ink-900/70 hover:border-ink-900/30"
                                     @click="
                                         copy(
                                             'hsl',

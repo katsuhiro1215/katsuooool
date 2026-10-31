@@ -149,16 +149,16 @@ async function copyCode() {
 </script>
 
 <template>
-    <div class="relative rounded-lg border border-gray-200 bg-white">
+    <div class="relative rounded-lg border border-ink-900/10 bg-white">
         <span
             v-if="locked"
-            class="absolute right-2 top-2 z-10 rounded-full bg-gray-900 px-2 py-0.5 text-[10px] font-bold text-white"
+            class="absolute right-2 top-2 z-10 rounded-full bg-gradient-to-r from-gold-400 via-gold-300 to-gold-400 px-2 py-0.5 text-[10px] font-bold text-ink-900"
         >
             Premium
         </span>
         <div
             ref="box"
-            class="relative flex h-56 items-center justify-center overflow-hidden border-b border-gray-200 bg-gray-50"
+            class="relative flex h-56 items-center justify-center overflow-hidden border-b border-ink-900/10 bg-ink-900/5"
         >
             <iframe
                 ref="frame"
@@ -170,16 +170,16 @@ async function copyCode() {
             />
         </div>
         <div class="p-4">
-            <p class="mb-2 text-sm font-medium text-gray-900">{{ title }}</p>
+            <p class="mb-2 text-sm font-medium text-ink-900">{{ title }}</p>
 
             <div
                 v-if="locked"
-                class="rounded-md border border-gray-200 bg-gray-50 p-3 text-center text-xs text-gray-600"
+                class="rounded-md border border-ink-900/10 bg-ink-900/5 p-3 text-center text-xs text-ink-900/60"
             >
                 <p>このパターンのコードはPremium会員限定です。</p>
                 <a
                     href="/premium"
-                    class="mt-2 inline-block font-medium text-gray-900 underline"
+                    class="mt-2 inline-block font-medium text-ink-900 underline"
                 >
                     Premiumに登録する
                 </a>
@@ -192,8 +192,8 @@ async function copyCode() {
                             class="rounded-md px-2 py-1 text-xs font-medium"
                             :class="
                                 activeTab === 'html'
-                                    ? 'bg-gray-900 text-white'
-                                    : 'text-gray-500 hover:bg-gray-100'
+                                    ? 'bg-ink-900 text-white'
+                                    : 'text-ink-900/40 hover:bg-ink-900/10'
                             "
                             @click="activeTab = 'html'"
                         >
@@ -204,8 +204,8 @@ async function copyCode() {
                             class="rounded-md px-2 py-1 text-xs font-medium"
                             :class="
                                 activeTab === 'css'
-                                    ? 'bg-gray-900 text-white'
-                                    : 'text-gray-500 hover:bg-gray-100'
+                                    ? 'bg-ink-900 text-white'
+                                    : 'text-ink-900/40 hover:bg-ink-900/10'
                             "
                             @click="activeTab = 'css'"
                         >
@@ -214,14 +214,14 @@ async function copyCode() {
                     </div>
                     <button
                         type="button"
-                        class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                        class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                         @click="copyCode"
                     >
                         {{ copied ? 'コピーしました' : 'コピー' }}
                     </button>
                 </div>
                 <pre
-                    class="overflow-x-auto rounded-md bg-gray-900 p-3 text-xs text-gray-100"
+                    class="overflow-x-auto rounded-md bg-ink-900 p-3 text-xs text-white/90"
                     >{{ activeCode }}</pre>
             </template>
         </div>

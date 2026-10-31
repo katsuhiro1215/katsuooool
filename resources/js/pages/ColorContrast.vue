@@ -71,34 +71,34 @@ watch([foreground, background], () => {
                     <div>
                         <label
                             for="foreground"
-                            class="block text-sm font-medium text-gray-700"
+                            class="block text-sm font-medium text-ink-900/70"
                             >文字色</label
                         >
                         <input
                             id="foreground"
                             v-model="foreground"
                             type="color"
-                            class="mt-1 h-12 w-24 cursor-pointer rounded-md border border-gray-200"
+                            class="mt-1 h-12 w-24 cursor-pointer rounded-md border border-ink-900/10"
                         />
                     </div>
                     <div>
                         <label
                             for="background"
-                            class="block text-sm font-medium text-gray-700"
+                            class="block text-sm font-medium text-ink-900/70"
                             >背景色</label
                         >
                         <input
                             id="background"
                             v-model="background"
                             type="color"
-                            class="mt-1 h-12 w-24 cursor-pointer rounded-md border border-gray-200"
+                            class="mt-1 h-12 w-24 cursor-pointer rounded-md border border-ink-900/10"
                         />
                     </div>
                 </div>
 
                 <div
                     v-if="ratio !== null"
-                    class="mt-6 rounded-lg border border-gray-200 bg-white p-6"
+                    class="mt-6 rounded-lg border border-ink-900/10 bg-white p-6"
                 >
                     <p
                         class="flex h-24 items-center justify-center rounded-md text-lg font-semibold"
@@ -110,7 +110,7 @@ watch([foreground, background], () => {
                         サンプルテキスト Sample Text
                     </p>
 
-                    <p class="mt-4 text-2xl font-bold text-gray-900">
+                    <p class="mt-4 text-2xl font-bold text-ink-900">
                         {{ ratio.toFixed(2) }}:1
                     </p>
 
@@ -118,9 +118,9 @@ watch([foreground, background], () => {
                         <li
                             v-for="criterion in CRITERIA"
                             :key="criterion.label"
-                            class="flex items-center justify-between rounded-md border border-gray-200 px-3 py-2"
+                            class="flex items-center justify-between rounded-md border border-ink-900/10 px-3 py-2"
                         >
-                            <span class="text-gray-700">{{
+                            <span class="text-ink-900/70">{{
                                 criterion.label
                             }}</span>
                             <span

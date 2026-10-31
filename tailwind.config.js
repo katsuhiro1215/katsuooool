@@ -16,6 +16,29 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                ink: {
+                    DEFAULT: '#0b0c0e',
+                    900: '#0b0c0e',
+                    800: '#15171a',
+                    700: '#24262b',
+                },
+                gold: {
+                    50: '#fdf8e7',
+                    100: '#fbeec2',
+                    300: '#f3d672',
+                    400: '#eec43f',
+                    500: '#e0ad1f',
+                    600: '#b5890f',
+                },
+                sprout: {
+                    50: '#eef9e8',
+                    100: '#d9f0ce',
+                    400: '#7fc957',
+                    500: '#5fb33a',
+                    600: '#45922a',
+                },
+            },
         },
     },
 

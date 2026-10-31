@@ -101,7 +101,7 @@ watch([type, lines, color], () => {
 
             <PageMain>
                 <div
-                    class="mb-8 flex h-40 items-center rounded-md border border-gray-200 bg-white px-6"
+                    class="mb-8 flex h-40 items-center rounded-md border border-ink-900/10 bg-white px-6"
                 >
                     <div
                         v-if="type === 'text'"
@@ -148,11 +148,11 @@ watch([type, lines, color], () => {
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         タイプ
                         <select
                             v-model="type"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-2 py-1.5 text-sm"
                         >
                             <option
                                 v-for="option in TYPE_OPTIONS"
@@ -163,7 +163,7 @@ watch([type, lines, color], () => {
                             </option>
                         </select>
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         行数: {{ lines }}
                         <input
                             v-model.number="lines"
@@ -173,7 +173,7 @@ watch([type, lines, color], () => {
                             class="mt-1 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         色
                         <input
                             v-model="color"
@@ -185,45 +185,45 @@ watch([type, lines, color], () => {
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >HTML</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copyText(output.html, 'html')"
                         >
                             {{ copiedHtml ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ output.html }}</pre>
                 </div>
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >CSS</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copyText(output.css, 'css')"
                         >
                             {{ copiedCss ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ output.css }}</pre>
                 </div>
 
                 <section v-if="props.patterns.length > 0" class="mt-16">
-                    <h2 class="text-lg font-bold text-gray-900">
+                    <h2 class="text-lg font-bold text-ink-900">
                         いろんなスケルトン
                     </h2>
-                    <p class="mt-1 text-sm text-gray-600">
+                    <p class="mt-1 text-sm text-ink-900/60">
                         気に入ったものをそのままコピーして使えます。
                     </p>
                     <div

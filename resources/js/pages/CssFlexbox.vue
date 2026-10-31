@@ -80,24 +80,24 @@ watch([direction, justifyContent, alignItems, wrap, gap], () => {
 
             <PageMain>
                 <div
-                    class="mb-8 min-h-40 rounded-md border border-gray-200 bg-white p-4"
+                    class="mb-8 min-h-40 rounded-md border border-ink-900/10 bg-white p-4"
                     :style="previewStyle"
                 >
                     <div
                         v-for="n in 4"
                         :key="n"
-                        class="flex h-16 w-16 items-center justify-center rounded-md bg-gray-900 text-sm font-medium text-white"
+                        class="flex h-16 w-16 items-center justify-center rounded-md bg-ink-900 text-sm font-medium text-white"
                     >
                         {{ n }}
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         flex-direction
                         <select
                             v-model="direction"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-2 py-1.5 text-sm"
                         >
                             <option value="row">row</option>
                             <option value="row-reverse">row-reverse</option>
@@ -107,11 +107,11 @@ watch([direction, justifyContent, alignItems, wrap, gap], () => {
                             </option>
                         </select>
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         justify-content
                         <select
                             v-model="justifyContent"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-2 py-1.5 text-sm"
                         >
                             <option value="flex-start">flex-start</option>
                             <option value="flex-end">flex-end</option>
@@ -121,11 +121,11 @@ watch([direction, justifyContent, alignItems, wrap, gap], () => {
                             <option value="space-evenly">space-evenly</option>
                         </select>
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         align-items
                         <select
                             v-model="alignItems"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-2 py-1.5 text-sm"
                         >
                             <option value="stretch">stretch</option>
                             <option value="flex-start">flex-start</option>
@@ -134,18 +134,18 @@ watch([direction, justifyContent, alignItems, wrap, gap], () => {
                             <option value="baseline">baseline</option>
                         </select>
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         flex-wrap
                         <select
                             v-model="wrap"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-2 py-1.5 text-sm"
                         >
                             <option value="nowrap">nowrap</option>
                             <option value="wrap">wrap</option>
                             <option value="wrap-reverse">wrap-reverse</option>
                         </select>
                     </label>
-                    <label class="text-sm text-gray-700 sm:col-span-2">
+                    <label class="text-sm text-ink-900/70 sm:col-span-2">
                         gap: {{ gap }}px
                         <input
                             v-model.number="gap"
@@ -159,19 +159,19 @@ watch([direction, justifyContent, alignItems, wrap, gap], () => {
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >生成されたCSS</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copy"
                         >
                             {{ copied ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ css }}</pre>
                 </div>
             </PageMain>

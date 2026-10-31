@@ -79,12 +79,12 @@ const NAV_GROUPS: NavGroup[] = [
 </script>
 
 <template>
-    <footer class="border-t border-gray-200 bg-white">
+    <footer class="border-t border-ink-900/10 bg-white">
         <div class="mx-auto px-6 py-10">
             <div class="grid grid-cols-2 gap-8 sm:grid-cols-4">
                 <div v-for="group in NAV_GROUPS" :key="group.heading">
                     <p
-                        class="text-xs font-semibold uppercase tracking-wide text-gray-400"
+                        class="text-xs font-semibold uppercase tracking-wide text-ink-900/35"
                     >
                         {{ group.heading }}
                     </p>
@@ -99,7 +99,7 @@ const NAV_GROUPS: NavGroup[] = [
                                     ? 'noopener noreferrer'
                                     : undefined
                             "
-                            class="text-sm text-gray-600 hover:text-gray-900"
+                            class="text-sm text-ink-900/60 hover:text-ink-900"
                         >
                             {{ link.label }}
                         </a>
@@ -108,7 +108,7 @@ const NAV_GROUPS: NavGroup[] = [
             </div>
 
             <div
-                class="mt-10 flex items-center justify-between border-t border-gray-100 pt-6"
+                class="mt-10 flex items-center justify-between border-t border-ink-900/10 pt-6"
             >
                 <div class="flex items-center gap-4">
                     <a
@@ -118,7 +118,7 @@ const NAV_GROUPS: NavGroup[] = [
                         target="_blank"
                         rel="noopener noreferrer"
                         :aria-label="social.label"
-                        class="text-gray-400 transition hover:text-gray-700"
+                        class="text-ink-900/35 transition hover:text-gold-600"
                     >
                         <svg
                             v-if="social.label === 'Facebook'"
@@ -154,7 +154,7 @@ const NAV_GROUPS: NavGroup[] = [
                     </a>
                 </div>
 
-                <p class="text-sm text-gray-400">
+                <p class="text-sm text-ink-900/35">
                     &copy; {{ currentYear }} katsuooool
                 </p>
             </div>

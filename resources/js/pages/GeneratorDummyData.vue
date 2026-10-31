@@ -85,14 +85,14 @@ async function copy() {
 
             <PageMain>
                 <div>
-                    <span class="text-sm font-medium text-gray-700"
+                    <span class="text-sm font-medium text-ink-900/70"
                         >フィールド</span
                     >
                     <div class="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
                         <label
                             v-for="option in FIELD_OPTIONS"
                             :key="option.key"
-                            class="flex items-center gap-2 text-sm text-gray-700"
+                            class="flex items-center gap-2 text-sm text-ink-900/70"
                         >
                             <input
                                 type="checkbox"
@@ -105,14 +105,14 @@ async function copy() {
                 </div>
 
                 <div class="mt-6 flex items-end gap-4">
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         件数
                         <input
                             v-model.number="count"
                             type="number"
                             min="1"
                             max="1000"
-                            class="mt-1 block w-32 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                            class="mt-1 block w-32 rounded-md border border-ink-900/20 px-3 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                         />
                     </label>
                     <AppButton
@@ -126,19 +126,19 @@ async function copy() {
 
                 <div v-if="records.length > 0" class="mt-8">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >生成されたJSON</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copy"
                         >
                             {{ copied ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 max-h-96 overflow-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 max-h-96 overflow-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ json }}</pre>
                 </div>
             </PageMain>

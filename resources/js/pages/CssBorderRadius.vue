@@ -63,13 +63,13 @@ watch([topLeft, topRight, bottomRight, bottomLeft], () => {
 
             <PageMain>
                 <div
-                    class="mb-8 flex h-40 items-center justify-center rounded-md border border-gray-200 bg-white"
+                    class="mb-8 flex h-40 items-center justify-center rounded-md border border-ink-900/10 bg-white"
                 >
-                    <div class="h-24 w-24 bg-gray-900" :style="css"></div>
+                    <div class="h-24 w-24 bg-ink-900" :style="css"></div>
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         左上: {{ topLeft }}px
                         <input
                             v-model.number="topLeft"
@@ -79,7 +79,7 @@ watch([topLeft, topRight, bottomRight, bottomLeft], () => {
                             class="mt-1 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         右上: {{ topRight }}px
                         <input
                             v-model.number="topRight"
@@ -89,7 +89,7 @@ watch([topLeft, topRight, bottomRight, bottomLeft], () => {
                             class="mt-1 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         右下: {{ bottomRight }}px
                         <input
                             v-model.number="bottomRight"
@@ -99,7 +99,7 @@ watch([topLeft, topRight, bottomRight, bottomLeft], () => {
                             class="mt-1 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         左下: {{ bottomLeft }}px
                         <input
                             v-model.number="bottomLeft"
@@ -113,19 +113,19 @@ watch([topLeft, topRight, bottomRight, bottomLeft], () => {
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >生成されたCSS</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copy"
                         >
                             {{ copied ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ css }}</pre>
                 </div>
             </PageMain>

@@ -110,7 +110,7 @@ watch(
 
             <PageMain>
                 <div
-                    class="mb-8 flex items-center justify-center rounded-md border border-gray-200 bg-white p-8"
+                    class="mb-8 flex items-center justify-center rounded-md border border-ink-900/10 bg-white p-8"
                 >
                     <div class="w-64" :style="cardStyle">
                         <img
@@ -123,13 +123,13 @@ watch(
                             :style="variant === 'image' ? bodyStyle : undefined"
                         >
                             <h3 class="mb-2 text-lg font-bold">{{ title }}</h3>
-                            <p class="text-sm text-gray-600">{{ text }}</p>
+                            <p class="text-sm text-ink-900/60">{{ text }}</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <label class="text-sm text-gray-700 sm:col-span-2">
+                    <label class="text-sm text-ink-900/70 sm:col-span-2">
                         バリエーション
                         <div class="mt-1 flex gap-4">
                             <label class="flex items-center gap-1 text-sm">
@@ -150,23 +150,23 @@ watch(
                             </label>
                         </div>
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         タイトル
                         <input
                             v-model="title"
                             type="text"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         本文
                         <input
                             v-model="text"
                             type="text"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         背景色
                         <input
                             v-model="backgroundColor"
@@ -174,7 +174,7 @@ watch(
                             class="mt-1 h-9 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         角丸: {{ borderRadius }}px
                         <input
                             v-model.number="borderRadius"
@@ -184,7 +184,7 @@ watch(
                             class="mt-1 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         パディング: {{ padding }}px
                         <input
                             v-model.number="padding"
@@ -195,7 +195,7 @@ watch(
                         />
                     </label>
                     <label
-                        class="flex items-center gap-2 text-sm text-gray-700"
+                        class="flex items-center gap-2 text-sm text-ink-900/70"
                     >
                         <input v-model="shadowEnabled" type="checkbox" />
                         影を表示する
@@ -204,45 +204,45 @@ watch(
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >HTML</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copyHtml"
                         >
                             {{ copiedHtml ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ output.html }}</pre>
                 </div>
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >CSS</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copyCss"
                         >
                             {{ copiedCss ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ output.css }}</pre>
                 </div>
 
                 <section v-if="props.patterns.length > 0" class="mt-16">
-                    <h2 class="text-lg font-bold text-gray-900">
+                    <h2 class="text-lg font-bold text-ink-900">
                         いろんなカード
                     </h2>
-                    <p class="mt-1 text-sm text-gray-600">
+                    <p class="mt-1 text-sm text-ink-900/60">
                         気に入ったものをそのままコピーして使えます。
                     </p>
                     <div

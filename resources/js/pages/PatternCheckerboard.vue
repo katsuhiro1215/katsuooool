@@ -71,12 +71,12 @@ watch([backgroundColor, patternColor, cellSize], () => {
 
             <PageMain>
                 <div
-                    class="mb-8 h-48 rounded-md border border-gray-200"
+                    class="mb-8 h-48 rounded-md border border-ink-900/10"
                     :style="previewStyle"
                 ></div>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         背景色
                         <input
                             v-model="backgroundColor"
@@ -84,7 +84,7 @@ watch([backgroundColor, patternColor, cellSize], () => {
                             class="mt-1 h-9 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         パターン色
                         <input
                             v-model="patternColor"
@@ -92,7 +92,7 @@ watch([backgroundColor, patternColor, cellSize], () => {
                             class="mt-1 h-9 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700 sm:col-span-2">
+                    <label class="text-sm text-ink-900/70 sm:col-span-2">
                         マス目サイズ: {{ cellSize }}px
                         <input
                             v-model.number="cellSize"
@@ -106,19 +106,19 @@ watch([backgroundColor, patternColor, cellSize], () => {
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >生成されたCSS</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copy"
                         >
                             {{ copied ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ css }}</pre>
                 </div>
             </PageMain>

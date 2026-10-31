@@ -152,7 +152,7 @@ async function copyText(text: string, field: string) {
                 <div class="space-y-4">
                     <div>
                         <label
-                            class="block text-sm font-medium text-gray-700"
+                            class="block text-sm font-medium text-ink-900/70"
                             for="site-name"
                             >サイト名</label
                         >
@@ -160,13 +160,13 @@ async function copyText(text: string, field: string) {
                             id="site-name"
                             v-model="siteName"
                             type="text"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm"
                         />
                     </div>
 
                     <div>
                         <label
-                            class="block text-sm font-medium text-gray-700"
+                            class="block text-sm font-medium text-ink-900/70"
                             for="site-url"
                             >サイトURL</label
                         >
@@ -175,20 +175,20 @@ async function copyText(text: string, field: string) {
                             v-model="siteUrl"
                             type="url"
                             placeholder="https://example.com"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm"
                         />
                     </div>
 
                     <div>
                         <label
-                            class="block text-sm font-medium text-gray-700"
+                            class="block text-sm font-medium text-ink-900/70"
                             for="industry"
                             >業種</label
                         >
                         <select
                             id="industry"
                             v-model="industry"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm"
                         >
                             <option value="">選択してください</option>
                             <option
@@ -203,14 +203,14 @@ async function copyText(text: string, field: string) {
 
                     <div>
                         <label
-                            class="block text-sm font-medium text-gray-700"
+                            class="block text-sm font-medium text-ink-900/70"
                             for="prefecture"
                             >都道府県</label
                         >
                         <select
                             id="prefecture"
                             v-model="prefecture"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm"
                         >
                             <option value="">選択してください</option>
                             <option
@@ -226,14 +226,14 @@ async function copyText(text: string, field: string) {
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label
-                                class="block text-sm font-medium text-gray-700"
+                                class="block text-sm font-medium text-ink-900/70"
                                 for="target-age"
                                 >ターゲット年代(任意)</label
                             >
                             <select
                                 id="target-age"
                                 v-model="targetAgeRange"
-                                class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                                class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm"
                             >
                                 <option value="">選択しない</option>
                                 <option
@@ -250,14 +250,14 @@ async function copyText(text: string, field: string) {
 
                         <div>
                             <label
-                                class="block text-sm font-medium text-gray-700"
+                                class="block text-sm font-medium text-ink-900/70"
                                 for="target-gender"
                                 >ターゲット性別(任意)</label
                             >
                             <select
                                 id="target-gender"
                                 v-model="targetGender"
-                                class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                                class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm"
                             >
                                 <option value="">選択しない</option>
                                 <option
@@ -273,14 +273,14 @@ async function copyText(text: string, field: string) {
 
                     <div>
                         <label
-                            class="block text-sm font-medium text-gray-700"
+                            class="block text-sm font-medium text-ink-900/70"
                             for="purpose"
                             >サイトの目的(任意)</label
                         >
                         <select
                             id="purpose"
                             v-model="purpose"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm"
                         >
                             <option value="">選択しない</option>
                             <option
@@ -295,7 +295,7 @@ async function copyText(text: string, field: string) {
 
                     <div>
                         <label
-                            class="block text-sm font-medium text-gray-700"
+                            class="block text-sm font-medium text-ink-900/70"
                             for="logo"
                             >ロゴ画像</label
                         >
@@ -310,7 +310,7 @@ async function copyText(text: string, field: string) {
 
                     <div>
                         <label
-                            class="block text-sm font-medium text-gray-700"
+                            class="block text-sm font-medium text-ink-900/70"
                             for="meta-description"
                         >
                             サイトの説明(meta description)
@@ -319,9 +319,9 @@ async function copyText(text: string, field: string) {
                             id="meta-description"
                             v-model="metaDescription"
                             rows="3"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm"
                         />
-                        <p class="mt-1 text-xs text-gray-500">
+                        <p class="mt-1 text-xs text-ink-900/40">
                             文字数: {{ descriptionResult.characterCount }}
                             <span
                                 v-if="!descriptionResult.withinRecommended"
@@ -351,10 +351,10 @@ async function copyText(text: string, field: string) {
                 <div v-if="response" class="mt-8 space-y-6">
                     <template v-if="response.status === 'success'">
                         <div
-                            class="rounded-md border border-gray-200 bg-white p-4"
+                            class="rounded-md border border-ink-900/10 bg-white p-4"
                         >
                             <label
-                                class="block text-sm font-medium text-gray-700"
+                                class="block text-sm font-medium text-ink-900/70"
                                 for="generated-title"
                                 >推奨title</label
                             >
@@ -362,7 +362,7 @@ async function copyText(text: string, field: string) {
                                 id="generated-title"
                                 v-model="generatedTitle"
                                 type="text"
-                                class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                                class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm"
                             />
                             <AppButton
                                 type="button"
@@ -378,9 +378,9 @@ async function copyText(text: string, field: string) {
                         </div>
 
                         <div
-                            class="rounded-md border border-gray-200 bg-white p-4"
+                            class="rounded-md border border-ink-900/10 bg-white p-4"
                         >
-                            <p class="text-sm font-medium text-gray-700">
+                            <p class="text-sm font-medium text-ink-900/70">
                                 favicon一式
                             </p>
                             <AppButton
@@ -393,9 +393,9 @@ async function copyText(text: string, field: string) {
                         </div>
 
                         <div
-                            class="rounded-md border border-gray-200 bg-white p-4"
+                            class="rounded-md border border-ink-900/10 bg-white p-4"
                         >
-                            <p class="text-sm font-medium text-gray-700">
+                            <p class="text-sm font-medium text-ink-900/70">
                                 OGP画像
                             </p>
                             <AppButton
@@ -408,13 +408,13 @@ async function copyText(text: string, field: string) {
                         </div>
 
                         <div
-                            class="rounded-md border border-gray-200 bg-white p-4"
+                            class="rounded-md border border-ink-900/10 bg-white p-4"
                         >
-                            <p class="text-sm font-medium text-gray-700">
+                            <p class="text-sm font-medium text-ink-900/70">
                                 meta タグ
                             </p>
                             <pre
-                                class="mt-2 overflow-x-auto rounded bg-gray-50 p-3 text-xs"
+                                class="mt-2 overflow-x-auto rounded bg-ink-900/5 p-3 text-xs"
                                 >{{ response.meta_tags }}</pre>
                             <AppButton
                                 type="button"
@@ -430,13 +430,13 @@ async function copyText(text: string, field: string) {
                         </div>
 
                         <div
-                            class="rounded-md border border-gray-200 bg-white p-4"
+                            class="rounded-md border border-ink-900/10 bg-white p-4"
                         >
-                            <p class="text-sm font-medium text-gray-700">
+                            <p class="text-sm font-medium text-ink-900/70">
                                 HTML head一括コード
                             </p>
                             <pre
-                                class="mt-2 overflow-x-auto rounded bg-gray-50 p-3 text-xs"
+                                class="mt-2 overflow-x-auto rounded bg-ink-900/5 p-3 text-xs"
                                 >{{ response.html_head }}</pre>
                             <AppButton
                                 type="button"
@@ -452,17 +452,17 @@ async function copyText(text: string, field: string) {
                         </div>
 
                         <div
-                            class="rounded-lg bg-gray-900 px-6 py-8 text-center text-white"
+                            class="rounded-lg bg-ink-900 px-6 py-8 text-center text-white"
                         >
                             <p class="text-base font-bold">
                                 Webサイトの準備ができました
                             </p>
-                            <p class="mt-2 text-sm text-gray-300">
+                            <p class="mt-2 text-sm text-ink-900/20">
                                 サイト本体の制作についてもご相談いただけます。
                             </p>
                             <a
                                 href="/contact"
-                                class="mt-4 inline-block rounded-md bg-white px-6 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100"
+                                class="mt-4 inline-block rounded-md bg-white px-6 py-2 text-sm font-medium text-ink-900 hover:bg-ink-900/10"
                             >
                                 制作のご相談はこちら
                             </a>

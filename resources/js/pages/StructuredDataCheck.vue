@@ -68,7 +68,7 @@ async function check() {
             <PageMain>
                 <label
                     for="url-input"
-                    class="block text-sm font-medium text-gray-700"
+                    class="block text-sm font-medium text-ink-900/70"
                     >URL</label
                 >
                 <div class="mt-1 flex gap-2">
@@ -77,7 +77,7 @@ async function check() {
                         v-model="url"
                         type="url"
                         placeholder="https://example.com/"
-                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                        class="w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                     />
                     <AppButton
                         type="button"
@@ -95,7 +95,7 @@ async function check() {
 
                 <p
                     v-if="result && result.blocks.length === 0"
-                    class="mt-8 text-sm text-gray-500"
+                    class="mt-8 text-sm text-ink-900/40"
                 >
                     JSON-LD形式の構造化データは見つかりませんでした。
                 </p>
@@ -104,7 +104,7 @@ async function check() {
                     <div
                         v-for="(block, index) in result.blocks"
                         :key="index"
-                        class="rounded-md border border-gray-200 p-4"
+                        class="rounded-md border border-ink-900/10 p-4"
                     >
                         <p
                             class="text-sm font-medium"
@@ -130,7 +130,7 @@ async function check() {
                             </li>
                         </ul>
                         <pre
-                            class="mt-3 overflow-x-auto rounded bg-gray-50 p-3 font-mono text-xs text-gray-800"
+                            class="mt-3 overflow-x-auto rounded bg-ink-900/5 p-3 font-mono text-xs text-ink-900/80"
                             >{{ block.raw }}</pre>
                     </div>
                 </div>

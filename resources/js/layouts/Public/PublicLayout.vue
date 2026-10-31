@@ -18,13 +18,15 @@ const showingSidebar = ref(false);
 </script>
 
 <template>
-    <div class="min-h-screen bg-gray-50">
+    <div class="min-h-screen bg-white">
         <PublicHeader :user="user" />
+
+        <slot name="hero" />
 
         <div class="lg:flex">
             <button
                 type="button"
-                class="mx-6 mb-4 mt-6 inline-flex w-[calc(100%-3rem)] items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 lg:hidden"
+                class="mx-6 mb-4 mt-6 inline-flex w-[calc(100%-3rem)] items-center justify-between rounded-md border border-ink-900/15 bg-white px-3 py-2 text-sm font-medium text-ink-900/70 lg:hidden"
                 :aria-expanded="showingSidebar"
                 @click="showingSidebar = !showingSidebar"
             >

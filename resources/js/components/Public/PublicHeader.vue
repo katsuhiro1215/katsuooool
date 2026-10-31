@@ -14,14 +14,14 @@ const showingMobileMenu = ref(false);
 </script>
 
 <template>
-    <header class="border-b border-gray-200 bg-white">
+    <header class="sticky top-0 z-40 border-b border-ink-900/10 bg-white/95 backdrop-blur">
         <div
             class="mx-auto flex items-center justify-between px-6 py-4"
         >
             <Link href="/" class="flex items-center gap-3">
                 <ApplicationLogo class="h-8 w-auto" />
-                <span class="text-lg font-bold text-gray-900">katsuooool</span>
-                <span class="hidden text-sm text-gray-500 sm:inline"
+                <span class="text-lg font-bold tracking-tight text-ink-900">katsuooool</span>
+                <span class="hidden text-sm text-ink-900/50 sm:inline"
                     >Web制作に役立つ実用ツール集</span
                 >
             </Link>
@@ -30,7 +30,7 @@ const showingMobileMenu = ref(false);
             <div class="hidden items-center gap-4 md:flex">
                 <Link
                     href="/premium"
-                    class="group relative overflow-hidden rounded-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 px-4 py-1.5 text-sm font-semibold text-amber-950 shadow-sm transition hover:shadow-md hover:shadow-amber-300/50"
+                    class="group relative overflow-hidden rounded-full bg-gradient-to-r from-gold-400 via-gold-300 to-gold-400 px-4 py-1.5 text-sm font-semibold text-ink-900 shadow-sm transition hover:shadow-md hover:shadow-gold-400/40"
                 >
                     <span class="relative z-10">Premium</span>
                     <span
@@ -43,7 +43,7 @@ const showingMobileMenu = ref(false);
                         <template #trigger>
                             <button
                                 type="button"
-                                class="inline-flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-700"
+                                class="inline-flex items-center gap-1 text-sm font-medium text-ink-900/60 hover:text-ink-900"
                             >
                                 {{ user.name }}
                                 <svg
@@ -77,13 +77,13 @@ const showingMobileMenu = ref(false);
                 <template v-else>
                     <Link
                         :href="route('login')"
-                        class="text-sm font-medium text-gray-500 hover:text-gray-700"
+                        class="text-sm font-medium text-ink-900/60 hover:text-ink-900"
                     >
                         ログイン
                     </Link>
                     <Link
                         :href="route('register')"
-                        class="text-sm font-medium text-gray-500 hover:text-gray-700"
+                        class="text-sm font-medium text-ink-900/60 hover:text-ink-900"
                     >
                         新規登録
                     </Link>
@@ -93,7 +93,7 @@ const showingMobileMenu = ref(false);
                     <template #trigger>
                         <button
                             type="button"
-                            class="inline-flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-700"
+                            class="inline-flex items-center gap-1 text-sm font-medium text-ink-900/60 hover:text-ink-900"
                         >
                             その他
                             <svg
@@ -145,7 +145,7 @@ const showingMobileMenu = ref(false);
             <!-- Hamburger -->
             <button
                 type="button"
-                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none md:hidden"
+                class="inline-flex items-center justify-center rounded-md p-2 text-ink-900/40 transition duration-150 ease-in-out hover:bg-ink-900/5 hover:text-ink-900/70 focus:bg-ink-900/5 focus:text-ink-900/70 focus:outline-none md:hidden"
                 :aria-expanded="showingMobileMenu"
                 aria-label="メニューを開く"
                 @click="showingMobileMenu = !showingMobileMenu"
@@ -183,7 +183,7 @@ const showingMobileMenu = ref(false);
         <!-- Mobile Navigation -->
         <div
             :class="{ block: showingMobileMenu, hidden: !showingMobileMenu }"
-            class="border-t border-gray-200 md:hidden"
+            class="border-t border-ink-900/10 md:hidden"
         >
             <div class="space-y-1 py-3">
                 <ResponsiveNavLink href="/premium"> Premium </ResponsiveNavLink>

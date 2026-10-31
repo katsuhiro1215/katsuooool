@@ -6,10 +6,10 @@ defineProps<{
 
 <template>
     <div
-        class="mt-4 flex items-center gap-3 rounded-md border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700"
+        class="mt-4 flex items-center gap-3 rounded-md border border-gold-400/30 bg-gold-50 p-4 text-sm text-ink-900/70"
     >
         <svg
-            class="h-5 w-5 shrink-0 animate-spin text-gray-500"
+            class="h-5 w-5 shrink-0 animate-spin text-gold-600"
             fill="none"
             viewBox="0 0 24 24"
         >

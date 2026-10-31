@@ -69,7 +69,7 @@ watch([opacity, blur, borderOpacity, shadowOpacity], () => {
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         透明度: {{ opacity }}
                         <input
                             v-model.number="opacity"
@@ -80,7 +80,7 @@ watch([opacity, blur, borderOpacity, shadowOpacity], () => {
                             class="mt-1 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         ぼかし: {{ blur }}px
                         <input
                             v-model.number="blur"
@@ -90,7 +90,7 @@ watch([opacity, blur, borderOpacity, shadowOpacity], () => {
                             class="mt-1 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         境界線の透明度: {{ borderOpacity }}
                         <input
                             v-model.number="borderOpacity"
@@ -101,7 +101,7 @@ watch([opacity, blur, borderOpacity, shadowOpacity], () => {
                             class="mt-1 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         影の強さ: {{ shadowOpacity }}
                         <input
                             v-model.number="shadowOpacity"
@@ -116,19 +116,19 @@ watch([opacity, blur, borderOpacity, shadowOpacity], () => {
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >生成されたCSS</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copy"
                         >
                             {{ copied ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ css }}</pre>
                 </div>
             </PageMain>

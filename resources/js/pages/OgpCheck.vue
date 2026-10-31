@@ -67,7 +67,7 @@ async function check() {
             <PageMain>
                 <label
                     for="url-input"
-                    class="block text-sm font-medium text-gray-700"
+                    class="block text-sm font-medium text-ink-900/70"
                     >URL</label
                 >
                 <div class="mt-1 flex gap-2">
@@ -76,7 +76,7 @@ async function check() {
                         v-model="url"
                         type="url"
                         placeholder="https://example.com/"
-                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                        class="w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                     />
                     <AppButton
                         type="button"
@@ -103,7 +103,7 @@ async function check() {
 
                     <div
                         v-if="result.tags['og:image']"
-                        class="overflow-hidden rounded-md border border-gray-200"
+                        class="overflow-hidden rounded-md border border-ink-900/10"
                     >
                         <img
                             :src="result.tags['og:image']"
@@ -111,10 +111,10 @@ async function check() {
                             class="h-48 w-full object-cover"
                         />
                         <div class="p-4">
-                            <p class="font-medium text-gray-900">
+                            <p class="font-medium text-ink-900">
                                 {{ result.tags['og:title'] }}
                             </p>
-                            <p class="mt-1 text-sm text-gray-600">
+                            <p class="mt-1 text-sm text-ink-900/60">
                                 {{ result.tags['og:description'] }}
                             </p>
                         </div>
@@ -125,14 +125,14 @@ async function check() {
                             <tr
                                 v-for="(value, key) in result.tags"
                                 :key="key"
-                                class="border-b border-gray-100"
+                                class="border-b border-ink-900/5"
                             >
                                 <td
-                                    class="py-2 pr-4 font-mono text-xs text-gray-500"
+                                    class="py-2 pr-4 font-mono text-xs text-ink-900/40"
                                 >
                                     {{ key }}
                                 </td>
-                                <td class="py-2 text-gray-800">{{ value }}</td>
+                                <td class="py-2 text-ink-900/80">{{ value }}</td>
                             </tr>
                         </tbody>
                     </table>

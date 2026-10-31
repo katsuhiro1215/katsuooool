@@ -24,9 +24,9 @@ function onAdd(event: Event): void {
         <li
             v-for="item in items"
             :key="item.id"
-            class="overflow-hidden rounded-lg border border-gray-200 bg-white"
+            class="overflow-hidden rounded-xl border border-ink-900/10 bg-white"
         >
-            <div class="relative aspect-square bg-gray-100">
+            <div class="relative aspect-square bg-ink-900/5">
                 <img
                     v-if="item.previewUrl"
                     :src="item.previewUrl"
@@ -36,7 +36,7 @@ function onAdd(event: Event): void {
                 <div
                     v-else
                     data-testid="thumb-fallback"
-                    class="flex h-full w-full flex-col items-center justify-center p-2 text-center text-xs text-gray-500"
+                    class="flex h-full w-full flex-col items-center justify-center p-2 text-center text-xs text-ink-900/50"
                 >
                     <span class="text-base font-semibold">{{
                         extensionOf(item.name)
@@ -48,7 +48,7 @@ function onAdd(event: Event): void {
                     v-if="item.state === 'ready'"
                     type="button"
                     :aria-label="`${item.name} を削除`"
-                    class="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-gray-900/70 text-sm text-white hover:bg-red-600"
+                    class="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-ink-900/70 text-sm text-white hover:bg-red-600"
                     @click="emit('remove', item.id)"
                 >
                     ×
@@ -60,7 +60,7 @@ function onAdd(event: Event): void {
                     class="absolute inset-0 flex items-center justify-center bg-white/70"
                 >
                     <svg
-                        class="h-6 w-6 animate-spin text-gray-600"
+                        class="h-6 w-6 animate-spin text-gold-600"
                         fill="none"
                         viewBox="0 0 24 24"
                     >
@@ -82,14 +82,14 @@ function onAdd(event: Event): void {
             </div>
 
             <div class="space-y-1 p-2 text-xs">
-                <p class="truncate text-gray-800" :title="item.name">
+                <p class="truncate text-ink-900/80" :title="item.name">
                     {{ item.name }}
                 </p>
 
                 <template
                     v-if="item.state === 'success' && isSuccess(item.result)"
                 >
-                    <p class="text-gray-600">
+                    <p class="text-ink-900/60">
                         {{ formatBytes(item.result.input_bytes) }} →
                         {{ formatBytes(item.result.output_bytes) }}
                         <span
@@ -97,16 +97,16 @@ function onAdd(event: Event): void {
                                 item.result.reduction_percent > 0 &&
                                 !item.result.converted_from
                             "
-                            class="font-medium text-green-700"
+                            class="font-medium text-sprout-600"
                             >({{ item.result.reduction_percent }}%削減)</span
                         >
                     </p>
-                    <p v-if="item.result.converted_from" class="text-gray-500">
+                    <p v-if="item.result.converted_from" class="text-ink-900/40">
                         HEICをJPEGに変換しました（元より大きくなることがあります）
                     </p>
                     <p
                         v-if="item.result.width && item.result.height"
-                        class="text-gray-500"
+                        class="text-ink-900/40"
                     >
                         {{ item.result.width }} × {{ item.result.height }}px
                     </p>
@@ -118,7 +118,7 @@ function onAdd(event: Event): void {
                     </p>
                     <a
                         :href="item.result.download_url"
-                        class="inline-block text-gray-900 underline hover:text-gray-600"
+                        class="inline-block text-ink-900 underline hover:text-ink-900/60"
                         >ダウンロード</a
                     >
                 </template>
@@ -134,13 +134,13 @@ function onAdd(event: Event): void {
                     {{ item.result.reason }}
                 </p>
 
-                <p v-else class="text-gray-500">{{ formatBytes(item.size) }}</p>
+                <p v-else class="text-ink-900/40">{{ formatBytes(item.size) }}</p>
             </div>
         </li>
 
         <li v-if="canAdd">
             <label
-                class="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-white text-sm text-gray-500 transition hover:border-gray-400"
+                class="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-ink-900/20 bg-white text-sm text-ink-900/50 transition hover:border-gold-400"
             >
                 <span class="text-2xl">＋</span>
                 <span>追加</span>

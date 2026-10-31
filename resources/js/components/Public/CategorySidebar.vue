@@ -41,7 +41,7 @@ function submit(): void {
                 type="search"
                 placeholder="ツールを検索..."
                 aria-label="ツールを検索"
-                class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                class="w-full rounded-md border border-ink-900/15 px-3 py-2 text-sm text-ink-900 placeholder:text-ink-900/40 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-400/40"
             />
         </form>
 
@@ -53,11 +53,11 @@ function submit(): void {
                         :aria-current="
                             activeCategory === tab.key ? 'page' : undefined
                         "
-                        class="flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition"
+                        class="flex items-center justify-between rounded-md border-l-2 px-3 py-2 text-sm font-medium transition"
                         :class="
                             activeCategory === tab.key
-                                ? 'bg-gray-900 text-white'
-                                : 'text-gray-600 hover:bg-gray-100'
+                                ? 'border-gold-500 bg-ink-900 text-white'
+                                : 'border-transparent text-ink-900/60 hover:bg-ink-900/5 hover:text-ink-900'
                         "
                     >
                         <span>{{ tab.label }}</span>
@@ -65,8 +65,8 @@ function submit(): void {
                             class="text-xs"
                             :class="
                                 activeCategory === tab.key
-                                    ? 'text-gray-300'
-                                    : 'text-gray-400'
+                                    ? 'text-gold-400'
+                                    : 'text-ink-900/35'
                             "
                             >{{ counts[tab.key] ?? 0 }}</span
                         >

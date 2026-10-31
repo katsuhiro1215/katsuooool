@@ -92,7 +92,7 @@ watch([label, placeholder, helperText, hasError], () => {
 
             <PageMain>
                 <div
-                    class="mb-8 flex h-40 flex-col justify-center gap-1 rounded-md border border-gray-200 bg-white px-6"
+                    class="mb-8 flex h-40 flex-col justify-center gap-1 rounded-md border border-ink-900/10 bg-white px-6"
                 >
                     <label class="text-sm font-bold">{{ label }}</label>
                     <input
@@ -104,32 +104,32 @@ watch([label, placeholder, helperText, hasError], () => {
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         ラベル
                         <input
                             v-model="label"
                             type="text"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-2 py-1.5 text-sm"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         プレースホルダー
                         <input
                             v-model="placeholder"
                             type="text"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-2 py-1.5 text-sm"
                         />
                     </label>
-                    <label class="text-sm text-gray-700 sm:col-span-2">
+                    <label class="text-sm text-ink-900/70 sm:col-span-2">
                         ヘルパーテキスト
                         <input
                             v-model="helperText"
                             type="text"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-2 py-1.5 text-sm"
                         />
                     </label>
                     <label
-                        class="flex items-center gap-2 text-sm text-gray-700"
+                        class="flex items-center gap-2 text-sm text-ink-900/70"
                     >
                         <input v-model="hasError" type="checkbox" />
                         エラー状態(is-invalid)
@@ -138,45 +138,45 @@ watch([label, placeholder, helperText, hasError], () => {
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >HTML</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copyText(output.html, 'html')"
                         >
                             {{ copiedHtml ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ output.html }}</pre>
                 </div>
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >CSS</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copyText(output.css, 'css')"
                         >
                             {{ copiedCss ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ output.css }}</pre>
                 </div>
 
                 <section v-if="props.patterns.length > 0" class="mt-16">
-                    <h2 class="text-lg font-bold text-gray-900">
+                    <h2 class="text-lg font-bold text-ink-900">
                         いろんなフォームグループ
                     </h2>
-                    <p class="mt-1 text-sm text-gray-600">
+                    <p class="mt-1 text-sm text-ink-900/60">
                         気に入ったものをそのままコピーして使えます。
                     </p>
                     <div

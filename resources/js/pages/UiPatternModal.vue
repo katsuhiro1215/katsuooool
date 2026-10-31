@@ -96,7 +96,7 @@ watch([title, text, backgroundColor, borderRadius, overlayOpacity], () => {
 
             <PageMain>
                 <div
-                    class="relative mb-8 flex h-40 items-center justify-center rounded-md border border-gray-200 bg-white"
+                    class="relative mb-8 flex h-40 items-center justify-center rounded-md border border-ink-900/10 bg-white"
                 >
                     <AppButton type="button" @click="isPreviewOpen = true">
                         開く
@@ -109,10 +109,10 @@ watch([title, text, backgroundColor, borderRadius, overlayOpacity], () => {
                     >
                         <div class="w-64 p-6" :style="modalStyle">
                             <h3 class="mb-3 text-lg font-bold">{{ title }}</h3>
-                            <p class="mb-4 text-sm text-gray-600">{{ text }}</p>
+                            <p class="mb-4 text-sm text-ink-900/60">{{ text }}</p>
                             <button
                                 type="button"
-                                class="rounded bg-gray-200 px-4 py-2 text-sm"
+                                class="rounded bg-ink-900/15 px-4 py-2 text-sm"
                                 @click="isPreviewOpen = false"
                             >
                                 閉じる
@@ -122,23 +122,23 @@ watch([title, text, backgroundColor, borderRadius, overlayOpacity], () => {
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         タイトル
                         <input
                             v-model="title"
                             type="text"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         本文
                         <input
                             v-model="text"
                             type="text"
-                            class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none focus:ring-0"
+                            class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 text-sm focus:border-ink-900/30 focus:outline-none focus:ring-0"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         背景色
                         <input
                             v-model="backgroundColor"
@@ -146,7 +146,7 @@ watch([title, text, backgroundColor, borderRadius, overlayOpacity], () => {
                             class="mt-1 h-9 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         角丸: {{ borderRadius }}px
                         <input
                             v-model.number="borderRadius"
@@ -156,7 +156,7 @@ watch([title, text, backgroundColor, borderRadius, overlayOpacity], () => {
                             class="mt-1 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700 sm:col-span-2">
+                    <label class="text-sm text-ink-900/70 sm:col-span-2">
                         オーバーレイの不透明度: {{ overlayOpacity }}
                         <input
                             v-model.number="overlayOpacity"
@@ -171,63 +171,63 @@ watch([title, text, backgroundColor, borderRadius, overlayOpacity], () => {
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >HTML</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copyText(output.html, 'html')"
                         >
                             {{ copiedHtml ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ output.html }}</pre>
                 </div>
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >CSS</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copyText(output.css, 'css')"
                         >
                             {{ copiedCss ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ output.css }}</pre>
                 </div>
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >JS</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copyText(output.js, 'js')"
                         >
                             {{ copiedJs ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ output.js }}</pre>
                 </div>
 
                 <section v-if="props.patterns.length > 0" class="mt-16">
-                    <h2 class="text-lg font-bold text-gray-900">
+                    <h2 class="text-lg font-bold text-ink-900">
                         いろんなモーダル
                     </h2>
-                    <p class="mt-1 text-sm text-gray-600">
+                    <p class="mt-1 text-sm text-ink-900/60">
                         気に入ったものをそのままコピーして使えます。
                     </p>
                     <div

@@ -79,14 +79,14 @@ function track() {
             <PageMain>
                 <label
                     for="json-input"
-                    class="block text-sm font-medium text-gray-700"
+                    class="block text-sm font-medium text-ink-900/70"
                     >JSON</label
                 >
                 <textarea
                     id="json-input"
                     v-model="input"
                     rows="10"
-                    class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-xs focus:border-gray-400 focus:outline-none focus:ring-0"
+                    class="mt-1 w-full rounded-md border border-ink-900/20 px-3 py-2 font-mono text-xs focus:border-ink-900/30 focus:outline-none focus:ring-0"
                     placeholder='{"key": "value"}'
                 />
 
@@ -107,7 +107,7 @@ function track() {
                     <div class="mb-3 flex justify-end">
                         <button
                             type="button"
-                            class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:border-gray-400"
+                            class="rounded-md border border-ink-900/20 px-3 py-1.5 text-sm text-ink-900/70 hover:border-ink-900/30"
                             @click="copyOutput"
                         >
                             {{ copied ? 'コピーしました' : 'コピー' }}
@@ -117,7 +117,7 @@ function track() {
                         :value="output"
                         rows="10"
                         readonly
-                        class="w-full rounded-md border border-gray-200 bg-white px-3 py-2 font-mono text-xs text-gray-800"
+                        class="w-full rounded-md border border-ink-900/10 bg-white px-3 py-2 font-mono text-xs text-ink-900/80"
                     />
                 </div>
             </PageMain>

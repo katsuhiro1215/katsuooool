@@ -23,17 +23,17 @@ function onDrop(event: DragEvent): void {
 
 <template>
     <div
-        class="flex min-h-[60vh] flex-col items-center justify-center rounded-lg border-2 border-dashed p-10 text-center transition"
+        class="flex min-h-[60vh] flex-col items-center justify-center rounded-xl border-2 border-dashed p-10 text-center transition"
         :class="
             isDragging
-                ? 'border-gray-500 bg-gray-100'
-                : 'border-gray-300 bg-white'
+                ? 'border-gold-500 bg-gold-50'
+                : 'border-ink-900/20 bg-white'
         "
         @dragover.prevent="isDragging = true"
         @dragleave.prevent="isDragging = false"
         @drop.prevent="onDrop"
     >
-        <p class="text-base text-gray-600">
+        <p class="text-base text-ink-900/60">
             ここに画像をドラッグ&ドロップ、または
         </p>
         <AppButton as="label" class="mt-4 inline-block">
@@ -46,6 +46,6 @@ function onDrop(event: DragEvent): void {
                 @change="onChange"
             />
         </AppButton>
-        <p v-if="hint" class="mt-4 text-xs text-gray-500">{{ hint }}</p>
+        <p v-if="hint" class="mt-4 text-xs text-ink-900/40">{{ hint }}</p>
     </div>
 </template>

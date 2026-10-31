@@ -258,9 +258,9 @@ function printFromReview() {
 }
 
 const buttonLight =
-    'inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-800 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40';
+    'inline-flex items-center justify-center rounded-md border border-ink-900/20 bg-white px-4 py-2 text-base font-medium text-ink-900/80 transition hover:bg-ink-900/5 disabled:cursor-not-allowed disabled:opacity-40';
 const linkButton =
-    'rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100';
+    'rounded-md px-3 py-2 text-base font-medium text-ink-900/70 hover:bg-ink-900/10';
 </script>
 
 <template>
@@ -278,15 +278,15 @@ const linkButton =
                     class="flex flex-wrap items-center justify-between gap-3"
                     data-toolbar
                 >
-                    <p class="text-base text-gray-700" role="status">
+                    <p class="text-base text-ink-900/70" role="status">
                         <span class="font-semibold">{{
                             state.answers.project || '新しいヒアリングシート'
                         }}</span>
                         <span
-                            class="ml-2 rounded bg-gray-100 px-2 py-0.5 text-sm text-gray-600"
+                            class="ml-2 rounded bg-ink-900/10 px-2 py-0.5 text-sm text-ink-900/60"
                             >下書き</span
                         >
-                        <span class="ml-3 text-sm text-gray-500">{{
+                        <span class="ml-3 text-sm text-ink-900/40">{{
                             saveStatus
                         }}</span>
                     </p>
@@ -342,22 +342,22 @@ const linkButton =
                 </div>
 
                 <div
-                    class="mt-4 rounded-lg border border-gray-200 bg-white p-4"
+                    class="mt-4 rounded-lg border border-ink-900/10 bg-white p-4"
                 >
                     <div class="flex items-center justify-between text-base">
-                        <span class="font-medium text-gray-800"
+                        <span class="font-medium text-ink-900/80"
                             >ヒアリングの進捗</span
                         >
                         <strong data-percent>{{ percent }}%</strong>
                     </div>
                     <progress
-                        class="mt-2 h-2 w-full overflow-hidden rounded [&::-moz-progress-bar]:bg-gray-900 [&::-webkit-progress-bar]:bg-gray-100 [&::-webkit-progress-value]:bg-gray-900"
+                        class="mt-2 h-2 w-full overflow-hidden rounded [&::-moz-progress-bar]:bg-ink-900 [&::-webkit-progress-bar]:bg-ink-900/10 [&::-webkit-progress-value]:bg-ink-900"
                         max="100"
                         :value="percent"
                     >
                         {{ percent }}%
                     </progress>
-                    <p class="mt-2 text-sm text-gray-600" data-progress-detail>
+                    <p class="mt-2 text-sm text-ink-900/60" data-progress-detail>
                         {{ counts.answered }} /
                         {{ allFields.length }} 項目回答済み · 確認待ち
                         {{ counts.pending }}
@@ -379,8 +379,8 @@ const linkButton =
                         class="flex-1 rounded-md border px-4 py-2 text-base font-medium"
                         :class="
                             mobileView === 'editor'
-                                ? 'border-gray-900 bg-gray-900 text-white'
-                                : 'border-gray-300 bg-white text-gray-700'
+                                ? 'border-ink-900 bg-ink-900 text-white'
+                                : 'border-ink-900/20 bg-white text-ink-900/70'
                         "
                         data-view="editor"
                         @click="mobileView = 'editor'"
@@ -393,8 +393,8 @@ const linkButton =
                         class="flex-1 rounded-md border px-4 py-2 text-base font-medium"
                         :class="
                             mobileView === 'preview'
-                                ? 'border-gray-900 bg-gray-900 text-white'
-                                : 'border-gray-300 bg-white text-gray-700'
+                                ? 'border-ink-900 bg-ink-900 text-white'
+                                : 'border-ink-900/20 bg-white text-ink-900/70'
                         "
                         data-view="preview"
                         @click="mobileView = 'preview'"
@@ -415,23 +415,23 @@ const linkButton =
                         class="scroll-mt-4"
                     >
                         <div>
-                            <p class="text-sm font-semibold text-gray-500">
+                            <p class="text-sm font-semibold text-ink-900/40">
                                 STEP 0{{ state.step + 1 }} / 0{{
                                     HEARING_STEPS.length
                                 }}
                             </p>
                             <h2
-                                class="mt-1 text-2xl font-bold text-gray-900"
+                                class="mt-1 text-2xl font-bold text-ink-900"
                                 data-step-title
                             >
                                 {{ step.title }}
                             </h2>
-                            <p class="mt-1 text-base text-gray-600">
+                            <p class="mt-1 text-base text-ink-900/60">
                                 {{ step.description }}
                             </p>
                         </div>
                         <p
-                            class="mt-4 rounded-md bg-gray-100 px-4 py-3 text-sm text-gray-700"
+                            class="mt-4 rounded-md bg-ink-900/10 px-4 py-3 text-sm text-ink-900/70"
                         >
                             わかる項目から入力できます。
                             <span class="text-rose-600">●</span>
@@ -442,17 +442,17 @@ const linkButton =
                             <section
                                 v-for="(group, gi) in step.groups"
                                 :key="group.title"
-                                class="rounded-lg border border-gray-200 bg-white p-5 sm:p-6"
+                                class="rounded-lg border border-ink-900/10 bg-white p-5 sm:p-6"
                             >
                                 <h3
-                                    class="flex items-baseline gap-3 text-lg font-bold text-gray-900"
+                                    class="flex items-baseline gap-3 text-lg font-bold text-ink-900"
                                 >
-                                    <span class="text-sm text-gray-400">{{
+                                    <span class="text-sm text-ink-900/35">{{
                                         String(gi + 1).padStart(2, '0')
                                     }}</span>
                                     {{ group.title }}
                                 </h3>
-                                <p class="mt-1 text-base text-gray-600">
+                                <p class="mt-1 text-base text-ink-900/60">
                                     {{ group.description }}
                                 </p>
                                 <div class="mt-5 grid gap-5 sm:grid-cols-2">
@@ -472,9 +472,9 @@ const linkButton =
                                 </div>
                             </section>
                             <p
-                                class="rounded-lg border border-gray-200 bg-white p-4 text-base text-gray-700"
+                                class="rounded-lg border border-ink-900/10 bg-white p-4 text-base text-ink-900/70"
                             >
-                                <strong class="mr-2 text-gray-900"
+                                <strong class="mr-2 text-ink-900"
                                     >HEARING TIP</strong
                                 >{{ step.tip }}
                             </p>
@@ -492,7 +492,7 @@ const linkButton =
                             >
                                 ← 前のステップ
                             </button>
-                            <span class="text-base text-gray-500"
+                            <span class="text-base text-ink-900/40"
                                 >{{ state.step + 1 }} /
                                 {{ HEARING_STEPS.length }}</span
                             >
@@ -512,7 +512,7 @@ const linkButton =
                         class="xl:sticky xl:top-4"
                     >
                         <div class="flex items-center justify-between">
-                            <h2 class="text-lg font-bold text-gray-900">
+                            <h2 class="text-lg font-bold text-ink-900">
                                 シートプレビュー
                             </h2>
                             <button
@@ -528,7 +528,7 @@ const linkButton =
                             class="mt-3 flex flex-wrap items-center justify-between gap-3"
                         >
                             <div
-                                class="inline-flex rounded-md border border-gray-300 bg-white p-0.5"
+                                class="inline-flex rounded-md border border-ink-900/20 bg-white p-0.5"
                             >
                                 <button
                                     type="button"
@@ -536,8 +536,8 @@ const linkButton =
                                     class="rounded px-3 py-1.5 text-base"
                                     :class="
                                         previewMode === 'sheet'
-                                            ? 'bg-gray-900 text-white'
-                                            : 'text-gray-700'
+                                            ? 'bg-ink-900 text-white'
+                                            : 'text-ink-900/70'
                                     "
                                     data-mode="sheet"
                                     @click="previewMode = 'sheet'"
@@ -550,8 +550,8 @@ const linkButton =
                                     class="rounded px-3 py-1.5 text-base"
                                     :class="
                                         previewMode === 'text'
-                                            ? 'bg-gray-900 text-white'
-                                            : 'text-gray-700'
+                                            ? 'bg-ink-900 text-white'
+                                            : 'text-ink-900/70'
                                     "
                                     data-mode="text"
                                     @click="previewMode = 'text'"
@@ -560,12 +560,12 @@ const linkButton =
                                 </button>
                             </div>
                             <label
-                                class="inline-flex items-center gap-2 text-base text-gray-700"
+                                class="inline-flex items-center gap-2 text-base text-ink-900/70"
                             >
                                 <input
                                     v-model="hideEmpty"
                                     type="checkbox"
-                                    class="rounded border-gray-300"
+                                    class="rounded border-ink-900/20"
                                     data-hide-empty
                                 />
                                 未回答を隠す
@@ -573,7 +573,7 @@ const linkButton =
                         </div>
 
                         <div
-                            class="mt-3 max-h-[70vh] overflow-y-auto rounded-lg bg-gray-100 p-3"
+                            class="mt-3 max-h-[70vh] overflow-y-auto rounded-lg bg-ink-900/10 p-3"
                         >
                             <HearingPaper
                                 v-show="previewMode === 'sheet'"
@@ -582,7 +582,7 @@ const linkButton =
                             />
                             <pre
                                 v-show="previewMode === 'text'"
-                                class="whitespace-pre-wrap break-words rounded border border-gray-300 bg-white p-4 text-sm leading-relaxed text-gray-800"
+                                class="whitespace-pre-wrap break-words rounded border border-ink-900/20 bg-white p-4 text-sm leading-relaxed text-ink-900/80"
                                 data-text-preview
                                 >{{ text }}</pre>
                         </div>
@@ -603,7 +603,7 @@ const linkButton =
                                 >PDF / 印刷</AppButton
                             >
                         </div>
-                        <p class="mt-3 text-sm text-gray-600">
+                        <p class="mt-3 text-sm text-ink-900/60">
                             入力はこのブラウザ内に保存されます。外部送信はしません。
                         </p>
                     </aside>
@@ -618,11 +618,11 @@ const linkButton =
         <Modal :show="dialog !== null" max-width="lg" @close="dialog = null">
             <div class="p-6" data-dialog>
                 <template v-if="dialog === 'help'">
-                    <h2 class="text-xl font-bold text-gray-900">
+                    <h2 class="text-xl font-bold text-ink-900">
                         このツールの使い方
                     </h2>
                     <ol
-                        class="mt-4 list-decimal space-y-2 pl-5 text-base text-gray-700"
+                        class="mt-4 list-decimal space-y-2 pl-5 text-base text-ink-900/70"
                     >
                         <li>
                             上の6つのタブから、わかるところを選んで入力します。
@@ -641,10 +641,10 @@ const linkButton =
                             印刷」で書き出します。印刷画面で「PDFに保存」を選んでください。
                         </li>
                     </ol>
-                    <p class="mt-4 text-base text-gray-700">
+                    <p class="mt-4 text-base text-ink-900/70">
                         入力はこの端末・ブラウザのローカルストレージに自動保存されます。共有端末では、利用後にリセットしてください。別の端末へ移すときは、JSON保存・読込を使います。
                     </p>
-                    <p class="mt-2 text-base text-gray-700">
+                    <p class="mt-2 text-base text-ink-900/70">
                         <span class="text-rose-600">●</span>
                         は重点項目です。未回答でも保存・書き出しできます。確認待ちは、進捗の「回答済み」に含みません。
                     </p>
@@ -654,37 +654,37 @@ const linkButton =
                 </template>
 
                 <template v-else-if="dialog === 'review'">
-                    <h2 class="text-xl font-bold text-gray-900">
+                    <h2 class="text-xl font-bold text-ink-900">
                         ヒアリング内容を確認
                     </h2>
-                    <p class="mt-2 text-base text-gray-700">
+                    <p class="mt-2 text-base text-ink-900/70">
                         回答済み・確認待ち・未回答を整理しました。途中の状態でも書き出せます。
                     </p>
                     <div class="mt-4 grid grid-cols-3 gap-3 text-center">
-                        <div class="rounded-md bg-gray-100 p-3">
+                        <div class="rounded-md bg-ink-900/10 p-3">
                             <strong class="block text-2xl">{{
                                 counts.answered
                             }}</strong>
-                            <span class="text-sm text-gray-600"
+                            <span class="text-sm text-ink-900/60"
                                 >回答済み / {{ allFields.length }}</span
                             >
                         </div>
-                        <div class="rounded-md bg-gray-100 p-3">
+                        <div class="rounded-md bg-ink-900/10 p-3">
                             <strong class="block text-2xl">{{
                                 review.waiting
                             }}</strong>
-                            <span class="text-sm text-gray-600">確認待ち</span>
+                            <span class="text-sm text-ink-900/60">確認待ち</span>
                         </div>
-                        <div class="rounded-md bg-gray-100 p-3">
+                        <div class="rounded-md bg-ink-900/10 p-3">
                             <strong class="block text-2xl">{{
                                 review.missingCore
                             }}</strong>
-                            <span class="text-sm text-gray-600"
+                            <span class="text-sm text-ink-900/60"
                                 >重点項目の未回答</span
                             >
                         </div>
                     </div>
-                    <p class="mt-4 text-base text-gray-700">
+                    <p class="mt-4 text-base text-ink-900/70">
                         {{
                             review.items.length
                                 ? '次のヒアリングで確認したい項目です。項目を選ぶと入力欄へ移動します。'
@@ -695,12 +695,12 @@ const linkButton =
                         <li v-for="item in review.items" :key="item.field.id">
                             <button
                                 type="button"
-                                class="flex w-full items-center justify-between rounded-md border border-gray-200 px-3 py-2 text-left text-base hover:bg-gray-50"
+                                class="flex w-full items-center justify-between rounded-md border border-ink-900/10 px-3 py-2 text-left text-base hover:bg-ink-900/5"
                                 :data-jump="item.field.id"
                                 @click="jumpTo(item.field.id)"
                             >
                                 {{ item.field.label }}
-                                <span class="text-sm text-gray-500"
+                                <span class="text-sm text-ink-900/40"
                                     >{{ item.reason }} →</span
                                 >
                             </button>
@@ -721,10 +721,10 @@ const linkButton =
                 </template>
 
                 <template v-else-if="dialog === 'reset'">
-                    <h2 class="text-xl font-bold text-gray-900">
+                    <h2 class="text-xl font-bold text-ink-900">
                         入力内容をリセットしますか？
                     </h2>
-                    <p class="mt-3 text-base text-gray-700">
+                    <p class="mt-3 text-base text-ink-900/70">
                         このシートの回答と確認待ちをすべて消去します。必要な場合は、先にJSON保存でバックアップしてください。
                     </p>
                     <div class="mt-6 flex flex-wrap justify-end gap-2">
@@ -754,21 +754,21 @@ const linkButton =
                 <template
                     v-else-if="dialog === 'sample' || dialog === 'import'"
                 >
-                    <h2 class="text-xl font-bold text-gray-900">
+                    <h2 class="text-xl font-bold text-ink-900">
                         {{
                             dialog === 'sample'
                                 ? 'サンプルを表示する'
                                 : '保存したシートを読み込む'
                         }}
                     </h2>
-                    <p class="mt-3 text-base text-gray-700">
+                    <p class="mt-3 text-base text-ink-900/70">
                         {{
                             dialog === 'sample'
                                 ? '架空の工務店のヒアリング例に置き換えます。'
                                 : '現在の入力内容を、JSONファイルの内容に置き換えます。'
                         }}
                     </p>
-                    <p class="mt-2 text-base text-gray-700">
+                    <p class="mt-2 text-base text-ink-900/70">
                         現在の内容を残す場合は、先に「JSON保存」をしてください。
                     </p>
                     <div class="mt-6 flex flex-wrap justify-end gap-2">
@@ -799,7 +799,7 @@ const linkButton =
 
         <div
             v-if="toastMessage"
-            class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-md bg-gray-900 px-4 py-3 text-base text-white shadow-lg"
+            class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-md bg-ink-900 px-4 py-3 text-base text-white shadow-lg"
             role="status"
             aria-live="polite"
         >

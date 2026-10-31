@@ -67,7 +67,7 @@ watch([x, y, blur, spread, color, inset], () => {
 
             <PageMain>
                 <div
-                    class="mb-8 flex h-40 items-center justify-center rounded-md border border-gray-200 bg-white"
+                    class="mb-8 flex h-40 items-center justify-center rounded-md border border-ink-900/10 bg-white"
                 >
                     <div
                         class="h-20 w-20 rounded-md bg-white"
@@ -76,7 +76,7 @@ watch([x, y, blur, spread, color, inset], () => {
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         X オフセット: {{ x }}px
                         <input
                             v-model.number="x"
@@ -86,7 +86,7 @@ watch([x, y, blur, spread, color, inset], () => {
                             class="mt-1 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         Y オフセット: {{ y }}px
                         <input
                             v-model.number="y"
@@ -96,7 +96,7 @@ watch([x, y, blur, spread, color, inset], () => {
                             class="mt-1 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         ぼかし: {{ blur }}px
                         <input
                             v-model.number="blur"
@@ -106,7 +106,7 @@ watch([x, y, blur, spread, color, inset], () => {
                             class="mt-1 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         広がり: {{ spread }}px
                         <input
                             v-model.number="spread"
@@ -116,7 +116,7 @@ watch([x, y, blur, spread, color, inset], () => {
                             class="mt-1 w-full"
                         />
                     </label>
-                    <label class="text-sm text-gray-700">
+                    <label class="text-sm text-ink-900/70">
                         色
                         <input
                             v-model="color"
@@ -125,7 +125,7 @@ watch([x, y, blur, spread, color, inset], () => {
                         />
                     </label>
                     <label
-                        class="flex items-center gap-2 text-sm text-gray-700"
+                        class="flex items-center gap-2 text-sm text-ink-900/70"
                     >
                         <input v-model="inset" type="checkbox" />
                         inset(内側に影)
@@ -134,19 +134,19 @@ watch([x, y, blur, spread, color, inset], () => {
 
                 <div class="mt-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700"
+                        <span class="text-sm font-medium text-ink-900/70"
                             >生成されたCSS</span
                         >
                         <button
                             type="button"
-                            class="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700"
+                            class="rounded-md bg-ink-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-ink-700"
                             @click="copy"
                         >
                             {{ copied ? 'コピーしました' : 'コピー' }}
                         </button>
                     </div>
                     <pre
-                        class="mt-2 overflow-x-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100"
+                        class="mt-2 overflow-x-auto rounded-md bg-ink-900 p-4 text-xs text-white/90"
                         >{{ css }}</pre>
                 </div>
             </PageMain>

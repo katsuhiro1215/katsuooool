@@ -136,14 +136,14 @@ function isSuccess(result: OgpResult): result is SuccessResult {
                     class="rounded-lg border-2 border-dashed p-10 text-center transition"
                     :class="
                         isDragging
-                            ? 'border-gray-400 bg-gray-100'
-                            : 'border-gray-300 bg-white'
+                            ? 'border-ink-900/30 bg-ink-900/10'
+                            : 'border-ink-900/20 bg-white'
                     "
                     @dragover.prevent="isDragging = true"
                     @dragleave.prevent="isDragging = false"
                     @drop.prevent="onDrop"
                 >
-                    <p class="text-sm text-gray-600">
+                    <p class="text-sm text-ink-900/60">
                         ここに画像をドラッグ&ドロップ、または
                     </p>
                     <AppButton as="label" class="mt-3 inline-block">
@@ -173,14 +173,14 @@ function isSuccess(result: OgpResult): result is SuccessResult {
                     <li
                         v-for="(file, index) in selectedFiles"
                         :key="`${file.name}-${index}`"
-                        class="flex items-center justify-between rounded-md border border-gray-200 bg-white px-4 py-2 text-sm"
+                        class="flex items-center justify-between rounded-md border border-ink-900/10 bg-white px-4 py-2 text-sm"
                     >
-                        <span class="truncate text-gray-800">{{
+                        <span class="truncate text-ink-900/80">{{
                             file.name
                         }}</span>
                         <button
                             type="button"
-                            class="ml-4 text-gray-400 hover:text-red-600"
+                            class="ml-4 text-ink-900/35 hover:text-red-600"
                             @click="removeFile(index)"
                         >
                             削除
@@ -212,26 +212,26 @@ function isSuccess(result: OgpResult): result is SuccessResult {
                         <li
                             v-for="(result, index) in response.results"
                             :key="`${result.original_name}-${index}`"
-                            class="rounded-md border border-gray-200 bg-white px-4 py-3 text-sm"
+                            class="rounded-md border border-ink-900/10 bg-white px-4 py-3 text-sm"
                         >
                             <template v-if="isSuccess(result)">
                                 <div class="flex items-center justify-between">
-                                    <span class="truncate text-gray-800">{{
+                                    <span class="truncate text-ink-900/80">{{
                                         result.original_name
                                     }}</span>
                                     <a
                                         :href="result.download_url"
-                                        class="text-gray-900 underline hover:text-gray-600"
+                                        class="text-ink-900 underline hover:text-ink-900/60"
                                         >ダウンロード</a
                                     >
                                 </div>
-                                <p class="mt-1 text-xs text-gray-500">
+                                <p class="mt-1 text-xs text-ink-900/40">
                                     {{ result.width }} × {{ result.height }} px
                                 </p>
                             </template>
                             <template v-else>
                                 <div class="flex items-center justify-between">
-                                    <span class="truncate text-gray-500">{{
+                                    <span class="truncate text-ink-900/40">{{
                                         result.original_name
                                     }}</span>
                                     <span class="text-xs text-red-600">{{

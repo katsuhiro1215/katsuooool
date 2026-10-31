@@ -94,7 +94,7 @@ const summary = computed(() =>
                     <template #grid>
                         <div
                             v-if="errorMessage"
-                            class="mb-4 text-sm text-red-600"
+                            class="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700"
                         >
                             <p>{{ errorMessage }}</p>
                             <Link
@@ -131,7 +131,7 @@ const summary = computed(() =>
                         >
                             <fieldset>
                                 <legend
-                                    class="text-sm font-medium text-gray-900"
+                                    class="text-sm font-medium text-ink-900"
                                 >
                                     圧縮レベル
                                 </legend>
@@ -142,8 +142,8 @@ const summary = computed(() =>
                                         class="flex cursor-pointer items-start gap-2 rounded-md border p-2 text-sm"
                                         :class="
                                             level === option.value
-                                                ? 'border-gray-900 bg-gray-50'
-                                                : 'border-gray-200'
+                                                ? 'border-gold-500 bg-gold-50'
+                                                : 'border-ink-900/15'
                                         "
                                     >
                                         <input
@@ -151,15 +151,15 @@ const summary = computed(() =>
                                             type="radio"
                                             name="level"
                                             :value="option.value"
-                                            class="mt-1"
+                                            class="mt-1 accent-gold-500"
                                         />
                                         <span>
                                             <span
-                                                class="font-medium text-gray-900"
+                                                class="font-medium text-ink-900"
                                                 >{{ option.label }}</span
                                             >
                                             <span
-                                                class="block text-xs text-gray-500"
+                                                class="block text-xs text-ink-900/50"
                                                 >{{ option.note }}</span
                                             >
                                         </span>

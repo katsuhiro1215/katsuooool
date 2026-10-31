@@ -14,7 +14,7 @@ withDefaults(
 <template>
     <component
         :is="as"
-        class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md bg-gray-900 px-6 py-3 text-center text-base font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+        class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md bg-ink-900 px-6 py-3 text-center text-base font-medium text-white transition hover:bg-ink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-400 disabled:cursor-not-allowed disabled:bg-ink-900/30"
     >
         <svg
             v-if="loading"
